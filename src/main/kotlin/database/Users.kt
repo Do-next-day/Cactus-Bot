@@ -1,17 +1,25 @@
 package org.laolittle.plugin.database
 
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.IntEntityClass
+import kotlinx.serialization.json.Json
+import org.jetbrains.exposed.dao.LongEntity
+import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.dao.id.LongIdTable
 
-object Users : IntIdTable() {
+object Users : LongIdTable() {
     val card = integer("Card")
     val data = varchar("Data", 255)
 }
 
-class User(id: EntityID<Int>) : IntEntity(id){
-    companion object: IntEntityClass<User>(Users)
+class User(id: EntityID<Long>) : LongEntity(id){
+    companion object: LongEntityClass<User>(Users)
     var card by Users.card
     var data by Users.data
+}
+
+internal val Json = Json {
+    prettyPrint = true
+    ignoreUnknownKeys = true
+    isLenient = true
+    allowStructuredMapKeys = true
 }

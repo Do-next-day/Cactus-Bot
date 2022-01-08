@@ -9,12 +9,12 @@ import org.jetbrains.exposed.sql.javatime.date
 object Gachas : IntIdTable() {
     val name = char("Name", 5)
     val up = integer("Up")
-    val version = date("Ver")
+    val date = date("Date")
 }
 
 class Gacha(id: EntityID<Int>) : IntEntity(id){
     companion object: IntEntityClass<Gacha>(Gachas)
     var name by Gachas.name
     var up by Gachas.up
-    var version by Gachas.version
+    var date by Gachas.date
 }
