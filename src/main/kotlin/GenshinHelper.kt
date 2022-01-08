@@ -4,11 +4,15 @@ import com.alibaba.druid.pool.DruidDataSource
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
+import net.mamoe.mirai.event.globalEventChannel
+import net.mamoe.mirai.event.subscribeGroupMessages
+import net.mamoe.mirai.message.data.buildMessageChain
 import net.mamoe.mirai.utils.info
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.laolittle.plugin.command.GenshinAdd
+import org.laolittle.plugin.database.Character
 import org.laolittle.plugin.database.Characters
 import java.sql.Connection
 import javax.sql.DataSource
@@ -27,6 +31,17 @@ object GenshinHelper : KotlinPlugin(
     override fun onEnable() {
         GenshinAdd.register()
         logger.info { "Plugin loaded" }
+        globalEventChannel().subscribeGroupMessages {
+            "人物列表"{
+                subject.sendMessage(buildMessageChain {
+                    transaction {
+                        Character.all().forEach {
+                            add(it.name)
+                        }
+                    }
+                })
+            }
+        }
     }
 
     init {
