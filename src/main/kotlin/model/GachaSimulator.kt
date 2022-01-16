@@ -1,3 +1,5 @@
+@file: Suppress("unused")
+
 package org.laolittle.plugin.model
 
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -27,16 +29,14 @@ object GachaSimulator {
             if (userEntity.card >= times) {
                 var gaTimes = userData["times"]?.plus(times) ?: times
                 val itGacha = Gacha[type]
-                val characters = mutableSetOf<Int>()
-                (Character.find { (Characters.id eq itGacha.up) or (Characters.star eq false and (Characters.date lessEq itGacha.date)) } + Character[16] + Character[17] + Character[18] + Character[19] + Character[20])
-                    .forEach {
-                        characters.add(it.id.value)
-                    }
+                val characters =
+                (Character.find { (Characters.id eq itGacha.up) or (Characters.star eq false and (Characters.date lessEq itGacha.date)) } + Character[16] + Character[17] + Character[18] + Character[19] + Character[20] + Character[21])
+                    .toSet()
                 while (gets.size < times) {
                     gaTimes++
                     val per = if (gaTimes < 50) 6 else if (gaTimes < 70) 20 else if (gaTimes < 89) 300 else 1000
                     val randomNum = (1..1000).random()
-                    val single = Character[characters.random()]
+                    val single = Character[characters.random().id.value]
                     if ((randomNum <= per && single.star)) {
                         gaTimes = 0
                         userData[single.id.value.toString()] = userData[single.id.value.toString()]?.plus(1) ?: 1

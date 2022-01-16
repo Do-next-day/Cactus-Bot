@@ -5,14 +5,13 @@ import kotlinx.coroutines.Dispatchers
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
+import net.mamoe.mirai.contact.Contact.Companion.sendImage
 import net.mamoe.mirai.event.globalEventChannel
 import net.mamoe.mirai.event.subscribeGroupMessages
-import net.mamoe.mirai.message.data.buildForwardMessage
 import net.mamoe.mirai.message.data.buildMessageChain
-import net.mamoe.mirai.message.data.toPlainText
+import net.mamoe.mirai.utils.ExternalResource.Companion.toExternalResource
 import net.mamoe.mirai.utils.info
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -22,6 +21,7 @@ import org.laolittle.plugin.database.Characters
 import org.laolittle.plugin.database.Gachas
 import org.laolittle.plugin.database.Users
 import org.laolittle.plugin.model.GachaSimulator.gachaCharacter
+import org.laolittle.plugin.util.GachaRenderer
 import java.sql.Connection
 import javax.sql.DataSource
 
@@ -50,18 +50,18 @@ object GenshinHelper : KotlinPlugin(
                     }
                 })
             }
-            "gacha" Here@{
-                val result = sender.gachaCharacter(1, 10)
-                if (result.isEmpty()){
-                    subject.sendMessage("没了")
-                    return@Here
+            "模拟抽卡" Here@{
+                newSuspendedTransaction(Dispatchers.IO ,db) {
+                    val entityIDS = sender.gachaCharacter(1, 10)
+                    val characters = mutableListOf<Int>()
+                        entityIDS.forEach { id ->
+                        characters.add(Character[id].id.value)
+                    }
+                    GachaRenderer.renderForeach(characters).toExternalResource().use {
+                        subject.sendMessage("抽卡结果")
+                        subject.sendImage(it)
+                    }
                 }
-                subject.sendMessage(buildForwardMessage {
-                    result.forEach {
-                        newSuspendedTransaction(Dispatchers.IO, db) { add(sender, Character[it].name.toPlainText()) }
-                }
-                })
-
             }
         }
     }
