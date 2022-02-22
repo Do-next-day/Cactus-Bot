@@ -1,5 +1,3 @@
-@file: Suppress("unused")
-
 package org.laolittle.plugin.model
 
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -13,6 +11,7 @@ import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.laolittle.plugin.GenshinHelper
 import org.laolittle.plugin.database.*
+import kotlin.random.Random
 import net.mamoe.mirai.contact.User as UserSubject
 
 object GachaSimulator {
@@ -25,33 +24,41 @@ object GachaSimulator {
                 data = buildJsonObject { put("times", 0) }.toString()
             }
 
-            val userData: MutableMap<String, Int> = Json.decodeFromString(userEntity.data)
+            val userData: JsonIntMap = Json.decodeFromString(userEntity.data)
             if (userEntity.card >= times) {
                 var gaTimes = userData["times"]?.plus(times) ?: times
-                val itGacha = Gacha[type]
+                val thisGacha = Gacha[type]
+
                 val characters =
-                (Character.find { (Characters.id eq itGacha.up) or (Characters.star eq false and (Characters.date lessEq itGacha.date)) } + Character[16] + Character[17] + Character[18] + Character[19] + Character[20] + Character[21])
-                    .toSet()
+                    (Character.find { (Characters.id eq thisGacha.up) or (Characters.star eq false and (Characters.date lessEq thisGacha.date)) } + specialCharacters)
+                        .toSet()
                 while (gets.size < times) {
                     gaTimes++
-                    val per = if (gaTimes < 50) 6 else if (gaTimes < 70) 20 else if (gaTimes < 89) 300 else 1000
-                    val randomNum = (1..1000).random()
+                    val per = getProb(gaTimes)
+                    val randomNum = Random.nextDouble(1.0)
                     val single = Character[characters.random().id.value]
                     if ((randomNum <= per && single.star)) {
                         gaTimes = 0
-                        userData[single.id.value.toString()] = userData[single.id.value.toString()]?.plus(1) ?: 1
+                        userData[single] = userData[single] + 1
                         gets.add(single.id)
-                    }else if ((randomNum > per && !single.star)) gets.add(single.id)
+                    } else if ((randomNum > per && !single.star)) gets.add(single.id)
                 }
                 userEntity.card = userEntity.card - times
                 userData["times"] = gaTimes
                 userEntity.data = Json.encodeToString(userData)
             }
         }
+
         return gets
     }
 
     fun gachaWeapon(type: Int) {
 
+    }
+
+    private fun getProb(times: Int): Double {
+        if (times in 1..70) return 0.006
+        val foo = (0.994 / 210) * (times - 70)
+        return foo + getProb(times - 1)
     }
 }

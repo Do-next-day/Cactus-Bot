@@ -1,5 +1,3 @@
-@file: Suppress("unused")
-
 package org.laolittle.plugin.util
 
 import java.awt.RenderingHints
@@ -9,7 +7,7 @@ import javax.imageio.ImageIO
 
 object GachaRenderer {
     private const val BASE_PIXEL = 100
-    fun renderForeach(characters: List<Int>): ByteArray {
+    fun renderGachaResult(characters: List<Int>): ByteArray {
         // 200px , 300px 100px/per
         val gacha = ImageIO.read(File("BG"))
         val g2 = gacha.createGraphics()

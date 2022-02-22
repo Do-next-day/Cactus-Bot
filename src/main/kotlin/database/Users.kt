@@ -23,3 +23,11 @@ internal val Json = Json {
     isLenient = true
     allowStructuredMapKeys = true
 }
+
+internal typealias JsonIntMap = MutableMap<String, Int>
+
+operator fun JsonIntMap.get(c: Character) = this[c.id.value.toString()] ?: 0
+
+operator fun JsonIntMap.set(c: Character, r: Int) {
+    this[c.id.value.toString()] = r
+}

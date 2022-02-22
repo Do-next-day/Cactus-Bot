@@ -5,11 +5,11 @@ import kotlinx.coroutines.Dispatchers
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
-import net.mamoe.mirai.contact.Contact.Companion.sendImage
 import net.mamoe.mirai.event.globalEventChannel
 import net.mamoe.mirai.event.subscribeGroupMessages
+import net.mamoe.mirai.message.data.PlainText
+import net.mamoe.mirai.message.data.buildForwardMessage
 import net.mamoe.mirai.message.data.buildMessageChain
-import net.mamoe.mirai.utils.ExternalResource.Companion.toExternalResource
 import net.mamoe.mirai.utils.info
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.TransactionManager
@@ -21,7 +21,6 @@ import org.laolittle.plugin.database.Characters
 import org.laolittle.plugin.database.Gachas
 import org.laolittle.plugin.database.Users
 import org.laolittle.plugin.model.GachaSimulator.gachaCharacter
-import org.laolittle.plugin.util.GachaRenderer
 import java.sql.Connection
 import javax.sql.DataSource
 
@@ -53,14 +52,19 @@ object GenshinHelper : KotlinPlugin(
             "模拟抽卡" Here@{
                 newSuspendedTransaction(Dispatchers.IO ,db) {
                     val entityIDS = sender.gachaCharacter(1, 10)
-                    val characters = mutableListOf<Int>()
+                    val characters = mutableListOf<String>()
                         entityIDS.forEach { id ->
-                        characters.add(Character[id].id.value)
+                        characters.add(Character[id].name)
                     }
-                    GachaRenderer.renderForeach(characters).toExternalResource().use {
+                    /*GachaRenderer.renderGachaResult(characters).toExternalResource().use {
                         subject.sendMessage("抽卡结果")
                         subject.sendImage(it)
-                    }
+                    }*/
+                    buildForwardMessage {
+                        characters.forEach {
+                            add(bot, PlainText(it))
+                        }
+                    }.also { subject.sendMessage(it) }
                 }
             }
         }

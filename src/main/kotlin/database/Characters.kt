@@ -20,3 +20,9 @@ class Character(id: EntityID<Int>) : IntEntity(id) {
     var date by Characters.date
     var description by Characters.description
 }
+
+internal val specialCharacters by lazy {
+    arrayListOf<Character>().apply {
+        for (i in 16..21) add(Character[i])
+    }
+}
