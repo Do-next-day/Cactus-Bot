@@ -10,11 +10,12 @@ object Characters : IntIdTable() {
     val name = varchar("Name", 6)
     val star = bool("Star")
     val date = date("Date")
-    val description = text("Desc")
+    val description = varchar("Desc", 255)
 }
 
 class Character(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<Character>(Characters)
+
     var name by Characters.name
     var star by Characters.star
     var date by Characters.date
@@ -23,6 +24,6 @@ class Character(id: EntityID<Int>) : IntEntity(id) {
 
 internal val specialCharacters by lazy {
     arrayListOf<Character>().apply {
-        for (i in 16..21) add(Character[i])
+        for (i in 16..20) add(Character[i])
     }
 }

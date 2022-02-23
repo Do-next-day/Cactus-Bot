@@ -49,12 +49,13 @@ object GenshinHelper : KotlinPlugin(
                     }
                 })
             }
+
             "模拟抽卡" Here@{
-                newSuspendedTransaction(Dispatchers.IO ,db) {
+                newSuspendedTransaction(Dispatchers.IO, db) {
                     val entityIDS = sender.gachaCharacter(1, 10)
                     val characters = mutableListOf<String>()
-                        entityIDS.forEach { id ->
-                        characters.add(Character[id].name)
+                    entityIDS.forEach { character ->
+                        characters.add(character.name)
                     }
                     /*GachaRenderer.renderGachaResult(characters).toExternalResource().use {
                         subject.sendMessage("抽卡结果")

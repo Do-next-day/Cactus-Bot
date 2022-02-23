@@ -11,8 +11,9 @@ object Users : LongIdTable() {
     val data = varchar("Data", 255)
 }
 
-class User(id: EntityID<Long>) : LongEntity(id){
-    companion object: LongEntityClass<User>(Users)
+class User(id: EntityID<Long>) : LongEntity(id) {
+    companion object : LongEntityClass<User>(Users)
+
     var card by Users.card
     var data by Users.data
 }

@@ -12,8 +12,9 @@ object Gachas : IntIdTable() {
     val date = date("Date")
 }
 
-class Gacha(id: EntityID<Int>) : IntEntity(id){
-    companion object: IntEntityClass<Gacha>(Gachas)
+class Gacha(id: EntityID<Int>) : IntEntity(id) {
+    companion object : IntEntityClass<Gacha>(Gachas)
+
     var name by Gachas.name
     var up by Gachas.up
     var date by Gachas.date
