@@ -1,6 +1,6 @@
-package org.laolittle.plugin.util
+package org.laolittle.plugin.genshin.util
 
-import org.laolittle.plugin.database.Character
+import org.laolittle.plugin.genshin.database.Character
 import java.awt.RenderingHints
 import java.io.ByteArrayOutputStream
 import java.io.File

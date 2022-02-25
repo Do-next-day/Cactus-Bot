@@ -1,4 +1,4 @@
-package org.laolittle.plugin.database
+package org.laolittle.plugin.genshin.database
 
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -22,7 +22,7 @@ class Character(id: EntityID<Int>) : IntEntity(id) {
     var description by Characters.description
 }
 
-internal val specialCharacters by lazy {
+internal val specialStarCharacters by lazy {
     arrayListOf<Character>().apply {
         for (i in 16..20) add(Character[i])
     }

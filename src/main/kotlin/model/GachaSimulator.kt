@@ -1,4 +1,4 @@
-package org.laolittle.plugin.model
+package org.laolittle.plugin.genshin.model
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
@@ -7,9 +7,8 @@ import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.laolittle.plugin.GenshinHelper
-import org.laolittle.plugin.database.*
-import kotlin.random.Random
+import org.laolittle.plugin.genshin.GenshinHelper
+import org.laolittle.plugin.genshin.database.*
 import net.mamoe.mirai.contact.User as UserSubject
 
 object GachaSimulator {
@@ -31,22 +30,22 @@ object GachaSimulator {
                 val thisGacha = Gacha[type]
 
                 val characters =
-                    ((Character.find { Characters.star eq false and (Characters.date lessEq thisGacha.date) } + specialCharacters)
-                        .toSet().toList() + List(5) { Character[thisGacha.up] })
+                    (Character.find { Characters.star eq false and (Characters.date lessEq thisGacha.date) } + specialStarCharacters)
+                        .toList() + List(5) { Character[thisGacha.up] }
 
                 while (got.size < times) {
                     val per = getProb(gaTimes)
-                    val randomNum = Random.nextDouble(1.0)
+                    val randomNum = Math.random()
                     val single = characters.random()
                     if ((randomNum <= per && single.star)) {
                         gaTimes = 0
                         userData[single] = userData[single] + 1
-                        if (single.id.value != thisGacha.up && userData["floor"] == 0) {
-                            userData["floor"] = 1
+                        userData["floor"] = if (single.id.value != thisGacha.up && userData["floor"] == 0) {
                             got.add(single)
+                            1
                         } else {
-                            userData["floor"] = 0
                             got.add(Character[thisGacha.up])
+                            0
                         }
                     } else if ((randomNum > per && !single.star)) {
                         gaTimes++
@@ -64,10 +63,11 @@ object GachaSimulator {
     }
 
     fun gachaWeapon(type: Int) {
-
+        // TODO: 2022/2/24 gachaWeapon
     }
 
     private fun getProb(times: Int): Double {
+        require(times in 0..90) { "Gacha times must be within 0 to 90" }
         if (times in 0..70) return 0.006
         val foo = (0.994 / 210) * (times - 70)
         return foo + getProb(times - 1)

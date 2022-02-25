@@ -1,4 +1,4 @@
-package org.laolittle.plugin
+package org.laolittle.plugin.genshin
 
 import com.alibaba.druid.pool.DruidDataSource
 import kotlinx.coroutines.Dispatchers
@@ -11,18 +11,17 @@ import net.mamoe.mirai.message.data.PlainText
 import net.mamoe.mirai.message.data.buildForwardMessage
 import net.mamoe.mirai.message.data.buildMessageChain
 import net.mamoe.mirai.utils.info
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.Database.Companion.connectPool
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.laolittle.plugin.command.GenshinAdd
-import org.laolittle.plugin.database.Character
-import org.laolittle.plugin.database.Characters
-import org.laolittle.plugin.database.Gachas
-import org.laolittle.plugin.database.Users
-import org.laolittle.plugin.model.GachaSimulator.gachaCharacter
+import org.laolittle.plugin.genshin.command.GenshinAdd
+import org.laolittle.plugin.genshin.database.*
+import org.laolittle.plugin.genshin.model.GachaSimulator.gachaCharacter
 import java.sql.Connection
-import javax.sql.DataSource
+import javax.sql.ConnectionPoolDataSource
 
 object GenshinHelper : KotlinPlugin(
     JvmPluginDescription(
@@ -34,12 +33,30 @@ object GenshinHelper : KotlinPlugin(
     }
 ) {
     private val dataSource = DruidDataSource()
-    val db: org.jetbrains.exposed.sql.Database
+    val db: Database
     override fun onEnable() {
-        GenshinAdd.register()
+        init()
         logger.info { "Plugin loaded" }
         globalEventChannel().subscribeGroupMessages {
-            "人物列表"{
+            startsWith("原神") { foo ->
+                when (val result = Regex("""(人物|十连|单抽)""").find(foo)?.groupValues?.get(1)) {
+                    "十连", "单抽" -> {
+                        val times = if (result == "十连") 10 else 1
+
+                        val entities = newSuspendedTransaction(Dispatchers.IO, db) {
+                            sender.gachaCharacter(1, times)
+                        }
+
+                        buildForwardMessage {
+                            entities.forEach { c ->
+                                add(bot, PlainText(c.name))
+                            }
+                        }.also { subject.sendMessage(it) }
+                    }
+                }
+            }
+
+            "人物列表" {
                 subject.sendMessage(buildMessageChain {
                     transaction(db) {
                         Character.all().forEach {
@@ -57,10 +74,12 @@ object GenshinHelper : KotlinPlugin(
                     entityIDS.forEach { character ->
                         characters.add(character.name)
                     }
+
                     /*GachaRenderer.renderGachaResult(characters).toExternalResource().use {
                         subject.sendMessage("抽卡结果")
                         subject.sendImage(it)
                     }*/
+
                     buildForwardMessage {
                         characters.forEach {
                             add(bot, PlainText(it))
@@ -71,16 +90,25 @@ object GenshinHelper : KotlinPlugin(
         }
     }
 
+    private fun init(){
+        Config.reload()
+        GenshinAdd.register()
+    }
+
     init {
         dataSource.url = "jdbc:sqlite:$dataFolder/genshin.sqlite"
         dataSource.driverClassName = "org.sqlite.JDBC"
-        db = org.jetbrains.exposed.sql.Database.connect(dataSource as DataSource)
+        db = connectPool(dataSource as ConnectionPoolDataSource)
         TransactionManager.manager.defaultIsolationLevel =
             Connection.TRANSACTION_SERIALIZABLE
         transaction(db) {
-            SchemaUtils.create(Characters)
-            SchemaUtils.create(Gachas)
-            SchemaUtils.create(Users)
+            SchemaUtils.create(
+                Users,
+                Characters,
+                Weapons,
+                Gachas,
+                GachasWeapon,
+            )
         }
     }
 }

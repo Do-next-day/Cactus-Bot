@@ -1,0 +1,11 @@
+GET https://api-takumi.mihoyo.com/game_record/card/wapi/getGameRecordCard?uid=104442468
+Content-Type: application/json
+x-rpc-app_version: "2.20.1"
+x-rpc-client_type: 5
+DS: xV8v4Qu54lUKrEYFZkJhB8cuOh9Asafs
+
+{
+
+}
+
+###

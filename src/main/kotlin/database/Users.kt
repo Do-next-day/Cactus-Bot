@@ -1,4 +1,4 @@
-package org.laolittle.plugin.database
+package org.laolittle.plugin.genshin.database
 
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.dao.LongEntity

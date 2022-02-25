@@ -1,12 +1,12 @@
-package org.laolittle.plugin.command
+package org.laolittle.plugin.genshin.command
 
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.laolittle.plugin.GenshinHelper
-import org.laolittle.plugin.database.Character
+import org.laolittle.plugin.genshin.GenshinHelper
+import org.laolittle.plugin.genshin.database.Character
 import java.time.LocalDate
 
 object GenshinAdd : SimpleCommand(
