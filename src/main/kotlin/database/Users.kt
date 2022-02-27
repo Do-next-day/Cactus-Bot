@@ -1,10 +1,11 @@
 package org.laolittle.plugin.genshin.database
 
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
+import kotlinx.serialization.json.Json as KtxJson
 
 object Users : LongIdTable() {
     val card = integer("Card")
@@ -18,17 +19,34 @@ class User(id: EntityID<Long>) : LongEntity(id) {
     var data by Users.data
 }
 
-internal val Json = Json {
+internal val Json = KtxJson {
     prettyPrint = true
     ignoreUnknownKeys = true
     isLenient = true
     allowStructuredMapKeys = true
 }
 
-internal typealias JsonIntMap = MutableMap<String, Int>
+@Serializable
+data class UserData(
+    var gachaTimes: Int = 0,
+    var characterFloor: Boolean = false,
+    var weaponFloor: Boolean = false,
+    val characters: MutableIntMap = mutableMapOf(),
+) {
+    var miHoYoCookies = ""
+        private set
 
-operator fun JsonIntMap.get(c: Character) = this[c.id.value.toString()] ?: 0
+    fun setCookies(cookies: String) {
+        miHoYoCookies = cookies
+    }
 
-operator fun JsonIntMap.set(c: Character, r: Int) {
-    this[c.id.value.toString()] = r
+    override fun toString() = Json.encodeToString(serializer(), this)
+}
+
+internal typealias MutableIntMap = MutableMap<Int, Int>
+
+operator fun MutableIntMap.get(c: Character) = this[c.id.value] ?: 0
+
+operator fun MutableIntMap.set(c: Character, r: Int) {
+    this[c.id.value] = r
 }

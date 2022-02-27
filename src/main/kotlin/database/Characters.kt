@@ -1,5 +1,6 @@
 package org.laolittle.plugin.genshin.database
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -20,7 +21,44 @@ class Character(id: EntityID<Int>) : IntEntity(id) {
     var star by Characters.star
     var date by Characters.date
     var description by Characters.description
+
+    operator fun compareTo(other: Character): Int {
+        return if (star && other.star) 0
+        else if (star) -1
+        else if (other.star) 1
+        else 0
+    }
 }
+
+@Serializable
+@Suppress("unused")
+enum class CharacterElement {
+    // 火
+    Pyro,
+
+    // 水
+    Hydro,
+
+    // 风
+    Anemo,
+
+    // 电
+    Electro,
+
+    // 冰
+    Cryo,
+
+    // 岩
+    Geo,
+    // 草（？）
+}
+
+@Serializable
+data class CharacterDescription(
+    val alias: String,
+    val skills: String,
+    val from: String,
+)
 
 internal val specialStarCharacters by lazy {
     arrayListOf<Character>().apply {

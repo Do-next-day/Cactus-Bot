@@ -1,10 +1,8 @@
 package org.laolittle.plugin.genshin.model
 
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.skia.Image
@@ -15,7 +13,9 @@ import org.laolittle.plugin.genshin.database.*
 import org.laolittle.plugin.genshin.model.GachaImages.SETTLEMENT_BACKGROUND
 import org.laolittle.plugin.genshin.model.Tenti.GOLD
 import org.laolittle.plugin.genshin.model.Tenti.PURPLE
-import org.laolittle.plugin.genshin.model.Tenti.card
+import org.laolittle.plugin.genshin.model.Tenti.getCard
+import org.laolittle.plugin.genshin.util.PluginDispatcher
+import org.laolittle.plugin.genshin.util.decodeFromStringOrNull
 
 object GachaSimulator {
     @OptIn(ExperimentalSerializationApi::class)
@@ -25,15 +25,11 @@ object GachaSimulator {
         transaction(GenshinHelper.db) {
             val userEntity = User.findById(userId) ?: User.new(userId) {
                 card = 1000
-                data = buildJsonObject {
-                    put("times", 0)
-                    put("floor", 0)
-                }.toString()
+                data = UserData().toString()
             }
 
-            val userData: JsonIntMap = Json.decodeFromString(userEntity.data)
+            val userData: UserData = Json.decodeFromStringOrNull(userEntity.data) ?: UserData()
             if (userEntity.card >= times) {
-                var gaTimes = userData["times"] ?: 1
                 val thisGacha = Gacha[type]
 
                 val upCharacter = Character[thisGacha.up]
@@ -43,28 +39,28 @@ object GachaSimulator {
                         .toList() + List(5) { upCharacter }
 
                 while (got.size < times) {
-                    val per = getProb(gaTimes)
+                    val per = getProb(userData.gachaTimes)
                     val randomNum = Math.random()
                     val single = characters.random()
                     if ((randomNum <= per && single.star)) {
-                        gaTimes = 0
-                        userData[single] = userData[single] + 1
-                        userData["floor"] = if (single.id.value != thisGacha.up && userData["floor"] == 0) {
+                        userData.gachaTimes = 0
+                        userData.characterFloor = if (single.id.value != thisGacha.up && !userData.characterFloor) {
                             got.add(single)
-                            1
+                            userData.characters[single] = userData.characters[single] + 1
+                            true
                         } else {
                             got.add(upCharacter)
-                            0
+                            userData.characters[upCharacter] = userData.characters[upCharacter] + 1
+                            false
                         }
                     } else if ((randomNum > per && !single.star)) {
-                        gaTimes++
+                        userData.gachaTimes++
                         got.add(single)
                     }
                 }
 
                 userEntity.card = userEntity.card - times
-                userData["times"] = gaTimes
-                userEntity.data = Json.encodeToString(userData)
+                userEntity.data = userData.toString()
             }
         }
 
@@ -101,14 +97,25 @@ object GachaSimulator {
                     }
                     10 -> {
                         //  val num = it.toIntOrNull() ?: return@startsWith
+                        val foo = mutableListOf<Deferred<Image>>()
+
                         val offset = 1400F
-                        for (i in characters.size - 1 downTo 0) {
-                            val times = (characters.size - 1 - i) * 145
-                            drawImageRect(
-                                characters[i].card,
-                                Rect.makeXYWH(offset + 110 - times, 236.8F, 138F, 606F)
-                            )
-                            drawImage(if (characters[i].star) GOLD else PURPLE, offset - times, 0f)
+                        val gold = GOLD
+                        val purple = PURPLE
+                        PluginDispatcher.runBlocking {
+                            characters.forEach {
+                                foo.add(async {
+                                    it.getCard()
+                                })
+                            }
+                            for (i in characters.size - 1 downTo 0) {
+                                val times = (characters.size - 1 - i) * 145
+                                drawImageRect(
+                                    foo[i].await(),
+                                    Rect.makeXYWH(offset + 110 - times, 237F, 138F, 606F)
+                                )
+                                drawImage(if (characters[i].star) gold else purple, offset - times, 0f)
+                            }
                         }
                     }
                 }

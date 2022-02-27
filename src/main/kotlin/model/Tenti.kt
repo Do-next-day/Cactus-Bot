@@ -16,60 +16,58 @@ object Tenti {
      *
      * Height: (int) 235 * 4.37 = 1026
      * */
-    val Character.card: Image
-        get() {
-            val character = gachaImage
+    fun Character.getCard(): Image {
+        val character = gachaImage
+        val sprite = GACHA_ATLAS_SPRITE
 
-            val w = 235
-            val h = (w * 4.37).toInt()
+        val w = 235
+        val h = (w * 4.37).toInt()
 
-            return Surface.makeRasterN32Premul(w, h).apply {
-                val dst = Rect.makeWH(w.toFloat(), h.toFloat())
-                val paint = Paint().apply {
-                    blendMode = BlendMode.SRC_ATOP
-                }
-                canvas.apply {
-                    drawImageRect(
-                        GACHA_ATLAS_SPRITE,
-                        GACHA_PURE_BG,
-                        dst
-                    )
+        return Surface.makeRasterN32Premul(w, h).apply {
+            val dst = Rect.makeWH(w.toFloat(), h.toFloat())
+            val paint = Paint().apply {
+                blendMode = BlendMode.SRC_ATOP
+            }
+            canvas.apply {
+                drawImageRect(
+                    sprite,
+                    GACHA_PURE_BG,
+                    dst
+                )
 
-                    drawImageRect(
-                        GACHA_ATLAS_SPRITE,
-                        GACHA_BACKDROP,
-                        dst,
-                        paint
-                    )
+                drawImageRect(
+                    sprite,
+                    GACHA_BACKDROP,
+                    dst,
+                    paint
+                )
 
-                    drawImage(character, -40f, 17F, paint)
+                drawImage(character, -40f, 17F, paint)
 
-                    drawImageRect(GACHA_ATLAS_SPRITE, STARRY, dst, paint.apply {
-                        colorFilter = ColorFilter.makeMatrix(
-                            ColorMatrix(
-                                3F, 0F, 0F, 0F, 0F,
-                                0F, 3F, 0F, 0F, 0F,
-                                0F, 0F, 3F, 0F, 0F,
-                                0F, 0F, 0F, 0.15F, 0F,
-                            )
+                drawImageRect(sprite, STARRY, dst, paint.apply {
+                    colorFilter = ColorFilter.makeMatrix(
+                        ColorMatrix(
+                            3F, 0F, 0F, 0F, 0F,
+                            0F, 3F, 0F, 0F, 0F,
+                            0F, 0F, 3F, 0F, 0F,
+                            0F, 0F, 0F, 0.15F, 0F,
                         )
-                    })
-                }
-            }.makeImageSnapshot()
-        }
+                    )
+                })
+            }
+        }.makeImageSnapshot()
+    }
 
     private val BORDER_FOLDER = gachaDataFolder.resolve("border").also { it.mkdirs() }
 
 
-    val GOLD by lazy {
-        BORDER_FOLDER.resolve("gold.png").SkikoImage
-    }
+    val GOLD by lazy { BORDER_FOLDER.resolve("gold.png").SkikoImage }
 
-    val PURPLE by lazy {
-        BORDER_FOLDER.resolve("purple.png").SkikoImage
-    }
 
-    val BLUE by lazy {
-        BORDER_FOLDER.resolve("blue.png").SkikoImage
-    }
+    val PURPLE by lazy { BORDER_FOLDER.resolve("purple.png").SkikoImage }
+
+
+    val BLUE by lazy { BORDER_FOLDER.resolve("blue.png").SkikoImage }
+
+
 }

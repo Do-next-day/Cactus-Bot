@@ -17,12 +17,17 @@ object GachaImages {
     private val CHARACTER_FOLDER = gachaDataFolder.resolve("characters").also { it.mkdirs() }
 
     // width: 121 height: 529
-    val GACHA_BACKDROP = Rect.makeLTRB(544F, 245F, 665F, 774F)
+    val GACHA_BACKDROP by lazy {
+        Rect.makeLTRB(544F, 245F, 665F, 774F)
+    }
 
-    val GACHA_PURE_BG = Rect.makeLTRB(385F, 503F, 539F, 1020F)
+    val GACHA_PURE_BG by lazy {
+        Rect.makeLTRB(385F, 503F, 539F, 1020F)
+    }
 
-    val STARRY = Rect.makeLTRB(2F, 102F, 213F, 1021F)
-
+    val STARRY by lazy {
+        Rect.makeLTRB(2F, 102F, 213F, 1021F)
+    }
 
     val SETTLEMENT_BACKGROUND by lazy {
         BG_FOLDER.resolve("settlement_bg2.png").SkikoImage
