@@ -38,8 +38,8 @@ data class UserData(
 
 internal typealias MutableIntMap = MutableMap<Int, Int>
 
-operator fun MutableIntMap.get(c: Character) = this[c.id.value] ?: 0
+operator fun MutableIntMap.get(c: Avatar) = this[c.id.value] ?: 0
 
-operator fun MutableIntMap.set(c: Character, r: Int) {
+operator fun MutableIntMap.set(c: Avatar, r: Int) {
     this[c.id.value] = r
 }

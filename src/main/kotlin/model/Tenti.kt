@@ -1,7 +1,7 @@
 package org.laolittle.plugin.genshin.model
 
 import org.jetbrains.skia.*
-import org.laolittle.plugin.genshin.database.Character
+import org.laolittle.plugin.genshin.database.Avatar
 import org.laolittle.plugin.genshin.model.GachaImages.GACHA_ATLAS_SPRITE
 import org.laolittle.plugin.genshin.model.GachaImages.GACHA_BACKDROP
 import org.laolittle.plugin.genshin.model.GachaImages.GACHA_PURE_BG
@@ -16,7 +16,7 @@ object Tenti {
      *
      * Height: (int) 235 * 4.37 = 1026
      * */
-    fun Character.getCard(): Image {
+    fun Avatar.getCard(): Image {
         val character = gachaImage
         val sprite = GACHA_ATLAS_SPRITE
 

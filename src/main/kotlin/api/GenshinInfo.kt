@@ -3,7 +3,7 @@ package org.laolittle.plugin.genshin.api
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonArray
-import org.laolittle.plugin.genshin.database.CharacterElement
+import org.laolittle.plugin.genshin.database.AvatarElement
 
 object GenshinInfo {
     @Serializable
@@ -138,7 +138,7 @@ object GenshinInfo {
         /**
          * 角色元素
          * */
-        val element: CharacterElement,
+        val element: AvatarElement,
 
 
         /**

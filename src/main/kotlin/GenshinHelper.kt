@@ -118,8 +118,8 @@ object GenshinHelper : KotlinPlugin(
         transaction(db) {
             SchemaUtils.create(
                 Users,
-                Characters,
-                Weapons,
+                Avatars,
+                Equips,
                 Gachas,
                 GachasWeapon,
             )

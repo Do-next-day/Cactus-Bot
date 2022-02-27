@@ -20,8 +20,8 @@ import org.laolittle.plugin.genshin.util.decodeFromStringOrNull
 
 object GachaSimulator {
     @OptIn(ExperimentalSerializationApi::class)
-    fun gachaCharacter(userId: Long, type: Int, times: Int): List<Character> {
-        val got = mutableListOf<Character>()
+    fun gachaCharacter(userId: Long, type: Int, times: Int): List<Avatar> {
+        val got = mutableListOf<Avatar>()
         var up = 0
         transaction(GenshinHelper.db) {
             val userEntity = User.findById(userId) ?: User.new(userId) {
@@ -33,16 +33,16 @@ object GachaSimulator {
             if (userEntity.card >= times) {
                 val thisGacha = Gacha[type]
 
-                val upCharacter = Character[thisGacha.up]
-                up = upCharacter.id.value
-                val characters =
-                    (Character.find { Characters.star eq false and (Characters.date lessEq thisGacha.date) } + specialStarCharacters)
-                        .toList() + List(5) { upCharacter }
+                val upAvatar = Avatar[thisGacha.up]
+                up = upAvatar.id.value
+                val avatars =
+                    (Avatar.find { Avatars.star eq false and (Avatars.date lessEq thisGacha.date) } + specialStarAvatars)
+                        .toList() + List(5) { upAvatar }
 
                 while (got.size < times) {
                     val per = getProb(userData.gachaTimes)
                     val randomNum = Math.random()
-                    val single = characters.random()
+                    val single = avatars.random()
                     if ((randomNum <= per && single.star)) {
                         userData.gachaTimes = 0
                         userData.characterFloor = if (single.id.value != thisGacha.up && !userData.characterFloor) {
@@ -50,8 +50,8 @@ object GachaSimulator {
                             userData.characters[single] = userData.characters[single] + 1
                             true
                         } else {
-                            got.add(upCharacter)
-                            userData.characters[upCharacter] = userData.characters[upCharacter] + 1
+                            got.add(upAvatar)
+                            userData.characters[upAvatar] = userData.characters[upAvatar] + 1
                             false
                         }
                     } else if ((randomNum > per && !single.star)) {
@@ -65,7 +65,7 @@ object GachaSimulator {
             }
         }
 
-        val sorted = mutableListOf<Character>()
+        val sorted = mutableListOf<Avatar>()
 
         got.filter { it.id.value == up }.forEach(sorted::add)
         got.filter { it.star && it.id.value != up }.forEach(sorted::add)
@@ -86,13 +86,13 @@ object GachaSimulator {
         return foo + getProb(times - 1)
     }
 
-    fun renderGachaImage(characters: List<Character>): Image {
+    fun renderGachaImage(avatars: List<Avatar>): Image {
         val w = 1920F
         val h = 1080F
         return Surface.makeRasterN32Premul(w.toInt(), h.toInt()).apply {
             canvas.apply {
                 drawImageRect(SETTLEMENT_BACKGROUND, Rect.makeWH(w, h))
-                when (characters.size) {
+                when (avatars.size) {
                     1 -> {
                         TODO()
                     }
@@ -104,18 +104,18 @@ object GachaSimulator {
                         val gold = GOLD
                         val purple = PURPLE
                         PluginDispatcher.runBlocking {
-                            characters.forEach {
+                            avatars.forEach {
                                 foo.add(async {
                                     it.getCard()
                                 })
                             }
-                            for (i in characters.size - 1 downTo 0) {
-                                val times = (characters.size - 1 - i) * 145
+                            for (i in avatars.size - 1 downTo 0) {
+                                val times = (avatars.size - 1 - i) * 145
                                 drawImageRect(
                                     foo[i].await(),
                                     Rect.makeXYWH(offset + 110 - times, 237F, 138F, 606F)
                                 )
-                                drawImage(if (characters[i].star) gold else purple, offset - times, 0f)
+                                drawImage(if (avatars[i].star) gold else purple, offset - times, 0f)
                             }
                         }
                     }

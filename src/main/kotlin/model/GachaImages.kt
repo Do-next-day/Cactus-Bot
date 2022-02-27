@@ -4,7 +4,7 @@ import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Paint
 import org.jetbrains.skia.Rect
 import org.laolittle.plugin.Fonts
-import org.laolittle.plugin.genshin.database.Character
+import org.laolittle.plugin.genshin.database.Avatar
 import org.laolittle.plugin.genshin.util.SkikoImage
 import org.laolittle.plugin.genshin.util.gachaDataFolder
 
@@ -37,7 +37,7 @@ object GachaImages {
         ATLAS_FOLDER.resolve("gacha_sprite.png").SkikoImage
     }
 
-    val Character.gachaImage get() = CHARACTER_FOLDER.resolve("gacha_${id.value}.png").SkikoImage
+    val Avatar.gachaImage get() = CHARACTER_FOLDER.resolve("gacha_${id.value}.png").SkikoImage
 
     fun Canvas.drawBackDrop(dst: Rect, paint: Paint? = null) =
         drawImageRect(
