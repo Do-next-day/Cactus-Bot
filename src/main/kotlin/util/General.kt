@@ -18,3 +18,10 @@ inline fun <reified R> Json.decodeFromStringOrNull(str: String) =
     kotlin.runCatching {
         decodeFromString<R>(serializersModule.serializer(), str)
     }.getOrNull()
+
+internal val Json = Json {
+    prettyPrint = true
+    ignoreUnknownKeys = true
+    isLenient = true
+    allowStructuredMapKeys = true
+}

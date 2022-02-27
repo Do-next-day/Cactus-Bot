@@ -14,6 +14,7 @@ import org.laolittle.plugin.genshin.model.GachaImages.SETTLEMENT_BACKGROUND
 import org.laolittle.plugin.genshin.model.Tenti.GOLD
 import org.laolittle.plugin.genshin.model.Tenti.PURPLE
 import org.laolittle.plugin.genshin.model.Tenti.getCard
+import org.laolittle.plugin.genshin.util.Json
 import org.laolittle.plugin.genshin.util.PluginDispatcher
 import org.laolittle.plugin.genshin.util.decodeFromStringOrNull
 

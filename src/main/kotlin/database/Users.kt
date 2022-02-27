@@ -5,7 +5,7 @@ import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
-import kotlinx.serialization.json.Json as KtxJson
+import org.laolittle.plugin.genshin.util.Json
 
 object Users : LongIdTable() {
     val card = integer("Card")
@@ -17,13 +17,6 @@ class User(id: EntityID<Long>) : LongEntity(id) {
 
     var card by Users.card
     var data by Users.data
-}
-
-internal val Json = KtxJson {
-    prettyPrint = true
-    ignoreUnknownKeys = true
-    isLenient = true
-    allowStructuredMapKeys = true
 }
 
 @Serializable

@@ -62,8 +62,8 @@ object GenshinHelper : KotlinPlugin(
                         users.remove(sender.id)
                     }
                     "查询" -> {
-                        val uid = result[2].toLongOrNull()
-                        if (uid == null || uid < 100000100 || uid > 1000000000) {
+                        val uid = result[2].replace(Regex("""[\s]+"""), "").toLongOrNull()
+                        if (uid == null || uid < 100000100 || uid > 700000000) {
                             subject.sendMessage("请输入正确的uid")
                             return@Listener
                         }
@@ -77,6 +77,7 @@ object GenshinHelper : KotlinPlugin(
                             }
                             return@Listener
                         }
+
                         subject.sendMessage(buildForwardMessage {
                             query.avatars.forEach { cInfo ->
                                 add(bot, buildMessageChain {
@@ -96,15 +97,13 @@ object GenshinHelper : KotlinPlugin(
                     }
                 }
             }
-
-
         }
     }
 
     private fun init() {
         launch { getAppVersion(true) }
-        Config.reload()
-        Data.reload()
+        PluginConfig.reload()
+        PluginData.reload()
         dataFolder.mkdirs()
         gachaDataFolder.mkdir()
         characterDataFolder.mkdir()

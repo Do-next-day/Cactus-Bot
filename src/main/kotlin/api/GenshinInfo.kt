@@ -2,11 +2,10 @@ package org.laolittle.plugin.genshin.api
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonArray
 import org.laolittle.plugin.genshin.database.CharacterElement
 
 object GenshinInfo {
-
-
     @Serializable
     data class GameRecordResponseData(
         // ？
@@ -25,7 +24,7 @@ object GenshinInfo {
         /**
          * 城市探索度
          * */
-        @SerialName("city_explorations") val cityExplorations: List<WorldInfo.City>,
+        @SerialName("city_explorations") val cityExplorations: JsonArray, // TODO: 2022/2/27 need city data
 
         /**
          * 世界探索度
@@ -140,7 +139,11 @@ object GenshinInfo {
          * 角色元素
          * */
         val element: CharacterElement,
-        // unknown
+
+
+        /**
+         * 好感度
+         * */
         val fetter: Int,
 
 
