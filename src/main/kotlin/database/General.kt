@@ -17,8 +17,7 @@ private val cactusDatabase: Database by lazy {
     dataSource.url = "jdbc:sqlite:${CactusBot.dataFolder}/genshin.sqlite"
     dataSource.driverClassName = "org.sqlite.JDBC"
     Database.connect(dataSource as DataSource).also {
-        TransactionManager.manager.defaultIsolationLevel =
-            Connection.TRANSACTION_SERIALIZABLE
+        TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
         transaction(it) {
             SchemaUtils.create(
                 Users,

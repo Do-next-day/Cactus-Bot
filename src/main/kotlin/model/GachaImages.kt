@@ -39,11 +39,7 @@ object GachaImages {
 
     val Avatar.gachaImage get() = CHARACTER_FOLDER.resolve("gacha_${id.value}.png").skikoImage
 
-    fun Canvas.drawBackDrop(dst: Rect, paint: Paint? = null) =
-        drawImageRect(
-            GACHA_ATLAS_SPRITE,
-            GACHA_BACKDROP,
-            dst,
-            paint
-        )
+    fun Canvas.drawBackDrop(dst: Rect, paint: Paint? = null) = drawImageRect(
+        GACHA_ATLAS_SPRITE, GACHA_BACKDROP, dst, paint
+    )
 }

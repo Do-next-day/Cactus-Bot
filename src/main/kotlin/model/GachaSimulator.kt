@@ -12,8 +12,6 @@ import org.laolittle.plugin.genshin.model.GachaImages.SETTLEMENT_BACKGROUND
 import org.laolittle.plugin.genshin.model.Tenti.GOLD
 import org.laolittle.plugin.genshin.model.Tenti.PURPLE
 import org.laolittle.plugin.genshin.service.PluginDispatcher
-import org.laolittle.plugin.genshin.util.Json
-import org.laolittle.plugin.genshin.util.decodeFromStringOrNull
 
 object GachaSimulator {
     @OptIn(ExperimentalSerializationApi::class)
@@ -23,10 +21,10 @@ object GachaSimulator {
         cactusTransaction {
             val userEntity = User.findById(userId) ?: User.new(userId) {
                 card = 1000
-                data = UserData().toString()
+                data = UserData()
             }
 
-            val userData: UserData = Json.decodeFromStringOrNull(userEntity.data) ?: UserData()
+            val userData: UserData = userEntity.data
             if (userEntity.card >= times) {
                 val thisGacha = Gacha[type]
 
@@ -58,7 +56,7 @@ object GachaSimulator {
                 }
 
                 userEntity.card = userEntity.card - times
-                userEntity.data = userData.toString()
+                userEntity.data = userData
             }
         }
 
@@ -109,8 +107,7 @@ object GachaSimulator {
                             for (i in avatars.size - 1 downTo 0) {
                                 val times = (avatars.size - 1 - i) * 145
                                 drawImageRect(
-                                    foo[i].await(),
-                                    Rect.makeXYWH(offset + 110 - times, 237F, 138F, 606F)
+                                    foo[i].await(), Rect.makeXYWH(offset + 110 - times, 237F, 138F, 606F)
                                 )
                                 drawImage(if (avatars[i].star) gold else purple, offset - times, 0f)
                             }

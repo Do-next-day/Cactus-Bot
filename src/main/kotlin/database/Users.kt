@@ -6,17 +6,24 @@ import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.laolittle.plugin.genshin.util.Json
+import org.laolittle.plugin.genshin.util.UserCookie
+import org.laolittle.plugin.genshin.util.decodeFromStringOrNull
+import org.laolittle.plugin.genshin.util.randomUUID
 
 object Users : LongIdTable() {
     val card = integer("Card")
-    val data = varchar("Data", 255)
+    val genshinUID = long("Uid")
+    val data = varchar("Data", 500)
 }
 
 class User(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<User>(Users)
 
     var card by Users.card
-    var data by Users.data
+    var genshinUID by Users.genshinUID
+    var data: UserData
+        get() = Json.decodeFromStringOrNull(UserData.serializer(), Users.data.getValue(this, ::data)) ?: UserData()
+        set(value) = Users.data.setValue(this, ::data, Json.encodeToString(UserData.serializer(), value))
 }
 
 @Serializable
@@ -26,14 +33,20 @@ data class UserData(
     var weaponFloor: Boolean = false,
     val characters: MutableIntMap = mutableMapOf(),
 ) {
-    var miHoYoCookies = ""
+    var cookieData = UserCookie()
         private set
 
     fun setCookies(cookies: String) {
-        miHoYoCookies = cookies
+        cookieData = UserCookie(cookies, randomUUID)
     }
 
     override fun toString() = Json.encodeToString(serializer(), this)
+}
+
+fun getUserData(id: Long) = User.findById(id) ?: User.new(id) {
+    card = 100
+    genshinUID = 0
+    data = UserData()
 }
 
 internal typealias MutableIntMap = MutableMap<Int, Int>

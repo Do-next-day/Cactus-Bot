@@ -26,9 +26,7 @@ class Equip(id: EntityID<Int>) : IntEntity(id), GachaItem {
     var description: EquipDescription
         get() = Json.decodeFromString(EquipDescription.serializer(), Equips.description.getValue(this, ::description))
         set(value) = Equips.description.setValue(
-            this,
-            ::description,
-            Json.encodeToString(EquipDescription.serializer(), value)
+            this, ::description, Json.encodeToString(EquipDescription.serializer(), value)
         )
 
     override fun getCard(): Image {

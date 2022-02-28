@@ -1,13 +1,13 @@
-package org.laolittle.plugin.genshin.api
+package org.laolittle.plugin.genshin.api.genshin
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonArray
 import org.laolittle.plugin.genshin.database.AvatarElement
 
-object GenshinInfo {
+object GenshinData {
     @Serializable
-    data class GameRecordResponseData(
+    data class GenshinRecordResponse(
         // ？
         val role: String?,
 
@@ -125,8 +125,7 @@ object GenshinInfo {
     @Serializable
     data class GenshiAvatarInfo(
         // unknown
-        val id: Long,
-        @SerialName("image") val imageUrl: String,
+        val id: Long, @SerialName("image") val imageUrl: String,
 
 
         /**

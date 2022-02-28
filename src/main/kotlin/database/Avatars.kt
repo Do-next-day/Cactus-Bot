@@ -28,9 +28,7 @@ class Avatar(id: EntityID<Int>) : IntEntity(id), GachaItem {
     var description: AvatarDescription
         get() = Json.decodeFromString(AvatarDescription.serializer(), Avatars.description.getValue(this, ::description))
         set(value) = Avatars.description.setValue(
-            this,
-            ::description,
-            Json.encodeToString(AvatarDescription.serializer(), value)
+            this, ::description, Json.encodeToString(AvatarDescription.serializer(), value)
         )
 
     operator fun compareTo(other: Avatar): Int {
@@ -55,16 +53,11 @@ class Avatar(id: EntityID<Int>) : IntEntity(id), GachaItem {
             }
             canvas.apply {
                 drawImageRect(
-                    sprite,
-                    GachaImages.GACHA_PURE_BG,
-                    dst
+                    sprite, GachaImages.GACHA_PURE_BG, dst
                 )
 
                 drawImageRect(
-                    sprite,
-                    GachaImages.GACHA_BACKDROP,
-                    dst,
-                    paint
+                    sprite, GachaImages.GACHA_BACKDROP, dst, paint
                 )
 
                 drawImage(character, -40f, 17F, paint)
