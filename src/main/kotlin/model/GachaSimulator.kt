@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.skia.Image
 import org.jetbrains.skia.Rect
 import org.jetbrains.skia.Surface
-import org.laolittle.plugin.genshin.GenshinHelper
+import org.laolittle.plugin.genshin.CactusBot
 import org.laolittle.plugin.genshin.database.*
 import org.laolittle.plugin.genshin.model.GachaImages.SETTLEMENT_BACKGROUND
 import org.laolittle.plugin.genshin.model.Tenti.GOLD
@@ -23,7 +23,7 @@ object GachaSimulator {
     fun gachaCharacter(userId: Long, type: Int, times: Int): List<Avatar> {
         val got = mutableListOf<Avatar>()
         var up = 0
-        transaction(GenshinHelper.db) {
+        transaction(CactusBot.db) {
             val userEntity = User.findById(userId) ?: User.new(userId) {
                 card = 1000
                 data = UserData().toString()

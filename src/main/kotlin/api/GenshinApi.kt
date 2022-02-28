@@ -3,7 +3,7 @@ package org.laolittle.plugin.genshin.api
 import io.ktor.client.request.*
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
-import org.laolittle.plugin.genshin.PluginData
+import org.laolittle.plugin.genshin.CactusData
 import org.laolittle.plugin.genshin.api.GenshinInfo.GameRecordResponseData
 import org.laolittle.plugin.genshin.api.internal.client
 import org.laolittle.plugin.genshin.api.internal.setHeaders
@@ -58,7 +58,7 @@ object GenshinApi {
         val url = "$GAME_RECORD/index?role_id=$uid&server=$server"
 
         val response = Json.decodeFromString(JsonObject.serializer(), client.get(url) {
-            headers.setHeaders(url, "", PluginData.cookies)
+            headers.setHeaders(url, "", CactusData.cookies)
         })
 
         return response["data"]?.let { Json.decodeFromJsonElement(it) }

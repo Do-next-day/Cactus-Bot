@@ -31,7 +31,7 @@ import org.laolittle.plugin.toExternalResource
 import java.sql.Connection
 import javax.sql.DataSource
 
-object GenshinHelper : KotlinPlugin(
+object CactusBot : KotlinPlugin(
     JvmPluginDescription(
         id = "org.laolittle.plugin.GenshinHelper",
         name = "Genshin-Helper",
@@ -102,8 +102,8 @@ object GenshinHelper : KotlinPlugin(
 
     private fun init() {
         launch { getAppVersion(true) }
-        PluginConfig.reload()
-        PluginData.reload()
+        CactusConfig.reload()
+        CactusData.reload()
         dataFolder.mkdirs()
         gachaDataFolder.mkdir()
         characterDataFolder.mkdir()

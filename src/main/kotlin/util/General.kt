@@ -3,10 +3,10 @@ package org.laolittle.plugin.genshin.util
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 import org.jetbrains.skia.Image
-import org.laolittle.plugin.genshin.GenshinHelper
+import org.laolittle.plugin.genshin.CactusBot
 import java.io.File
 
-private val dataFolder get() = GenshinHelper.dataFolder
+private val dataFolder get() = CactusBot.dataFolder
 
 val gachaDataFolder = dataFolder.resolve("GachaImages")
 

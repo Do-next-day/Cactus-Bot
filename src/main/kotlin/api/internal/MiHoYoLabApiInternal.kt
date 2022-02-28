@@ -6,13 +6,13 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.util.date.*
 import net.mamoe.mirai.utils.error
-import org.laolittle.plugin.genshin.GenshinHelper
+import org.laolittle.plugin.genshin.CactusBot
 import java.security.MessageDigest
 import kotlin.random.Random.Default.nextInt
 
 internal val client = HttpClient(OkHttp)
 
-internal val logger by GenshinHelper::logger
+internal val logger by CactusBot::logger
 
 internal var LAB_APP_VER = "2.20.1"
     private set
