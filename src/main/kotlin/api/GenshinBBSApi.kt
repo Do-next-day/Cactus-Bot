@@ -2,14 +2,13 @@ package org.laolittle.plugin.genshin.api
 
 import io.ktor.client.request.*
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.decodeFromJsonElement
 import org.laolittle.plugin.genshin.CactusData
 import org.laolittle.plugin.genshin.api.GenshinInfo.GameRecordResponseData
 import org.laolittle.plugin.genshin.api.internal.client
 import org.laolittle.plugin.genshin.api.internal.setHeaders
 import org.laolittle.plugin.genshin.util.Json
 
-object GenshinApi {
+object GenshinBBSApi {
     const val BASE_URL = "https://api-takumi.mihoyo.com"
     const val GAME_RECORD = "$BASE_URL/game_record/app/genshin/api"
 
@@ -51,19 +50,21 @@ object GenshinApi {
 //          Login cookies have not been provided or are incorrect. (if message is not "authkey error")
 // -101:    AuthKey has timed-out. Update it by opening the history page in Genshin.
 
-    suspend fun getPlayerInfo(uid: Long): GameRecordResponseData {
+    suspend fun getPlayerInfo(uid: Long, cookies: String): GameRecordResponseData {
         val server = if (uid < 500000000) GenshinServer.CN_GF01
         else GenshinServer.CN_QD01
 
         val url = "$GAME_RECORD/index?role_id=$uid&server=$server"
 
         val response = Json.decodeFromString(JsonObject.serializer(), client.get(url) {
-            headers.setHeaders(url, "", CactusData.cookies)
+            headers.setHeaders(url, "", cookies)
         })
 
-        return response["data"]?.let { Json.decodeFromJsonElement(it) }
+        return response["data"]?.let { Json.decodeFromJsonElement(GameRecordResponseData.serializer(), it) }
             ?: throw IllegalAccessException(response["message"].toString())
     }
+
+    suspend fun getPlayerInfo(uid: Long) = getPlayerInfo(uid, CactusData.cookies)
 
 
     enum class GenshinServer {

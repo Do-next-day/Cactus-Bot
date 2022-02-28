@@ -4,18 +4,15 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.serialization.ExperimentalSerializationApi
 import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.skia.Image
 import org.jetbrains.skia.Rect
 import org.jetbrains.skia.Surface
-import org.laolittle.plugin.genshin.CactusBot
 import org.laolittle.plugin.genshin.database.*
 import org.laolittle.plugin.genshin.model.GachaImages.SETTLEMENT_BACKGROUND
 import org.laolittle.plugin.genshin.model.Tenti.GOLD
 import org.laolittle.plugin.genshin.model.Tenti.PURPLE
-import org.laolittle.plugin.genshin.model.Tenti.getCard
+import org.laolittle.plugin.genshin.service.PluginDispatcher
 import org.laolittle.plugin.genshin.util.Json
-import org.laolittle.plugin.genshin.util.PluginDispatcher
 import org.laolittle.plugin.genshin.util.decodeFromStringOrNull
 
 object GachaSimulator {
@@ -23,7 +20,7 @@ object GachaSimulator {
     fun gachaCharacter(userId: Long, type: Int, times: Int): List<Avatar> {
         val got = mutableListOf<Avatar>()
         var up = 0
-        transaction(CactusBot.db) {
+        cactusTransaction {
             val userEntity = User.findById(userId) ?: User.new(userId) {
                 card = 1000
                 data = UserData().toString()

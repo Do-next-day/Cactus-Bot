@@ -1,13 +1,12 @@
 package org.laolittle.plugin.genshin.database
 
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.javatime.date
+import org.jetbrains.skia.Image
 import org.laolittle.plugin.genshin.util.Json
 
 object Equips : IntIdTable() {
@@ -17,17 +16,24 @@ object Equips : IntIdTable() {
     val description = varchar("Desc", 255)
 }
 
-class Equip(id: EntityID<Int>) : IntEntity(id) {
+class Equip(id: EntityID<Int>) : IntEntity(id), GachaItem {
     companion object : IntEntityClass<Equip>(Equips)
 
     var name by Equips.name
     var star by Equips.star
     var date by Equips.date
 
-    @OptIn(ExperimentalSerializationApi::class)
     var description: EquipDescription
-    get() = Json.decodeFromString(Equips.description.getValue(this, this::description))
-    set(value) = Equips.description.setValue(this, this::description, Json.encodeToString(EquipDescription.serializer(), value))
+        get() = Json.decodeFromString(EquipDescription.serializer(), Equips.description.getValue(this, ::description))
+        set(value) = Equips.description.setValue(
+            this,
+            ::description,
+            Json.encodeToString(EquipDescription.serializer(), value)
+        )
+
+    override fun getCard(): Image {
+        TODO("Not yet implemented")
+    }
 }
 
 @Serializable

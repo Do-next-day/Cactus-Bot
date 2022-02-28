@@ -12,7 +12,7 @@ val gachaDataFolder = dataFolder.resolve("GachaImages")
 
 val characterDataFolder = dataFolder.resolve("Characters")
 
-val File.SkikoImage: Image get() = Image.makeFromEncoded(readBytes())
+val File.skikoImage: Image get() = Image.makeFromEncoded(readBytes())
 
 inline fun <reified R> Json.decodeFromStringOrNull(str: String) =
     kotlin.runCatching {

@@ -1,14 +1,7 @@
 package org.laolittle.plugin.genshin.model
 
-import org.jetbrains.skia.*
-import org.laolittle.plugin.genshin.database.Avatar
-import org.laolittle.plugin.genshin.model.GachaImages.GACHA_ATLAS_SPRITE
-import org.laolittle.plugin.genshin.model.GachaImages.GACHA_BACKDROP
-import org.laolittle.plugin.genshin.model.GachaImages.GACHA_PURE_BG
-import org.laolittle.plugin.genshin.model.GachaImages.STARRY
-import org.laolittle.plugin.genshin.model.GachaImages.gachaImage
-import org.laolittle.plugin.genshin.util.SkikoImage
 import org.laolittle.plugin.genshin.util.gachaDataFolder
+import org.laolittle.plugin.genshin.util.skikoImage
 
 object Tenti {
     /**
@@ -16,58 +9,17 @@ object Tenti {
      *
      * Height: (int) 235 * 4.37 = 1026
      * */
-    fun Avatar.getCard(): Image {
-        val character = gachaImage
-        val sprite = GACHA_ATLAS_SPRITE
-
-        val w = 235
-        val h = (w * 4.37).toInt()
-
-        return Surface.makeRasterN32Premul(w, h).apply {
-            val dst = Rect.makeWH(w.toFloat(), h.toFloat())
-            val paint = Paint().apply {
-                blendMode = BlendMode.SRC_ATOP
-            }
-            canvas.apply {
-                drawImageRect(
-                    sprite,
-                    GACHA_PURE_BG,
-                    dst
-                )
-
-                drawImageRect(
-                    sprite,
-                    GACHA_BACKDROP,
-                    dst,
-                    paint
-                )
-
-                drawImage(character, -40f, 17F, paint)
-
-                drawImageRect(sprite, STARRY, dst, paint.apply {
-                    colorFilter = ColorFilter.makeMatrix(
-                        ColorMatrix(
-                            3F, 0F, 0F, 0F, 0F,
-                            0F, 3F, 0F, 0F, 0F,
-                            0F, 0F, 3F, 0F, 0F,
-                            0F, 0F, 0F, 0.15F, 0F,
-                        )
-                    )
-                })
-            }
-        }.makeImageSnapshot()
-    }
 
     private val BORDER_FOLDER = gachaDataFolder.resolve("border").also { it.mkdirs() }
 
 
-    val GOLD by lazy { BORDER_FOLDER.resolve("gold.png").SkikoImage }
+    val GOLD by lazy { BORDER_FOLDER.resolve("gold.png").skikoImage }
 
 
-    val PURPLE by lazy { BORDER_FOLDER.resolve("purple.png").SkikoImage }
+    val PURPLE by lazy { BORDER_FOLDER.resolve("purple.png").skikoImage }
 
 
-    val BLUE by lazy { BORDER_FOLDER.resolve("blue.png").SkikoImage }
+    val BLUE by lazy { BORDER_FOLDER.resolve("blue.png").skikoImage }
 
 
 }

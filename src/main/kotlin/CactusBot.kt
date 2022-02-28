@@ -1,6 +1,5 @@
 package org.laolittle.plugin.genshin
 
-import com.alibaba.druid.pool.DruidDataSource
 import io.ktor.client.request.*
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerializationException
@@ -14,22 +13,15 @@ import net.mamoe.mirai.message.data.buildMessageChain
 import net.mamoe.mirai.utils.ExternalResource.Companion.toExternalResource
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
 import net.mamoe.mirai.utils.info
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.TransactionManager
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.skia.EncodedImageFormat
-import org.laolittle.plugin.genshin.api.GenshinApi
+import org.laolittle.plugin.genshin.api.GenshinBBSApi
 import org.laolittle.plugin.genshin.api.internal.client
 import org.laolittle.plugin.genshin.api.internal.getAppVersion
-import org.laolittle.plugin.genshin.database.*
 import org.laolittle.plugin.genshin.model.GachaSimulator.gachaCharacter
 import org.laolittle.plugin.genshin.model.GachaSimulator.renderGachaImage
 import org.laolittle.plugin.genshin.util.characterDataFolder
 import org.laolittle.plugin.genshin.util.gachaDataFolder
 import org.laolittle.plugin.toExternalResource
-import java.sql.Connection
-import javax.sql.DataSource
 
 object CactusBot : KotlinPlugin(
     JvmPluginDescription(
@@ -40,9 +32,7 @@ object CactusBot : KotlinPlugin(
         author("LaoLittle")
     }
 ) {
-    private val dataSource = DruidDataSource()
     private val users = mutableSetOf<Long>()
-    val db: Database
     override fun onEnable() {
         init()
         logger.info { "Plugin loaded" }
@@ -68,7 +58,7 @@ object CactusBot : KotlinPlugin(
                             return@Listener
                         }
                         val query = kotlin.runCatching {
-                            GenshinApi.getPlayerInfo(uid)
+                            GenshinBBSApi.getPlayerInfo(uid)
                         }.getOrElse {
                             when (it) {
                                 is SerializationException -> subject.sendMessage("请求失败！请检查uid是否正确")
@@ -109,20 +99,4 @@ object CactusBot : KotlinPlugin(
         characterDataFolder.mkdir()
     }
 
-    init {
-        dataSource.url = "jdbc:sqlite:$dataFolder/genshin.sqlite"
-        dataSource.driverClassName = "org.sqlite.JDBC"
-        db = Database.connect(dataSource as DataSource)
-        TransactionManager.manager.defaultIsolationLevel =
-            Connection.TRANSACTION_SERIALIZABLE
-        transaction(db) {
-            SchemaUtils.create(
-                Users,
-                Avatars,
-                Equips,
-                Gachas,
-                GachasWeapon,
-            )
-        }
-    }
 }
