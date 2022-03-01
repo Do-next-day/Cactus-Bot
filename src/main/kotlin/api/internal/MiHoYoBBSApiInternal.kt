@@ -13,7 +13,6 @@ import org.laolittle.plugin.genshin.util.Json
 import org.laolittle.plugin.genshin.util.randomUUID
 import java.security.MessageDigest
 import java.util.concurrent.TimeUnit
-import kotlin.random.Random.Default.nextInt
 
 internal val client = HttpClient(OkHttp) {
     engine {
@@ -41,26 +40,34 @@ suspend fun getAppVersion(flush: Boolean = false): String? = runCatching {
     }
 }.onFailure { logger.error { "更新米游社App版本信息失败!" } }.getOrNull()
 
-
 private const val API_SALT = "xV8v4Qu54lUKrEYFZkJhB8cuOh9Asafs"
 private const val SIGN_SALT = "4a8knnbk5pbjqsrudp3dq484m9axoc5g"
 internal fun getNormalDS(url: String, body: String): String {
     val time = getTimeMillis() / 1000
-    val random = nextInt(100000, 200000)
+    val random = getRandomString(6)
     val urlParts = url.split("?")
     val query = if (urlParts.size == 2) urlParts[1] else ""
     val check = md5("salt=${API_SALT}&t=${time}&r=${random}&b=${body}&q=${query}")
     return "${time},${random},${check}"
 }
 
-// allow: App version 2.10.x
+// allow: app version 2.10.x
 internal fun getSignDS(): String {
     val time = getTimeMillis() / 1000
-    val random = nextInt(100000, 200000)
+    val random = getRandomString(6)
     val check = md5("salt=${SIGN_SALT}&t=${time}&r=${random}")
     return "${time},${random},${check}"
 }
 
+private const val ALL_CHAR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+@Suppress("SameParameterValue")
+private fun getRandomString(size: Int): String {
+    val builder = StringBuilder()
+    repeat(size) {
+        builder.append(ALL_CHAR.random())
+    }
+    return builder.toString()
+}
 
 internal suspend inline fun getBBS(
     url: String,

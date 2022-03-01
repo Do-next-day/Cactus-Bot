@@ -33,7 +33,7 @@ val Json = Json {
     allowStructuredMapKeys = true
 }
 
-val randomUUID get() = UUID.randomUUID().toString().uppercase()
+val randomUUID get() = UUID.randomUUID().toString().replace("-", "").lowercase()
 
 @Serializable
 data class UserCookie(
