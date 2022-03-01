@@ -19,7 +19,7 @@ import net.mamoe.mirai.utils.ExternalResource.Companion.toExternalResource
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
 import net.mamoe.mirai.utils.info
 import org.jetbrains.skia.EncodedImageFormat
-import org.laolittle.plugin.genshin.api.ApiFailedAccessException
+import org.laolittle.plugin.genshin.api.ApiAccessDeniedException
 import org.laolittle.plugin.genshin.api.bbs.BBSApi
 import org.laolittle.plugin.genshin.api.bbs.BBSData
 import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi
@@ -31,6 +31,8 @@ import org.laolittle.plugin.genshin.model.GachaSimulator.gachaCharacter
 import org.laolittle.plugin.genshin.model.GachaSimulator.renderGachaImage
 import org.laolittle.plugin.genshin.util.characterDataFolder
 import org.laolittle.plugin.genshin.util.gachaDataFolder
+import org.laolittle.plugin.genshin.util.requireCookie
+import org.laolittle.plugin.genshin.util.signGenshin
 import org.laolittle.plugin.toExternalResource
 
 object CactusBot : KotlinPlugin(JvmPluginDescription(
@@ -61,9 +63,8 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
                         users.remove(sender.id)
                     }
                     "查询" -> {
-                        val userData = cactusSuspendedTransaction {
-                            getUserData(sender.id)
-                        }
+                        val userData = if (CactusConfig.allowAnonymous) getUserData(sender.id)
+                        else requireCookie { return@Listener }
 
                         val cookies = userData.data.cookies.takeIf { it.isNotBlank() } ?: CactusData.cookies
 
@@ -77,7 +78,7 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
                         }.getOrElse {
                             when (it) {
                                 is SerializationException -> subject.sendMessage("请求失败！请检查uid是否正确")
-                                is ApiFailedAccessException -> subject.sendMessage("获取失败: ${it.message}")
+                                is ApiAccessDeniedException -> subject.sendMessage("获取失败: ${it.message}")
                                 else -> logger.error(it)
                             }
                             return@Listener
@@ -100,6 +101,7 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
                     }
 
                     "test" -> {
+
 
                     }
                 }
@@ -171,29 +173,12 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
 
         globalEventChannel().subscribeMessages {
             "原神签到" Sign@{
-                val userData = cactusSuspendedTransaction {
-                    getUserData(sender.id)
-                }
-
-                val cookies = userData.data.cookies
-                val uuid = userData.data.uuid
-                if (cookies.isEmpty()) {
-                    subject.sendMessage("请先登录")
-                    return@Sign
-                }
-
-                val role = BBSApi.getRolesByCookie(cookies, BBSData.GameBiz.HK4E_CN)
-                    .find { r -> r.gameUID == userData.genshinUID } ?: kotlin.run {
-                    subject.sendMessage("遇到预料外的错误")
-                    return@Sign
-                }
-
-                val region = role.region
+                val userData = requireCookie { return@Sign }
 
                 kotlin.runCatching {
-                    GenshinBBSApi.signGenshin(userData.genshinUID, region, cookies, uuid)
+                    userData.signGenshin()
                 }.onSuccess {
-                    subject.sendMessage("旅行者: ${role.nickname}签到成功")
+                    subject.sendMessage("旅行者: ${userData.genshinUID}签到成功")
                 }.onFailure {
                     subject.sendMessage("签到失败: ${it.message}")
                 }
@@ -204,6 +189,7 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
 
     private fun init() {
         launch { getAppVersion(true) }
+        // GenshinTimerProvider.start()
         CactusConfig.reload()
         CactusData.reload()
         dataFolder.mkdirs()

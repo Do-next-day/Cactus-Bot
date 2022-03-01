@@ -3,11 +3,10 @@ package org.laolittle.plugin.genshin.util
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
+import net.mamoe.mirai.event.events.MessageEvent
 import org.jetbrains.skia.Image
 import org.laolittle.plugin.genshin.CactusBot
-import org.laolittle.plugin.genshin.database.Avatar
-import org.laolittle.plugin.genshin.database.Equip
-import org.laolittle.plugin.genshin.database.GachaItem
+import org.laolittle.plugin.genshin.database.*
 import java.io.File
 import java.util.*
 
@@ -17,11 +16,13 @@ val gachaDataFolder = dataFolder.resolve("GachaImages")
 
 val characterDataFolder = dataFolder.resolve("Characters")
 
+val cacheFolder = CactusBot.dataFolder.resolve("cache")
+
 val File.skikoImage: Image get() = Image.makeFromEncoded(readBytes())
 
-inline fun <reified R> Json.decodeFromStringOrNull(str: String) = kotlin.runCatching {
-    decodeFromString<R>(serializersModule.serializer(), str)
-}.getOrNull()
+inline fun <reified R> Json.decodeFromStringOrNull(str: String) =
+    decodeFromStringOrNull<R>(serializersModule.serializer(), str)
+
 
 fun <T> Json.decodeFromStringOrNull(deserializer: DeserializationStrategy<T>, string: String): T? =
     kotlin.runCatching {
@@ -37,7 +38,7 @@ val Json = Json {
 
 val randomUUID get() = UUID.randomUUID().toString().replace("-", "").lowercase()
 
-fun Iterable<GachaItem>.sort(): MutableList<GachaItem> {
+fun Iterable<GachaItem>.sort(): List<GachaItem> {
     val sorted = mutableListOf<GachaItem>()
 
     asSequence().filterNot { item ->
@@ -59,4 +60,13 @@ fun Iterable<GachaItem>.sort(): MutableList<GachaItem> {
     }.filterIsInstance<Equip>().onEach(sorted::add).toList()
 
     return sorted
+}
+
+suspend inline fun MessageEvent.requireCookie(lazy: () -> Unit = {}): User {
+    val userData = getUserData(sender.id)
+    if (userData.data.cookies.isBlank()) {
+        subject.sendMessage("请先登录")
+        lazy()
+    }
+    return userData
 }

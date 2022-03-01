@@ -9,9 +9,9 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
 object PluginDispatcher {
-    private val dispatcherDispatcher = EmptyCoroutineContext
+    private val dispatcherContext = EmptyCoroutineContext
 
-    val coroutineContext: CoroutineContext get() = SupervisorJob(CactusBot.coroutineContext.job) + dispatcherDispatcher
+    private val coroutineContext: CoroutineContext get() = SupervisorJob(CactusBot.coroutineContext.job) + dispatcherContext
 
     fun <T> runBlocking(block: suspend CoroutineScope.() -> T): T =
         runBlocking(coroutineContext, block)

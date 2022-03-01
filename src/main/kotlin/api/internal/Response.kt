@@ -3,7 +3,7 @@ package org.laolittle.plugin.genshin.api.internal
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
-import org.laolittle.plugin.genshin.api.ApiFailedAccessException
+import org.laolittle.plugin.genshin.api.ApiAccessDeniedException
 import java.rmi.UnexpectedException
 
 ///////////////////////////////////////////////////////////////////////////
@@ -61,7 +61,7 @@ data class Response(
         }
 
     val cause
-        get() = ApiFailedAccessException(
+        get() = ApiAccessDeniedException(
             when (restCode) {
                 0 -> null
                 10101 -> "当前账号无法继续查询"
@@ -74,4 +74,6 @@ data class Response(
                 else -> message
             }
         )
+
+    fun getOrThrow() = if (isSuccess) this else throw cause
 }

@@ -8,8 +8,8 @@ import org.laolittle.plugin.genshin.api.internal.getBBS
 import org.laolittle.plugin.genshin.util.Json
 
 object BBSApi {
-    const val USER_FULL_INFO = "$BBS_API_BASE/user/wapi/getUserFullInfo"
-    const val ROLE_URL = "$TAKUMI_API/binding/api/getUserGameRolesByCookie"
+    private const val USER_FULL_INFO = "$BBS_API_BASE/user/wapi/getUserFullInfo"
+    private const val ROLE_URL = "$TAKUMI_API/binding/api/getUserGameRolesByCookie"
 
     suspend fun getUserInfo(cookies: String): JsonObject {
         val response = getBBS(

@@ -29,4 +29,5 @@ dependencies {
     implementation(skikoAwt("windows-x64"))
     implementation(skikoAwt("linux-x64"))
     implementation(skikoAwt("linux-arm64"))
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.2")
 }

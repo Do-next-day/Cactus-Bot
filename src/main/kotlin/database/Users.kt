@@ -37,10 +37,12 @@ data class UserData(
     override fun toString() = Json.encodeToString(serializer(), this)
 }
 
-fun getUserData(id: Long) = User.findById(id) ?: User.new(id) {
-    card = 100
-    genshinUID = 0
-    data = UserData()
+suspend fun getUserData(id: Long) = cactusSuspendedTransaction {
+    User.findById(id) ?: User.new(id) {
+        card = 100
+        genshinUID = 0
+        data = UserData()
+    }
 }
 
 internal typealias MutableIntMap = MutableMap<Int, Int>

@@ -9,8 +9,7 @@ import org.jetbrains.skia.Rect
 import org.jetbrains.skia.Surface
 import org.laolittle.plugin.genshin.database.*
 import org.laolittle.plugin.genshin.model.GachaImages.SETTLEMENT_BACKGROUND
-import org.laolittle.plugin.genshin.model.Tenti.GOLD
-import org.laolittle.plugin.genshin.model.Tenti.PURPLE
+import org.laolittle.plugin.genshin.model.Tenti.border
 import org.laolittle.plugin.genshin.service.PluginDispatcher
 
 object GachaSimulator {
@@ -83,7 +82,7 @@ object GachaSimulator {
         return foo + getProb(times - 1)
     }
 
-    fun renderGachaImage(avatars: List<Avatar>): Image {
+    fun renderGachaImage(avatars: List<GachaItem>): Image {
         val w = 1920F
         val h = 1080F
         return Surface.makeRasterN32Premul(w.toInt(), h.toInt()).apply {
@@ -98,8 +97,7 @@ object GachaSimulator {
                         val foo = mutableListOf<Deferred<Image>>()
 
                         val offset = 1400F
-                        val gold = GOLD
-                        val purple = PURPLE
+
                         PluginDispatcher.runBlocking {
                             avatars.forEach {
                                 foo.add(async {
@@ -111,7 +109,7 @@ object GachaSimulator {
                                 drawImageRect(
                                     foo[i].await(), Rect.makeXYWH(offset + 110 - times, 237F, 138F, 606F)
                                 )
-                                drawImage(if (avatars[i].star) gold else purple, offset - times, 0f)
+                                drawImage(avatars[i].border, offset - times, 0f)
                             }
                         }
                     }

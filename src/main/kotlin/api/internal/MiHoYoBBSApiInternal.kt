@@ -28,7 +28,6 @@ internal var LAB_APP_VER = "2.20.1"
     private set
 
 internal const val BBS_URL = "https://bbs.mihoyo.com/"
-
 suspend fun getAppVersion(flush: Boolean = false): String? = runCatching {
     val home: String = client.get(BBS_URL)
     val cssPath = BBS_URL + Regex("""<script type="text/javascript" src="(.+?)"></script>""").findAll(home)
@@ -70,6 +69,18 @@ private fun getRandomString(size: Int): String {
     return builder.toString()
 }
 
+/**
+ * Get a normal response like
+ *
+ * ```json
+ * {
+ *    retcode: 0
+ *    message: "OK"
+ *    data: ""
+ * }
+ * ```
+ * @see Response
+ */
 internal suspend inline fun getBBS(
     url: String,
     cookies: String = CactusData.cookies,
@@ -80,6 +91,9 @@ internal suspend inline fun getBBS(
     block()
 })
 
+/**
+ * @see getBBS
+ */
 internal suspend inline fun postBBS(
     url: String,
     cookies: String = CactusData.cookies,
