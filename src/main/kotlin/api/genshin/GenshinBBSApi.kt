@@ -5,7 +5,8 @@ import io.ktor.http.*
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import org.laolittle.plugin.genshin.CactusData
-import org.laolittle.plugin.genshin.api.ACT_ID_GENSHIN_SIGN
+import org.laolittle.plugin.genshin.api.Action.GENSHIN_SIGN
+import org.laolittle.plugin.genshin.api.ApiFailedAccessException
 import org.laolittle.plugin.genshin.api.TAKUMI_URL
 import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi.GenshinServer.CN_GF01
 import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi.GenshinServer.CN_QD01
@@ -30,27 +31,38 @@ object GenshinBBSApi {
         return if (response.isSuccess) Json.decodeFromJsonElement(
             GenshinRecordResponse.serializer(), response.data
         )
-        else throw IllegalAccessException(response.cause)
+        else throw response.cause
     }
 
-    private const val SIGN_REFERRER = "https://webstatic.mihoyo.com/bbs/event/signin-ys/index.html?bbs_auth_required=true&act_id=$ACT_ID_GENSHIN_SIGN&utm_source=bbs&utm_medium=mys&utm_campaign=icon"
-    suspend fun signGenshin(genshinUID: Long, region: GenshinServer, cookies: String, uuid: String = randomUUID): Response {
-        return postBBS(
+    private const val SIGN_REFERRER =
+        "https://webstatic.mihoyo.com/bbs/event/signin-ys/index.html?bbs_auth_required=true&act_id=$GENSHIN_SIGN&utm_source=bbs&utm_medium=mys&utm_campaign=icon"
+
+    suspend fun signGenshin(
+        genshinUID: Long,
+        region: GenshinServer,
+        cookies: String,
+        uuid: String = randomUUID
+    ): Response {
+        val response = postBBS(
             url = SIGN_URL,
             cookies,
             uuid
         ) {
             val appVersion = "2.10.2"
             userAgent("Mozilla/5.0 (iPhone; CPU iPhone OS 14_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/$appVersion")
+            contentType(ContentType.Application.Json)
             headers["x-rpc-app_version"] = appVersion
             headers["DS"] = getSignDS()
             headers[HttpHeaders.Referrer] = SIGN_REFERRER
             body = buildJsonObject {
-                put("act_id", ACT_ID_GENSHIN_SIGN)
+                put("act_id", GENSHIN_SIGN)
                 put("region", region.toString())
                 put("uid", genshinUID)
             }.toString()
         }
+
+        return if (response.isSuccess) response
+        else throw ApiFailedAccessException(response.message)
     }
 
     suspend fun getGameRecordCard(): String {
