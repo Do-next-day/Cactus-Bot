@@ -15,20 +15,18 @@ repositories {
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
-fun skikoAwt(ver: String) = "org.jetbrains.skiko:skiko-awt-runtime-$ver"
+fun skikoAwt(ver: String) = "org.jetbrains.skiko:skiko-awt-runtime-$ver:0.7.12"
+fun exposed(module: String) = "org.jetbrains.exposed:exposed-$module:0.37.3"
 
 dependencies {
-    val exposedVersion = "0.37.3"
-    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
+    implementation(exposed("core"))
+    implementation(exposed("dao"))
+    implementation(exposed("jdbc"))
+    implementation(exposed("java-time"))
     implementation("org.xerial:sqlite-jdbc:3.36.0.3")
     implementation("com.alibaba:druid:1.2.8")
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    val skikoVer = "0.7.12"
-
-    implementation(skikoAwt("windows-x64:$skikoVer"))
-    implementation(skikoAwt("linux-x64:$skikoVer"))
-    implementation(skikoAwt("linux-arm64:$skikoVer"))
+    implementation(skikoAwt("windows-x64"))
+    implementation(skikoAwt("linux-x64"))
+    implementation(skikoAwt("linux-arm64"))
 }

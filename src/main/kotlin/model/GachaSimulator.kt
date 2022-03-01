@@ -62,9 +62,11 @@ object GachaSimulator {
 
         val sorted = mutableListOf<Avatar>()
 
-        got.filter { it.id.value == up }.forEach(sorted::add)
-        got.filter { it.star && it.id.value != up }.forEach(sorted::add)
-        got.filter { !it.star }.forEach(sorted::add)
+        got.filterNot { a ->
+            (a.id.value == up).also {
+                if (it) sorted.add(a)
+            }
+        }.forEach(sorted::add)
 
         return sorted
     }

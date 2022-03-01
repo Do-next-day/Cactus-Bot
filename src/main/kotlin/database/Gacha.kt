@@ -21,18 +21,18 @@ class Gacha(id: EntityID<Int>) : IntEntity(id) {
     var date by Gachas.date
 }
 
-object GachasWeapon : IntIdTable() {
+object GachasEquip : IntIdTable() {
     val name = char("Name", 5)
     val up = integer("Up")
     val date = date("Date")
 }
 
-class GachaWeapon(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<GachaWeapon>(GachasWeapon)
+class GachaEquip(id: EntityID<Int>) : IntEntity(id) {
+    companion object : IntEntityClass<GachaEquip>(GachasEquip)
 
-    var name by GachasWeapon.name
-    var up by GachasWeapon.up
-    var date by GachasWeapon.date
+    var name by GachasEquip.name
+    var up by GachasEquip.up
+    var date by GachasEquip.date
 }
 
 interface GachaItem {

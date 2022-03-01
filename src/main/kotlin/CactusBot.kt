@@ -3,6 +3,7 @@ package org.laolittle.plugin.genshin
 import io.ktor.client.request.*
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerializationException
+import net.mamoe.mirai.console.plugin.description.PluginDependency
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.event.globalEventChannel
@@ -38,6 +39,9 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
     version = "1.0",
 ) {
     author("LaoLittle")
+    dependsOn(
+        PluginDependency("org.laolittle.plugin.SkikoMirai", ">=1.0.2")
+    )
 }) {
     private val users = mutableSetOf<Long>()
     override fun onEnable() {

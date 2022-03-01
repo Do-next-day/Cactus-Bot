@@ -24,7 +24,7 @@ private val cactusDatabase: Database by lazy {
                 Avatars,
                 Equips,
                 Gachas,
-                GachasWeapon,
+                GachasEquip,
             )
         }
     }

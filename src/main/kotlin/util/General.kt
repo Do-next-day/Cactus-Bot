@@ -1,11 +1,13 @@
 package org.laolittle.plugin.genshin.util
 
 import kotlinx.serialization.DeserializationStrategy
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 import org.jetbrains.skia.Image
 import org.laolittle.plugin.genshin.CactusBot
+import org.laolittle.plugin.genshin.database.Avatar
+import org.laolittle.plugin.genshin.database.Equip
+import org.laolittle.plugin.genshin.database.GachaItem
 import java.io.File
 import java.util.*
 
@@ -35,8 +37,26 @@ val Json = Json {
 
 val randomUUID get() = UUID.randomUUID().toString().replace("-", "").lowercase()
 
-@Serializable
-data class UserCookie(
-    val cookies: String? = null,
-    val uuid: String = randomUUID,
-)
+fun Iterable<GachaItem>.sort(): MutableList<GachaItem> {
+    val sorted = mutableListOf<GachaItem>()
+
+    asSequence().filterNot { item ->
+        (item is Avatar && item.star).also {
+            if (it) sorted.add(item)
+        }
+    }.filterNot { item ->
+        (item is Equip && item.star == 5).also {
+            if (it) sorted.add(item)
+        }
+    }.filterNot { item ->
+        (item is Avatar).also {
+            if (it) sorted.add(item)
+        }
+    }.filterNot { item ->
+        (item is Equip && item.star == 4).also {
+            if (it) sorted.add(item)
+        }
+    }.filterIsInstance<Equip>().onEach(sorted::add).toList()
+
+    return sorted
+}

@@ -81,7 +81,9 @@ class Avatar(id: EntityID<Int>) : IntEntity(id), GachaItem {
 data class AvatarDescription(
     val exonym: String,
     val element: AvatarElement,
-)
+) {
+    override fun toString(): String = Json.encodeToString(serializer(), this)
+}
 
 @Serializable
 @Suppress("unused")

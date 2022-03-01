@@ -11,7 +11,7 @@ import org.laolittle.plugin.genshin.util.Json
 
 object Equips : IntIdTable() {
     val name = varchar("Name", 6)
-    val star = bool("Star")
+    val star = integer("Star")
     val date = date("Date")
     val description = varchar("Desc", 255)
 }
@@ -38,7 +38,9 @@ class Equip(id: EntityID<Int>) : IntEntity(id), GachaItem {
 data class EquipDescription(
     val exonym: String,
     val type: EquipType,
-)
+) {
+    override fun toString(): String = Json.encodeToString(serializer(), this)
+}
 
 enum class EquipType {
     /**

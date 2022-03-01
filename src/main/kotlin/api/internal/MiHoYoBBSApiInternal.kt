@@ -60,6 +60,7 @@ internal fun getSignDS(): String {
 }
 
 private const val ALL_CHAR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+
 @Suppress("SameParameterValue")
 private fun getRandomString(size: Int): String {
     val builder = StringBuilder()
