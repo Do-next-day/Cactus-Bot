@@ -3,6 +3,7 @@ package org.laolittle.plugin.genshin.api.internal
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.request.*
+import io.ktor.client.utils.*
 import io.ktor.http.*
 import io.ktor.util.date.*
 import net.mamoe.mirai.utils.error
@@ -11,8 +12,6 @@ import org.laolittle.plugin.genshin.CactusData
 import org.laolittle.plugin.genshin.util.Json
 import org.laolittle.plugin.genshin.util.randomUUID
 import java.security.MessageDigest
-import java.time.Instant
-import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random.Default.nextInt
 
@@ -69,7 +68,7 @@ internal suspend inline fun getBBS(
     uuid: String = randomUUID,
     block: HttpRequestBuilder.() -> Unit = {}
 ) = Json.decodeFromString(Response.serializer(), client.get(url) {
-    setHeaders(url, this.body.toString(), cookies, uuid)
+    setHeaders(url, "", cookies, uuid)
     block()
 })
 
@@ -79,26 +78,9 @@ internal suspend inline fun postBBS(
     uuid: String = randomUUID,
     block: HttpRequestBuilder.() -> Unit = {}
 ) = Json.decodeFromString(Response.serializer(), client.post(url) {
-    setHeaders(url, this.body.toString(), cookies, uuid)
-    contentType(ContentType.Application.Json)
+    setHeaders(url, if (body !== EmptyContent) this.body.toString() else "", cookies, uuid)
     block()
 })
-
-fun getDS(): String {
-    val n = "h8w582wxwgqvahcdkpvdhbh2w9casgfl"
-    val i = Instant.now().epochSecond
-    val random = Random()
-    val sb = StringBuilder()
-    for (e in 1..6) {
-        val CONSTANTS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-        val number = random.nextInt(CONSTANTS.length)
-        val charAt = CONSTANTS[number]
-        sb.append(charAt)
-    }
-    val r = sb.toString()
-    val c = md5("salt=$n&t=$i&r=$r")
-    return "${i},${r},${c}"
-}
 
 internal fun HttpRequestBuilder.setHeaders(
     url: String, body: String = "", cookies: String = CactusData.cookies, uuid: String = randomUUID
