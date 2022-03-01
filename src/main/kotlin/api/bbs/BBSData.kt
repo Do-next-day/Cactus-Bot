@@ -23,10 +23,11 @@ object BBSData {
                 else -> throw IllegalStateException("未知 $originRegion")
             }
 
-        val gameBiz get() = when(originGameBiz) {
-            "hk4e_cn" -> GameBiz.HK4E_CN
-            else -> throw IllegalStateException("未知 $originGameBiz")
-        }
+        val gameBiz
+            get() = when (originGameBiz) {
+                "hk4e_cn" -> GameBiz.HK4E_CN
+                else -> throw IllegalStateException("未知 $originGameBiz")
+            }
     }
 
 

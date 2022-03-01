@@ -3,6 +3,7 @@ package org.laolittle.plugin.genshin.api.internal
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
+import org.laolittle.plugin.genshin.api.ApiFailedAccessException
 import java.rmi.UnexpectedException
 
 ///////////////////////////////////////////////////////////////////////////
@@ -56,19 +57,21 @@ data class Response(
     val data: JsonObject
         get() = when (restCode) {
             0 -> originData ?: throw UnexpectedException("服务器返回数据有误! $message")
-            else -> if (originData.isNullOrEmpty()) throw IllegalAccessException(cause) else originData
+            else -> if (originData.isNullOrEmpty()) throw cause else originData
         }
 
-    val cause: String?
-        get() = when (restCode) {
-            0 -> null
-            10101 -> "当前账号无法继续查询"
-            -100, 10001 -> "Cookie有误"
-            10102 -> "用户数据未公开"
-            1009 -> "无法找到用户"
-            -10002 -> "当前账号无绑定游戏"
-            -108 -> "语言错误"
-            10103 -> "无绑定米游社账号 $message"
-            else -> message
-        }
+    val cause
+        get() = ApiFailedAccessException(
+            when (restCode) {
+                0 -> null
+                10101 -> "当前账号无法继续查询"
+                -100, 10001 -> "Cookie有误"
+                10102 -> "用户数据未公开"
+                1009 -> "无法找到用户"
+                -10002 -> "当前账号无绑定游戏"
+                -108 -> "语言错误"
+                10103 -> "无绑定米游社账号 $message"
+                else -> message
+            }
+        )
 }

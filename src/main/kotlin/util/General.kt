@@ -23,8 +23,8 @@ inline fun <reified R> Json.decodeFromStringOrNull(str: String) = kotlin.runCatc
 
 fun <T> Json.decodeFromStringOrNull(deserializer: DeserializationStrategy<T>, string: String): T? =
     kotlin.runCatching {
-    decodeFromString(deserializer, string)
-}.getOrNull()
+        decodeFromString(deserializer, string)
+    }.getOrNull()
 
 val Json = Json {
     prettyPrint = true
@@ -33,7 +33,7 @@ val Json = Json {
     allowStructuredMapKeys = true
 }
 
-val randomUUID get() = UUID.randomUUID().toString().replace("-", "").uppercase()
+val randomUUID get() = UUID.randomUUID().toString().uppercase()
 
 @Serializable
 data class UserCookie(

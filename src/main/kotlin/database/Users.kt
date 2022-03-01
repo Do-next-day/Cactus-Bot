@@ -6,7 +6,6 @@ import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.laolittle.plugin.genshin.util.Json
-import org.laolittle.plugin.genshin.util.UserCookie
 import org.laolittle.plugin.genshin.util.decodeFromStringOrNull
 import org.laolittle.plugin.genshin.util.randomUUID
 
@@ -32,14 +31,9 @@ data class UserData(
     var characterFloor: Boolean = false,
     var weaponFloor: Boolean = false,
     val characters: MutableIntMap = mutableMapOf(),
+    var cookies: String = "",
+    val uuid: String = randomUUID
 ) {
-    var cookieData = UserCookie()
-        private set
-
-    fun setCookies(cookies: String) {
-        cookieData = UserCookie(cookies, randomUUID)
-    }
-
     override fun toString() = Json.encodeToString(serializer(), this)
 }
 

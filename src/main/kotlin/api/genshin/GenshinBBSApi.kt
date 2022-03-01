@@ -19,13 +19,14 @@ object GenshinBBSApi {
     const val GENSHIN_GAME_RECORD = "$TAKUMI_URL/game_record/app/genshin/api"
     const val SIGN_URL = "$TAKUMI_URL/event/bbs_sign_reward/sign"
 
-    suspend fun getPlayerInfo(uid: Long, cookies: String = CactusData.cookies): GenshinRecordResponse {
+    suspend fun getPlayerInfo(uid: Long, cookies: String = CactusData.cookies, uuid: String = randomUUID): GenshinRecordResponse {
         val server = if (uid < 500000000) CN_GF01
         else CN_QD01
 
         val response = getBBS(
             url = "$GENSHIN_GAME_RECORD/index?role_id=$uid&server=$server",
-            cookies = cookies
+            cookies = cookies,
+            uuid = uuid
         )
 
         return if (response.isSuccess) Json.decodeFromJsonElement(
