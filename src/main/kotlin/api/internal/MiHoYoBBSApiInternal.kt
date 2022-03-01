@@ -8,10 +8,11 @@ import io.ktor.util.date.*
 import net.mamoe.mirai.utils.error
 import org.laolittle.plugin.genshin.CactusBot
 import org.laolittle.plugin.genshin.CactusData
-import org.laolittle.plugin.genshin.api.ACT_ID_GENSHIN
 import org.laolittle.plugin.genshin.util.Json
 import org.laolittle.plugin.genshin.util.randomUUID
 import java.security.MessageDigest
+import java.time.Instant
+import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random.Default.nextInt
 
@@ -43,7 +44,8 @@ suspend fun getAppVersion(flush: Boolean = false): String? = runCatching {
 
 
 private const val API_SALT = "xV8v4Qu54lUKrEYFZkJhB8cuOh9Asafs"
-internal fun getDS(url: String, body: String): String {
+private const val SIGN_SALT = "4a8knnbk5pbjqsrudp3dq484m9axoc5g"
+internal fun getNormalDS(url: String, body: String): String {
     val time = getTimeMillis() / 1000
     val random = nextInt(100000, 200000)
     val urlParts = url.split("?")
@@ -52,14 +54,23 @@ internal fun getDS(url: String, body: String): String {
     return "${time},${random},${check}"
 }
 
+// allow: App version 2.10.x
+internal fun getSignDS(): String {
+    val time = getTimeMillis() / 1000
+    val random = nextInt(100000, 200000)
+    val check = md5("salt=${SIGN_SALT}&t=${time}&r=${random}")
+    return "${time},${random},${check}"
+}
+
+
 internal suspend inline fun getBBS(
     url: String,
     cookies: String = CactusData.cookies,
     uuid: String = randomUUID,
     block: HttpRequestBuilder.() -> Unit = {}
 ) = Json.decodeFromString(Response.serializer(), client.get(url) {
-    block()
     setHeaders(url, this.body.toString(), cookies, uuid)
+    block()
 })
 
 internal suspend inline fun postBBS(
@@ -68,25 +79,37 @@ internal suspend inline fun postBBS(
     uuid: String = randomUUID,
     block: HttpRequestBuilder.() -> Unit = {}
 ) = Json.decodeFromString(Response.serializer(), client.post(url) {
-    block()
     setHeaders(url, this.body.toString(), cookies, uuid)
-    headers["Content-Type"] = "application/json;charset=UTF-8"
+    contentType(ContentType.Application.Json)
+    block()
 })
+
+fun getDS(): String {
+    val n = "h8w582wxwgqvahcdkpvdhbh2w9casgfl"
+    val i = Instant.now().epochSecond
+    val random = Random()
+    val sb = StringBuilder()
+    for (e in 1..6) {
+        val CONSTANTS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        val number = random.nextInt(CONSTANTS.length)
+        val charAt = CONSTANTS[number]
+        sb.append(charAt)
+    }
+    val r = sb.toString()
+    val c = md5("salt=$n&t=$i&r=$r")
+    return "${i},${r},${c}"
+}
 
 internal fun HttpRequestBuilder.setHeaders(
     url: String, body: String = "", cookies: String = CactusData.cookies, uuid: String = randomUUID
 ) {
     headers.apply {
-        userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) miHoYoBBS/$LAB_APP_VER")
+        userAgent("Mozilla/5.0 (iPhone; CPU iPhone OS 14_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/$LAB_APP_VER")
         append("X-Requested-With", "com.mihoyo.hyperion")
         append("x-rpc-device_id", uuid)
         append("x-rpc-client_type", "5")
         append("x-rpc-app_version", LAB_APP_VER)
-        append("DS", getDS(url, body))
-        set(
-            HttpHeaders.Referrer,
-            "https://webstatic.mihoyo.com/bbs/event/signin-ys/index.html?bbs_auth_required=true&act_id=$ACT_ID_GENSHIN&utm_source=bbs&utm_medium=mys&utm_campaign=icon"
-        )
+        append("DS", getNormalDS(url, body))
         accept(ContentType.Application.Json)
         // set(HttpHeaders.AcceptEncoding, "gzip, deflate")
         set(HttpHeaders.Cookie, cookies)

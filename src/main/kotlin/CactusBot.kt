@@ -151,7 +151,7 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
         globalEventChannel().subscribeMessages {
             "原神签到" Sign@{
                 val userData = cactusSuspendedTransaction {
-                    getUserData(subject.id)
+                    getUserData(sender.id)
                 }
                 println(userData.data.toString())
                 val cookies = userData.data.cookieData.cookies
@@ -161,13 +161,18 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
                     return@Sign
                 }
 
-                val region = BBSApi.getRolesByCookie(cookies, BBSData.GameBiz.HK4E_CN)
-                    .find { r -> r.gameUID == userData.genshinUID }?.region ?: kotlin.run {
+                val role = BBSApi.getRolesByCookie(cookies, BBSData.GameBiz.HK4E_CN)
+                    .find { r -> r.gameUID == userData.genshinUID } ?: kotlin.run {
                     subject.sendMessage("遇到预料外的错误")
                     return@Sign
                 }
 
-                subject.sendMessage(GenshinBBSApi.signGenshin(userData.genshinUID, region, cookies, uuid))
+                val region = role.region
+
+                val response = GenshinBBSApi.signGenshin(userData.genshinUID, region, cookies, uuid)
+                val message = if (response.isSuccess) "旅行者: ${role.nickname}签到成功" else response.message
+
+                subject.sendMessage(message)
             }
         }
     }
