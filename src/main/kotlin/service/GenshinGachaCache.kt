@@ -6,7 +6,7 @@ import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi
 import org.laolittle.plugin.genshin.util.Json
 import org.laolittle.plugin.genshin.util.cacheFolder
 
-object GenshinGachaCacheTimer : CactusService(type = Type.Task) {
+object GenshinGachaCache : CactusService(type = Type.Task) {
     override suspend fun main() {
         while (isActive) {
             val cache: suspend (GenshinBBSApi.GenshinServer) -> Unit = { s ->

@@ -2,21 +2,25 @@ package org.laolittle.plugin.genshin.util
 
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.serializer
-import net.mamoe.mirai.event.events.MessageEvent
+import net.mamoe.mirai.contact.Friend
+import net.mamoe.mirai.contact.Member
+import net.mamoe.mirai.message.data.PlainText
 import org.jetbrains.skia.Image
 import org.laolittle.plugin.genshin.CactusBot
 import org.laolittle.plugin.genshin.database.*
 import java.io.File
 import java.util.*
+import net.mamoe.mirai.contact.User as MiraiUser
 
 private val dataFolder get() = CactusBot.dataFolder
 
 val gachaDataFolder = dataFolder.resolve("GachaImages")
 
-val characterDataFolder = dataFolder.resolve("Characters")
+val avatarDataFolder = dataFolder.resolve("Avatars")
 
-val cacheFolder = CactusBot.dataFolder.resolve("cache")
+val cacheFolder = dataFolder.resolve("cache")
 
 val File.skikoImage: Image get() = Image.makeFromEncoded(readBytes())
 
@@ -28,6 +32,11 @@ fun <T> Json.decodeFromStringOrNull(deserializer: DeserializationStrategy<T>, st
     kotlin.runCatching {
         decodeFromString(deserializer, string)
     }.getOrNull()
+
+inline fun <reified T> JsonElement.decode() = org.laolittle.plugin.genshin.util.Json.decodeFromJsonElement<T>(
+    org.laolittle.plugin.genshin.util.Json.serializersModule.serializer(),
+    this
+)
 
 val Json = Json {
     prettyPrint = true
@@ -62,10 +71,14 @@ fun Iterable<GachaItem>.sort(): List<GachaItem> {
     return sorted
 }
 
-suspend inline fun MessageEvent.requireCookie(lazy: () -> Unit = {}): User {
-    val userData = getUserData(sender.id)
+suspend inline fun <reified T : MiraiUser> T.requireCookie(lazy: () -> Unit = {}): User {
+    val userData = getUserData(this.id)
     if (userData.data.cookies.isBlank()) {
-        subject.sendMessage("请先登录")
+        val message = PlainText("请先登录")
+        when (this) {
+            is Friend -> sendMessage(message)
+            is Member -> group.sendMessage(message)
+        }
         lazy()
     }
     return userData

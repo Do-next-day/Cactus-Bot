@@ -21,7 +21,7 @@ import net.mamoe.mirai.utils.info
 import org.jetbrains.skia.EncodedImageFormat
 import org.laolittle.plugin.genshin.api.ApiAccessDeniedException
 import org.laolittle.plugin.genshin.api.bbs.BBSApi
-import org.laolittle.plugin.genshin.api.bbs.BBSData
+import org.laolittle.plugin.genshin.api.bbs.data.GameRole
 import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi
 import org.laolittle.plugin.genshin.api.internal.client
 import org.laolittle.plugin.genshin.api.internal.getAppVersion
@@ -29,14 +29,11 @@ import org.laolittle.plugin.genshin.database.cactusSuspendedTransaction
 import org.laolittle.plugin.genshin.database.getUserData
 import org.laolittle.plugin.genshin.model.GachaSimulator.gachaCharacter
 import org.laolittle.plugin.genshin.model.GachaSimulator.renderGachaImage
-import org.laolittle.plugin.genshin.util.characterDataFolder
-import org.laolittle.plugin.genshin.util.gachaDataFolder
-import org.laolittle.plugin.genshin.util.requireCookie
-import org.laolittle.plugin.genshin.util.signGenshin
+import org.laolittle.plugin.genshin.util.*
 import org.laolittle.plugin.toExternalResource
 
 object CactusBot : KotlinPlugin(JvmPluginDescription(
-    id = "org.laolittle.plugin.GenshinHelper",
+    id = "org.laolittle.plugin.CactusBot",
     name = "Genshin-Helper",
     version = "1.0",
 ) {
@@ -64,7 +61,7 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
                     }
                     "查询" -> {
                         val userData = if (CactusConfig.allowAnonymous) getUserData(sender.id)
-                        else requireCookie { return@Listener }
+                        else sender.requireCookie { return@Listener }
 
                         val cookies = userData.data.cookies.takeIf { it.isNotBlank() } ?: CactusData.cookies
 
@@ -101,8 +98,14 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
                     }
 
                     "test" -> {
+                        val userData = getUserData(sender.id)
 
+                        sender.requireCookie { return@Listener }
 
+                        GenshinBBSApi.getDailyNote(userData.genshinUID, userData.data.cookies, userData.data.uuid)
+                            .also {
+                                subject.sendMessage(it.toString())
+                            }
                     }
                 }
             }
@@ -117,7 +120,7 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
                 }
 
                 val response = runCatching {
-                    val roles = BBSApi.getRolesByCookie(cookies, BBSData.GameBiz.HK4E_CN)
+                    val roles = BBSApi.getRolesByCookie(cookies, GameRole.GameBiz.HK4E_CN)
 
                     if (roles.isEmpty()) {
                         subject.sendMessage("没有找到绑定的角色!")
@@ -172,17 +175,22 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
         }
 
         globalEventChannel().subscribeMessages {
-            "原神签到" Sign@{
-                val userData = requireCookie { return@Sign }
+            finding(Regex("""原神(.+)""")) Fun@{ result ->
+                when (result.groupValues[1]) {
+                    "签到" -> {
+                        val userData = sender.requireCookie { return@Fun }
 
-                kotlin.runCatching {
-                    userData.signGenshin()
-                }.onSuccess {
-                    subject.sendMessage("旅行者: ${userData.genshinUID}签到成功")
-                }.onFailure {
-                    subject.sendMessage("签到失败: ${it.message}")
+                        kotlin.runCatching {
+                            userData.signGenshin().also {
+                                subject.sendMessage(it.toString())
+                            }
+                        }.onSuccess {
+                            subject.sendMessage("旅行者: ${userData.genshinUID}签到成功")
+                        }.onFailure {
+                            subject.sendMessage("签到失败: ${it.message}")
+                        }
+                    }
                 }
-
             }
         }
     }
@@ -194,7 +202,8 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
         CactusData.reload()
         dataFolder.mkdirs()
         gachaDataFolder.mkdir()
-        characterDataFolder.mkdir()
+        avatarDataFolder.mkdir()
+        cacheFolder.mkdir()
     }
 
 }

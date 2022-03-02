@@ -85,8 +85,6 @@ data class AvatarDescription(
     override fun toString(): String = Json.encodeToString(serializer(), this)
 }
 
-@Serializable
-@Suppress("unused")
 enum class AvatarElement {
     /**
      * 火
