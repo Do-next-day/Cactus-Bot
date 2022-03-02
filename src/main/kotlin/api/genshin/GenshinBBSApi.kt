@@ -108,17 +108,19 @@ object GenshinBBSApi {
         cookies: String,
         uuid: String = randomUUID
     ): Response {
+        val appVersion = "2.10.2"
         val response = postBBS(
             url = SIGN_API,
             cookies,
-            uuid
+            uuid,
+            header = {
+                set("x-rpc-app_version", appVersion)
+                set("DS", getSignDS())
+                set(HttpHeaders.Referrer, SIGN_REFERRER)
+            },
         ) {
-            val appVersion = "2.10.2"
             userAgent("Mozilla/5.0 (iPhone; CPU iPhone OS 14_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/$appVersion")
             contentType(ContentType.Application.Json)
-            headers["x-rpc-app_version"] = appVersion
-            headers["DS"] = getSignDS()
-            headers[HttpHeaders.Referrer] = SIGN_REFERRER
             body = buildJsonObject {
                 put("act_id", GENSHIN_SIGN)
                 put("region", region.toString())

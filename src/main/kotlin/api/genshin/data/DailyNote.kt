@@ -5,8 +5,21 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class DailyNote(
+    /**
+     * 当前树脂
+     */
     @SerialName("current_resin") val currentResin: Short,
+
+
+    /**
+     * 最大树脂
+     */
     @SerialName("max_resin") val maxResin: Short,
+
+
+    /**
+     * 树脂恢复完毕时间
+     */
     @SerialName("resin_recovery_time") val resinRecoveryTime: Long,
     @SerialName("finished_task_num") val finishedTask: Short,
     @SerialName("total_task_num") val totalTask: Short,
@@ -28,7 +41,15 @@ data class DailyNote(
         @SerialName("remained_time") val remaining: Long
     ) {
         enum class Status {
+            /**
+             * 已完成
+             */
             Finished,
+
+            /**
+             * 派遣中
+             */
+            Ongoing
         }
     }
 }

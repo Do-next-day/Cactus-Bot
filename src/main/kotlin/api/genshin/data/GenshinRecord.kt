@@ -58,32 +58,32 @@ data class GenshinRecord(
         /**
          * 风神瞳
          * */
-        @SerialName("anemoculus_number") val totalAnemoculus: Int,
+        @SerialName("anemoculus_number") val totalAnemoculus: Short,
 
         /**
          * 岩神瞳
          * */
-        @SerialName("geoculus_number") val totalGeoculus: Int,
+        @SerialName("geoculus_number") val totalGeoculus: Short,
 
         /**
          * 雷神瞳
          * */
-        @SerialName("electroculus_number") val totalElectroculus: Int,
+        @SerialName("electroculus_number") val totalElectroculus: Short,
 
         /**
          * 获得角色数量
          * */
-        @SerialName("avatar_number") val totalAvatars: Int,
+        @SerialName("avatar_number") val totalAvatars: Short,
 
         /**
          * 解锁的传送点数量
          * */
-        @SerialName("way_point_number") val unlockedPoints: Int,
+        @SerialName("way_point_number") val unlockedPoints: Short,
 
         /**
          * 解锁的秘境数量
          * */
-        @SerialName("domain_number") val totalDomains: Int,
+        @SerialName("domain_number") val totalDomains: Short,
 
         /**
          * 深渊层数
@@ -141,18 +141,18 @@ data class GenshinRecord(
         /**
          * 好感度
          * */
-        val fetter: Int,
+        val fetter: Short,
 
 
         /**
          * 等级
          * */
-        val level: Int,
+        val level: Short,
 
         /**
          * 稀有度 (星级)
          * */
-        val rarity: Int,
+        val rarity: Short,
 
 
         /**
@@ -180,12 +180,12 @@ data class GenshinRecord(
              * 声望等级或供奉等级, 由type决定
              * @see RegionType
              * */
-            val level: Int,
+            val level: Short,
 
             /**
              * 探索度
              * */
-            @SerialName("exploration_percentage") val explorationPercentage: Int,
+            @SerialName("exploration_percentage") val explorationPercentage: Short,
 
             /**
              * 图片链接
@@ -210,7 +210,7 @@ data class GenshinRecord(
             /**
              * 地区ID, 或许是按照时间顺序
              * */
-            val id: Int,
+            val id: Short,
         )
 
         @Serializable
@@ -218,7 +218,7 @@ data class GenshinRecord(
             /**
              * 信任等阶
              * */
-            val level: Int,
+            val level: Short,
 
             /**
              * 访客数量
@@ -270,7 +270,7 @@ data class GenshinRecord(
             /**
              * 供奉等级
              * */
-            val level: Int,
+            val level: Short,
         )
 
         enum class RegionType {

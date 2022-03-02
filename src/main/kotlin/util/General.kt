@@ -83,3 +83,5 @@ suspend inline fun <reified T : MiraiUser> T.requireCookie(lazy: () -> Unit = {}
     }
     return userData
 }
+
+val currentTimeMillis get() = System.currentTimeMillis()

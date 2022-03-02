@@ -5,11 +5,11 @@ import io.ktor.client.engine.okhttp.*
 import io.ktor.client.request.*
 import io.ktor.client.utils.*
 import io.ktor.http.*
-import io.ktor.util.date.*
 import net.mamoe.mirai.utils.error
 import org.laolittle.plugin.genshin.CactusBot
 import org.laolittle.plugin.genshin.CactusData
 import org.laolittle.plugin.genshin.util.Json
+import org.laolittle.plugin.genshin.util.currentTimeMillis
 import org.laolittle.plugin.genshin.util.randomUUID
 import java.security.MessageDigest
 import java.util.concurrent.TimeUnit
@@ -42,7 +42,7 @@ suspend fun getAppVersion(flush: Boolean = false): String? = runCatching {
 private const val API_SALT = "xV8v4Qu54lUKrEYFZkJhB8cuOh9Asafs"
 private const val SIGN_SALT = "4a8knnbk5pbjqsrudp3dq484m9axoc5g"
 internal fun getNormalDS(url: String, body: String): String {
-    val time = getTimeMillis() / 1000
+    val time = currentTimeMillis / 1000
     val random = getRandomString(6)
     val urlParts = url.split("?")
     val query = if (urlParts.size == 2) urlParts[1] else ""
@@ -52,7 +52,7 @@ internal fun getNormalDS(url: String, body: String): String {
 
 // allow: app version 2.10.x
 internal fun getSignDS(): String {
-    val time = getTimeMillis() / 1000
+    val time = currentTimeMillis / 1000
     val random = getRandomString(6)
     val check = md5("salt=${SIGN_SALT}&t=${time}&r=${random}")
     return "${time},${random},${check}"
@@ -98,10 +98,12 @@ internal suspend inline fun postBBS(
     url: String,
     cookies: String = CactusData.cookies,
     uuid: String = randomUUID,
+    header: HeadersBuilder.() -> Any = {},
     block: HttpRequestBuilder.() -> Unit = {}
 ) = Json.decodeFromString(Response.serializer(), client.post(url) {
-    setHeaders(url, if (body !== EmptyContent) this.body.toString() else "", cookies, uuid)
     block()
+    setHeaders(url, if (this.body !== EmptyContent) this.body.toString() else "", cookies, uuid)
+    headers.header()
 })
 
 internal fun HttpRequestBuilder.setHeaders(

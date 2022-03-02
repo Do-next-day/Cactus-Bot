@@ -15,7 +15,7 @@ object GenshinGachaCache : CactusTimerService(
         delay(aDay)
     }
 
-    private suspend fun cacheGachaServer(server: GenshinBBSApi.GenshinServer){
+    private suspend fun cacheGachaServer(server: GenshinBBSApi.GenshinServer) {
         Json.encodeToString(
             Json.serializersModule.serializer(), GenshinBBSApi.getGachaInfo(
                 server = server,

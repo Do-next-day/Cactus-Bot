@@ -2,6 +2,8 @@ package org.laolittle.plugin.genshin
 
 import io.ktor.client.request.*
 import kotlinx.coroutines.launch
+import kotlinx.datetime.atTime
+import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.serialization.SerializationException
 import net.mamoe.mirai.console.plugin.description.PluginDependency
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
@@ -29,8 +31,11 @@ import org.laolittle.plugin.genshin.database.cactusSuspendedTransaction
 import org.laolittle.plugin.genshin.database.getUserData
 import org.laolittle.plugin.genshin.model.GachaSimulator.gachaCharacter
 import org.laolittle.plugin.genshin.model.GachaSimulator.renderGachaImage
+import org.laolittle.plugin.genshin.service.GenshinGachaCache
+import org.laolittle.plugin.genshin.service.GenshinSignProver
 import org.laolittle.plugin.genshin.util.*
 import org.laolittle.plugin.toExternalResource
+import java.time.LocalDate as JLocalDate
 
 object CactusBot : KotlinPlugin(JvmPluginDescription(
     id = "org.laolittle.plugin.CactusBot",
@@ -45,10 +50,11 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
     private val users = mutableSetOf<Long>()
     override fun onEnable() {
         init()
-        logger.info { "Plugin loaded" }
+
+        logger.info { "Cactus-Bot loaded" }
 
         globalEventChannel().subscribeGroupMessages {
-            (startsWith("原神") or startsWith("派蒙")) Listener@{ foo ->
+            (startsWith("原神") or startsWith(CactusConfig.botName)) Listener@{ foo ->
                 val result = Regex("""(人物|十连|单抽|查询|test)(.*)""").find(foo)?.groupValues
                 when (result?.get(1)) {
                     "十连" -> {
@@ -119,7 +125,7 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
                     return@Login
                 }
 
-                val response = runCatching {
+                val gameRole = runCatching {
                     val roles = BBSApi.getRolesByCookie(cookies, GameRole.GameBiz.HK4E_CN)
 
                     if (roles.isEmpty()) {
@@ -132,9 +138,7 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
                         val userData = getUserData(subject.id)
                         val data = userData.data
                         // roles not empty
-                        if (roles.size == 1) {
-                            data.cookies = cookies
-                        } else {
+                        if (roles.size != 1) {
                             subject.sendMessage(buildMessageChain {
                                 add("查询到以下信息: \n")
                                 roles.forEach { r ->
@@ -142,9 +146,10 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
                                 }
                                 add("请发送uid进行绑定")
                             })
-                            nextMessageOrNull(30_000) { e ->
+                            nextMessageOrNull(60_000) { e ->
                                 val uid = e.message.content.toLongOrNull() ?: return@nextMessageOrNull false
                                 role = roles.firstOrNull { r -> r.gameUID == uid } ?: kotlin.run {
+                                    subject.sendMessage("请确认你输入了正确的uid")
                                     return@nextMessageOrNull false
                                 }
                                 true
@@ -152,10 +157,8 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
                                 subject.sendMessage("超时")
                                 return@cactusSuspendedTransaction null
                             }
-
-                            data.cookies = cookies
                         }
-
+                        data.cookies = cookies
                         userData.genshinUID = role.gameUID
                         userData.data = data
                     } ?: return@Login
@@ -167,27 +170,49 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
 
                 subject.sendMessage(
                     """
-                    旅行者${response.nickname}登录成功!
-                    你的UID: ${response.gameUID}
+                    旅行者${gameRole.nickname}登录成功!
+                    你的UID: ${gameRole.gameUID}
                 """.trimIndent()
                 )
             }
         }
 
         globalEventChannel().subscribeMessages {
-            finding(Regex("""原神(.+)""")) Fun@{ result ->
+            finding(Regex("""(?:原神|${CactusConfig.botName})(.+)""")) Fun@{ result ->
                 when (result.groupValues[1]) {
                     "签到" -> {
                         val userData = sender.requireCookie { return@Fun }
 
                         kotlin.runCatching {
-                            userData.signGenshin().also {
-                                subject.sendMessage(it.toString())
-                            }
+                            userData.signGenshin()
                         }.onSuccess {
                             subject.sendMessage("旅行者: ${userData.genshinUID}签到成功")
                         }.onFailure {
                             subject.sendMessage("签到失败: ${it.message}")
+                        }
+                    }
+                    "便笺" -> {
+                        val userData = sender.requireCookie { return@Fun }
+
+                        val dailyNote = kotlin.runCatching {
+                            userData.getDailyNote()
+                        }.getOrElse {
+                            subject.sendMessage("获取失败, 原因: ${it.message}")
+                            return@Fun
+                        }
+
+                        with(dailyNote) {
+                            subject.sendMessage(
+                                """
+                            旅行者: ${userData.genshinUID}
+                            体力: $currentResin / $maxResin
+                            (__恢复时间: $resinRecoveryTime)
+                            每日委托: $finishedTask / $totalTask
+                            周本奖励折扣剩余次数: $resinDiscountRemain / $resinDiscountLimit
+                            派遣任务: $currentExpedition / $maxExpedition
+                            日历链接: $calendarUrl
+                        """.trimIndent()
+                            )
                         }
                     }
                 }
@@ -204,6 +229,13 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
         gachaDataFolder.mkdir()
         avatarDataFolder.mkdir()
         cacheFolder.mkdir()
+
+        // Services
+        val nowDay = JLocalDate.now()
+        val date = JLocalDate.ofYearDay(nowDay.year, nowDay.dayOfYear + 1).toKotlinLocalDate()
+        GenshinGachaCache.startAt(date.atTime(4, 15))
+        if (CactusConfig.autoSign)
+            GenshinSignProver.startAt(date)
     }
 
 }

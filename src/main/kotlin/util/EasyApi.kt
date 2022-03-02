@@ -5,3 +5,5 @@ import org.laolittle.plugin.genshin.database.User
 
 suspend fun User.signGenshin() =
     GenshinBBSApi.signGenshin(genshinUID, GenshinBBSApi.getServerFromUID(genshinUID), data.cookies, data.uuid)
+
+suspend fun User.getDailyNote() = GenshinBBSApi.getDailyNote(genshinUID, data.cookies, data.uuid)
