@@ -7,7 +7,7 @@ import org.laolittle.plugin.genshin.CactusBot
 import org.laolittle.plugin.genshin.util.currentTimeMillis
 import kotlin.coroutines.CoroutineContext
 
-abstract class CactusService(
+abstract class AbstractCactusService(
     private val ctx: CoroutineContext? = null,
     private val type: Type = Type.Job,
 ) : CoroutineScope, CompletableJob by SupervisorJob(CactusBot.coroutineContext.job) {

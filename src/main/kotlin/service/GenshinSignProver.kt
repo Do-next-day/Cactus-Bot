@@ -12,7 +12,7 @@ import org.laolittle.plugin.genshin.database.cactusSuspendedTransaction
 import org.laolittle.plugin.genshin.util.signGenshin
 import kotlin.random.Random
 
-object GenshinSignProver : CactusTimerService(
+object GenshinSignProver : AbstractCactusTimerService(
     serviceName = "GenshinSign"
 ) {
     private val logger get() = CactusBot.logger

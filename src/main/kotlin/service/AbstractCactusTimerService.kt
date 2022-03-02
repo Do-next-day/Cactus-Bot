@@ -12,9 +12,9 @@ import org.laolittle.plugin.genshin.CactusBot
 import org.laolittle.plugin.genshin.util.currentTimeMillis
 import kotlin.coroutines.CoroutineContext
 
-abstract class CactusTimerService(
+abstract class AbstractCactusTimerService(
     ctx: CoroutineContext? = null,
-) : CactusService(ctx, Type.Task) {
+) : AbstractCactusService(ctx, Type.Task) {
     constructor(
         ctx: CoroutineContext? = null,
         serviceName: String

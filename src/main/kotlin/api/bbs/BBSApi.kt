@@ -7,6 +7,7 @@ import org.laolittle.plugin.genshin.api.TAKUMI_API
 import org.laolittle.plugin.genshin.api.bbs.data.GameRole
 import org.laolittle.plugin.genshin.api.internal.getBBS
 import org.laolittle.plugin.genshin.util.Json
+import org.laolittle.plugin.genshin.util.decode
 
 object BBSApi {
     private const val USER_FULL_INFO = "$BBS_API_BASE/user/wapi/getUserFullInfo"
@@ -26,6 +27,6 @@ object BBSApi {
             url = "${ROLE_URL}?game_biz=$type",
             cookies = cookies
         )
-        return Json.decodeFromJsonElement(response.getOrThrow().data["list"]!!)
+        return response.getOrThrow().data["list"]!!.decode()
     }
 }
