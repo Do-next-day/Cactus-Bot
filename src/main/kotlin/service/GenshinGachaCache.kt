@@ -6,24 +6,23 @@ import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi
 import org.laolittle.plugin.genshin.util.Json
 import org.laolittle.plugin.genshin.util.cacheFolder
 
-object GenshinGachaCache : CactusService(type = Type.Task) {
+object GenshinGachaCache : CactusTimerService(
+    serviceName = "GachaCache"
+) {
     override suspend fun main() {
-        while (isActive) {
-            val cache: suspend (GenshinBBSApi.GenshinServer) -> Unit = { s ->
-                Json.encodeToString(
-                    Json.serializersModule.serializer(), GenshinBBSApi.getGachaInfo(
-                        server = s,
-                        useCache = false
-                    )
-                ).also {
-                    cacheFolder.resolve("gacha_info_$s.json").writeText(it)
-                }
-            }
+        cacheGachaServer(GenshinBBSApi.GenshinServer.CN_GF01)
+        cacheGachaServer(GenshinBBSApi.GenshinServer.CN_QD01)
+        delay(aDay)
+    }
 
-            cache(GenshinBBSApi.GenshinServer.CN_GF01)
-            cache(GenshinBBSApi.GenshinServer.CN_QD01)
-
-            delay(aDay)
+    private suspend fun cacheGachaServer(server: GenshinBBSApi.GenshinServer){
+        Json.encodeToString(
+            Json.serializersModule.serializer(), GenshinBBSApi.getGachaInfo(
+                server = server,
+                useCache = false
+            )
+        ).also {
+            cacheFolder.resolve("gacha_info_$server.json").writeText(it)
         }
     }
 }
