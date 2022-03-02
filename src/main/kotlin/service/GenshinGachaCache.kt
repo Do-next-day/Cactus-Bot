@@ -11,7 +11,6 @@ object GenshinGachaCache : CactusTimerService(
 ) {
     override suspend fun main() {
         cacheGachaServer(GenshinBBSApi.GenshinServer.CN_GF01)
-        cacheGachaServer(GenshinBBSApi.GenshinServer.CN_QD01)
         delay(aDay)
     }
 

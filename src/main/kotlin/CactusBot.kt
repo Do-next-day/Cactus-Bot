@@ -39,12 +39,12 @@ import java.time.LocalDate as JLocalDate
 
 object CactusBot : KotlinPlugin(JvmPluginDescription(
     id = "org.laolittle.plugin.CactusBot",
-    name = "Genshin-Helper",
+    name = "Cactus-Bot",
     version = "1.0",
 ) {
     author("LaoLittle")
     dependsOn(
-        PluginDependency("org.laolittle.plugin.SkikoMirai", ">=1.0.2")
+        PluginDependency("org.laolittle.plugin.SkikoMirai", ">=1.0.2", true)
     )
 }) {
     private val users = mutableSetOf<Long>()
@@ -233,7 +233,7 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
         // Services
         val nowDay = JLocalDate.now()
         val date = JLocalDate.ofYearDay(nowDay.year, nowDay.dayOfYear + 1).toKotlinLocalDate()
-        GenshinGachaCache.startAt(date.atTime(4, 15))
+        GenshinGachaCache.startOnce(date.atTime(4, 15))
         if (CactusConfig.autoSign)
             GenshinSignProver.startAt(date)
     }

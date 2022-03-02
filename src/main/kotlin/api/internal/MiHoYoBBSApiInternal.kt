@@ -37,7 +37,7 @@ suspend fun getAppVersion(flush: Boolean = false): String? = runCatching {
             if (flush) LAB_APP_VER = ver
         }
     }
-}.onFailure { logger.error { "更新米游社App版本信息失败!" } }.getOrNull()
+}.onFailure { logger.error { "更新米游社App版本信息失败! $it" } }.getOrNull()
 
 private const val API_SALT = "xV8v4Qu54lUKrEYFZkJhB8cuOh9Asafs"
 private const val SIGN_SALT = "4a8knnbk5pbjqsrudp3dq484m9axoc5g"

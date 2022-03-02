@@ -37,7 +37,7 @@ abstract class CactusTimerService(
         } else false
     }
 
-    override fun startAt(time: LocalDateTime) {
+    fun startOnce(time: LocalDateTime) {
         launch {
             val remain = time.toInstant(TimeZone.of("+8")).toEpochMilliseconds() - currentTimeMillis
             if (remain > 0)

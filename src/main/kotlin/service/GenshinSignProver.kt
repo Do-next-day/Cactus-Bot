@@ -6,6 +6,7 @@ import net.mamoe.mirai.contact.Friend
 import org.laolittle.plugin.genshin.CactusData
 import org.laolittle.plugin.genshin.database.User
 import org.laolittle.plugin.genshin.database.Users
+import org.laolittle.plugin.genshin.database.cactusSuspendedTransaction
 import org.laolittle.plugin.genshin.util.signGenshin
 import kotlin.random.Random
 
@@ -13,8 +14,9 @@ object GenshinSignProver : CactusTimerService(
     serviceName = "GenshinSign"
 ) {
     override suspend fun main() {
-        User.find { Users.id inList CactusData.autoSign }
-            .forEach { userData ->
+        cactusSuspendedTransaction {
+            User.find { Users.id inList CactusData.autoSign }
+        }.forEach { userData ->
                 delay(3_000)
                 var friend: Friend? = null
                 for (bot in Bot.instances) {
