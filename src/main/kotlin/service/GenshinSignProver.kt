@@ -3,6 +3,8 @@ package org.laolittle.plugin.genshin.service
 import kotlinx.coroutines.delay
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.contact.Friend
+import net.mamoe.mirai.utils.verbose
+import org.laolittle.plugin.genshin.CactusBot
 import org.laolittle.plugin.genshin.CactusData
 import org.laolittle.plugin.genshin.database.User
 import org.laolittle.plugin.genshin.database.Users
@@ -13,6 +15,7 @@ import kotlin.random.Random
 object GenshinSignProver : CactusTimerService(
     serviceName = "GenshinSign"
 ) {
+    private val logger get() = CactusBot.logger
     override suspend fun main() {
         cactusSuspendedTransaction {
             User.find { Users.id inList CactusData.autoSign }
@@ -24,6 +27,7 @@ object GenshinSignProver : CactusTimerService(
                     break
                 }
                 if (userData.data.cookies.isNotBlank()) {
+                    logger.verbose { "开始执行用户${userData.id.value} (${userData.genshinUID})的签到" }
                     runCatching {
                         userData.signGenshin()
                     }.onSuccess {
@@ -37,6 +41,6 @@ object GenshinSignProver : CactusTimerService(
                 delay(Random.nextLong(10_000, 30_000))
             }
 
-        delay((aDay shr 1) + Random.nextLong(aDay shr 1))
+        delay(aDay + Random.nextLong(aDay shr 4))
     }
 }
