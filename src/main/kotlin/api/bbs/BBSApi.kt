@@ -4,6 +4,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
 import org.laolittle.plugin.genshin.api.BBS_API_BASE
 import org.laolittle.plugin.genshin.api.TAKUMI_API
+import org.laolittle.plugin.genshin.api.bbs.data.GameRole
 import org.laolittle.plugin.genshin.api.internal.getBBS
 import org.laolittle.plugin.genshin.util.Json
 
@@ -20,7 +21,7 @@ object BBSApi {
         else throw response.cause
     }
 
-    suspend fun getRolesByCookie(cookies: String, type: BBSData.GameBiz): List<BBSData.GameRole> {
+    suspend fun getRolesByCookie(cookies: String, type: GameRole.GameBiz): List<GameRole> {
         val response = getBBS(
             url = "${ROLE_URL}?game_biz=$type",
             cookies = cookies

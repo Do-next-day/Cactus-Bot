@@ -1,43 +1,40 @@
-package org.laolittle.plugin.genshin.api.genshin
+package org.laolittle.plugin.genshin.api.genshin.data
 
-import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonArray
 import org.laolittle.plugin.genshin.database.AvatarElement
 
-object GenshinData {
-    @Serializable
-    data class GenshinRecordResponse(
-        // ？
-        val role: String?,
+@Serializable
+data class GenshinRecord(
+    // ？
+    val role: String?,
 
-        /**
-         * 角色列表
-         * */
-        val avatars: List<GenshiAvatarInfo>,
+    /**
+     * 角色列表
+     * */
+    val avatars: List<GenshiAvatarInfo>,
 
-        /**
-         * 玩家状态
-         * */
-        val stats: PlayerStats,
+    /**
+     * 玩家状态
+     * */
+    val stats: PlayerStats,
 
-        /**
-         * 城市探索度
-         * */
-        @SerialName("city_explorations") val cityExplorations: JsonArray, // TODO: 2022/2/27 need city data
+    /**
+     * 城市探索度
+     * */
+    @SerialName("city_explorations") val cityExplorations: JsonArray, // TODO: 2022/2/27 need city data
 
-        /**
-         * 世界探索度
-         * */
-        @SerialName("world_explorations") val worldExplorations: List<WorldInfo.WorldExploration>,
+    /**
+     * 世界探索度
+     * */
+    @SerialName("world_explorations") val worldExplorations: List<WorldInfo.WorldExploration>,
 
-        /**
-         * 家园
-         * */
-        val homes: List<WorldInfo.Home>
-    )
-
+    /**
+     * 家园
+     * */
+    val homes: List<WorldInfo.Home>
+) {
     /**
      * 玩家信息
      * */
@@ -288,38 +285,4 @@ object GenshinData {
             Offering,
         }
     }
-
-    @Serializable
-    data class GachaInfo(
-        @SerialName("begin_time") val originBeginTime: String,
-        @SerialName("end_time") val originEndTime: String,
-        @SerialName("gacha_id") val gachaId: String,
-        @SerialName("gacha_name") val gachaName: String,
-        @SerialName("gacha_type") val gachaType: Int,
-    ) {
-        val beginTime get() = originBeginTime.parseToLocalDateTime()
-        val endTime get() = originEndTime.parseToLocalDateTime()
-
-        private fun String.parseToLocalDateTime(): LocalDateTime {
-            val datePart = split(" ")
-
-            require(datePart.size == 2) { "Unexpected date: $this" }
-            val date = datePart[0].split("-")
-            val time = datePart[1].split(":")
-            return LocalDateTime(
-                date[0].toInt(),
-                date[1].toInt(),
-                date[2].toInt(),
-                time[0].toInt(),
-                time[1].toInt(),
-                time[2].toInt(),
-            )
-        }
-    }
-
-    @Serializable
-    data class GachaDetail(
-        val banner: String,
-        val content: String,
-    )
 }
