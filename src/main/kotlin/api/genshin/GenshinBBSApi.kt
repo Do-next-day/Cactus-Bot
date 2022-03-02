@@ -3,7 +3,6 @@ package org.laolittle.plugin.genshin.api.genshin
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.put
 import kotlinx.serialization.serializer
 import org.laolittle.plugin.genshin.CactusData
@@ -12,31 +11,41 @@ import org.laolittle.plugin.genshin.api.TAKUMI_API
 import org.laolittle.plugin.genshin.api.WEB_STATIC
 import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi.GenshinServer.CN_GF01
 import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi.GenshinServer.CN_QD01
-import org.laolittle.plugin.genshin.api.genshin.GenshinData.GenshinRecordResponse
+import org.laolittle.plugin.genshin.api.genshin.data.DailyNote
+import org.laolittle.plugin.genshin.api.genshin.data.GachaDetail
+import org.laolittle.plugin.genshin.api.genshin.data.GachaInfo
+import org.laolittle.plugin.genshin.api.genshin.data.GenshinRecord
 import org.laolittle.plugin.genshin.api.internal.*
 import org.laolittle.plugin.genshin.util.Json
 import org.laolittle.plugin.genshin.util.cacheFolder
+import org.laolittle.plugin.genshin.util.decode
 import org.laolittle.plugin.genshin.util.randomUUID
 
 object GenshinBBSApi {
+    /**
+     * ```
+     * ?role_id=&server=
+     * ```
+     *
+     * [GENSHIN_GAME_RECORD]
+     */
+
     private const val GENSHIN_GAME_RECORD = "$TAKUMI_API/game_record/app/genshin/api"
-    private const val SIGN_URL = "$TAKUMI_API/event/bbs_sign_reward/sign"
+    private const val SIGN_API = "$TAKUMI_API/event/bbs_sign_reward/sign"
     private const val GACHA_INFO = "$WEB_STATIC/hk4e/gacha_info"
 
     suspend fun getPlayerInfo(
         uid: Long,
         cookies: String = CactusData.cookies,
         uuid: String = randomUUID
-    ): GenshinRecordResponse {
+    ): GenshinRecord {
         val response = getBBS(
             url = "$GENSHIN_GAME_RECORD/index?role_id=$uid&server=${getServerFromUID(uid)}",
             cookies = cookies,
             uuid = uuid
         )
 
-        return Json.decodeFromJsonElement(
-            GenshinRecordResponse.serializer(), response.getOrThrow().data
-        )
+        return response.getOrThrow().data.decode()
     }
 
     suspend fun getGachaInfo(
@@ -44,16 +53,28 @@ object GenshinBBSApi {
         cookies: String = "",
         uuid: String = randomUUID,
         useCache: Boolean = true
-    ): List<GenshinData.GachaInfo> {
+    ): List<GachaInfo> {
         val cacheFile = cacheFolder.resolve("gacha_info_$server.json")
         if (useCache && cacheFile.isFile)
             return Json.decodeFromString(Json.serializersModule.serializer(), cacheFile.readText())
 
-        val url = "$GACHA_INFO/$server/gacha/list.json"
+        val response = getBBS("$GACHA_INFO/$server/gacha/list.json", cookies, uuid)
 
-        val response = getBBS(url, cookies, uuid)
+        return response.getOrThrow().data["list"]!!.decode()
+    }
 
-        return Json.decodeFromJsonElement(response.getOrThrow().data["list"]!!)
+    suspend fun getDailyNote(
+        uid: Long,
+        cookies: String,
+        uuid: String = randomUUID
+    ): DailyNote {
+        val response = getBBS(
+            url = "$GENSHIN_GAME_RECORD/dailyNote?role_id=$uid&server=${getServerFromUID(uid)}",
+            cookies,
+            uuid
+        )
+
+        return response.getOrThrow().data.decode()
     }
 
     /**
@@ -66,14 +87,14 @@ object GenshinBBSApi {
         uuid: String = randomUUID,
         gachaId: String,
         useCache: Boolean = true
-    ): GenshinData.GachaDetail { // todo: 解析
+    ): GachaDetail { // todo: 解析
         val cacheFile = cacheFolder.resolve("gacha_info_${server}_$gachaId.json")
         if (useCache && cacheFile.isFile)
-            return Json.decodeFromString(GenshinData.GachaDetail.serializer(), cacheFile.readText())
+            return Json.decodeFromString(GachaDetail.serializer(), cacheFile.readText())
 
         val url = "$GACHA_INFO/$server/$gachaId/zh-cn.json"
 
-        return Json.decodeFromString(GenshinData.GachaDetail.serializer(), client.get(url) {
+        return Json.decodeFromString(GachaDetail.serializer(), client.get(url) {
             setHeaders(url, "", cookies, uuid)
         })
     }
@@ -88,7 +109,7 @@ object GenshinBBSApi {
         uuid: String = randomUUID
     ): Response {
         val response = postBBS(
-            url = SIGN_URL,
+            url = SIGN_API,
             cookies,
             uuid
         ) {
