@@ -9,9 +9,9 @@ import org.laolittle.plugin.genshin.database.Users
 import org.laolittle.plugin.genshin.util.signGenshin
 import kotlin.random.Random
 
-object GenshinSignProver : CactusService() {
+object GenshinSignProver : CactusService(type = Type.Task) {
     override suspend fun main() {
-        while (true) {
+        while (isActive) {
             User.find { Users.id inList CactusData.autoSign }
                 .forEach { userData ->
                     delay(3_000)
@@ -22,7 +22,7 @@ object GenshinSignProver : CactusService() {
                     }
                     if (userData.data.cookies.isNotBlank()) {
                         runCatching {
-                            userData.signGenshin().getOrThrow()
+                            userData.signGenshin()
                         }.onSuccess {
                             friend?.sendMessage("旅行者${userData.genshinUID}签到成功！")
                         }.getOrElse { e ->

@@ -25,7 +25,6 @@ object BBSApi {
             url = "${ROLE_URL}?game_biz=$type",
             cookies = cookies
         )
-        return if (response.isSuccess) Json.decodeFromJsonElement(response.data["list"]!!)
-        else throw response.cause
+        return Json.decodeFromJsonElement(response.getOrThrow().data["list"]!!)
     }
 }

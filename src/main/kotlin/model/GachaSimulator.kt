@@ -98,12 +98,12 @@ object GachaSimulator {
 
                         val offset = 1400F
 
+                        avatars.forEach {
+                            foo.add(PluginDispatcher.async {
+                                it.getCard()
+                            })
+                        }
                         PluginDispatcher.runBlocking {
-                            avatars.forEach {
-                                foo.add(async {
-                                    it.getCard()
-                                })
-                            }
                             for (i in avatars.size - 1 downTo 0) {
                                 val times = (avatars.size - 1 - i) * 145
                                 drawImageRect(

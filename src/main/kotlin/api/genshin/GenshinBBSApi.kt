@@ -8,7 +8,6 @@ import kotlinx.serialization.json.put
 import kotlinx.serialization.serializer
 import org.laolittle.plugin.genshin.CactusData
 import org.laolittle.plugin.genshin.api.Action.GENSHIN_SIGN
-import org.laolittle.plugin.genshin.api.ApiAccessDeniedException
 import org.laolittle.plugin.genshin.api.TAKUMI_API
 import org.laolittle.plugin.genshin.api.WEB_STATIC
 import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi.GenshinServer.CN_GF01
@@ -23,7 +22,6 @@ object GenshinBBSApi {
     private const val GENSHIN_GAME_RECORD = "$TAKUMI_API/game_record/app/genshin/api"
     private const val SIGN_URL = "$TAKUMI_API/event/bbs_sign_reward/sign"
     private const val GACHA_INFO = "$WEB_STATIC/hk4e/gacha_info"
-    const val GACHA_DETAIL = "$WEB_STATIC/hk4e/gacha_info/cn_gf01/$/zh-cn.json"
 
     suspend fun getPlayerInfo(
         uid: Long,
@@ -107,8 +105,7 @@ object GenshinBBSApi {
             }.toString()
         }
 
-        return if (response.isSuccess) response
-        else throw ApiAccessDeniedException(response.message)
+        return response.getOrThrow()
     }
 
     suspend fun getGameRecordCard(): String {

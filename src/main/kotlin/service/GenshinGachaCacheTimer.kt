@@ -6,9 +6,9 @@ import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi
 import org.laolittle.plugin.genshin.util.Json
 import org.laolittle.plugin.genshin.util.cacheFolder
 
-object GenshinGachaCacheTimer : CactusService() {
+object GenshinGachaCacheTimer : CactusService(type = Type.Task) {
     override suspend fun main() {
-        while (true) {
+        while (isActive) {
             val cache: suspend (GenshinBBSApi.GenshinServer) -> Unit = { s ->
                 Json.encodeToString(
                     Json.serializersModule.serializer(), GenshinBBSApi.getGachaInfo(
