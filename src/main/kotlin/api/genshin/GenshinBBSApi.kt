@@ -2,6 +2,8 @@ package org.laolittle.plugin.genshin.api.genshin
 
 import io.ktor.client.request.*
 import io.ktor.http.*
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kotlinx.serialization.serializer
@@ -142,16 +144,19 @@ object GenshinBBSApi {
     fun getServerFromUID(uid: Long) = if (uid < 500000000) CN_GF01
     else CN_QD01
 
+    @Serializable
     enum class GenshinServer {
         /**
          * 官服
          * */
+        @SerialName("cn_gf01")
         CN_GF01,
 
 
         /**
          * 渠道服
          * */
+        @SerialName("cn_qd01")
         CN_QD01;
 
         override fun toString(): String = name.lowercase()

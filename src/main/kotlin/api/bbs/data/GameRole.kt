@@ -6,8 +6,8 @@ import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi.GenshinServer
 
 @Serializable
 data class GameRole(
-    @SerialName("game_biz") private val originGameBiz: String,
-    @SerialName("region") private val originRegion: String,
+    @SerialName("game_biz") val gameBiz: GameBiz,
+    val region: GenshinServer,
     @SerialName("game_uid") val gameUID: Long,
     val nickname: String,
     val level: Int,
@@ -15,26 +15,15 @@ data class GameRole(
     @SerialName("region_name") val regionName: String,
     @SerialName("is_official") val isOfficial: Boolean
 ) {
-    val region
-        get() = when (originRegion) {
-            "cn_gf01" -> GenshinServer.CN_GF01
-            "cn_qd01" -> GenshinServer.CN_QD01
-            else -> throw IllegalStateException("未知 $originRegion")
-        }
-
-    val gameBiz
-        get() = when (originGameBiz) {
-            "hk4e_cn" -> GameBiz.HK4E_CN
-            else -> throw IllegalStateException("未知 $originGameBiz")
-        }
-
     /**
      *
      */
+    @Serializable
     enum class GameBiz {
         /**
          * 原神
          */
+        @SerialName("hk4e_cn")
         HK4E_CN;
 
         override fun toString() = name.lowercase()

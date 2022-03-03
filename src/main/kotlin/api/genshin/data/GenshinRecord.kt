@@ -28,12 +28,12 @@ data class GenshinRecord(
     /**
      * 世界探索度
      * */
-    @SerialName("world_explorations") val worldExplorations: List<WorldInfo.WorldExploration>,
+    @SerialName("world_explorations") val worldExplorations: List<WorldExploration>,
 
     /**
      * 家园
      * */
-    val homes: List<WorldInfo.Home>
+    val homes: List<Home>
 ) {
     /**
      * 玩家信息
@@ -170,119 +170,117 @@ data class GenshinRecord(
         @SerialName("is_chosen") val isChosen: Boolean
     )
 
-    object WorldInfo {
-        @Serializable
-        class City
+    @Serializable
+    class City
 
-        @Serializable
-        data class WorldExploration(
-            /**
-             * 声望等级或供奉等级, 由type决定
-             * @see RegionType
-             * */
-            val level: Short,
-
-            /**
-             * 探索度
-             * */
-            @SerialName("exploration_percentage") val explorationPercentage: Short,
-
-            /**
-             * 图片链接
-             * */
-            @SerialName("icon") val iconUrl: String,
-
-            /**
-             * 地区名称
-             * */
-            val name: String,
-
-            /**
-             * 地区类型
-             * */
-            val type: RegionType,
-
-            /**
-             * 供奉
-             * */
-            val offerings: List<Offering>,
-
-            /**
-             * 地区ID, 或许是按照时间顺序
-             * */
-            val id: Short,
-        )
-
-        @Serializable
-        data class Home(
-            /**
-             * 信任等阶
-             * */
-            val level: Short,
-
-            /**
-             * 访客数量
-             * */
-            @SerialName("visit_num") val totalVistors: Int,
-
-            /**
-             * 洞天仙力 (舒适度)
-             * */
-            @SerialName("comfort_num") val comfort: Int,
-
-            /**
-             * 获得摆件数
-             * */
-            @SerialName("item_num") val totalGotItems: Int,
-
-            /**
-             * 名称
-             * */
-            val name: String,
-
-            /**
-             * 图标地址
-             * */
-            @SerialName("icon") val iconUrl: String,
-
-            /**
-             * 舒适等级
-             * */
-            @SerialName("comfort_level_name") val comfortLevel: String,
-
-            /**
-             * 舒适度图标
-             * */
-            @SerialName("comfort_level_icon") val comfortLevelIconUrl: String,
-
-            )
+    @Serializable
+    data class WorldExploration(
+        /**
+         * 声望等级或供奉等级, 由type决定
+         * @see RegionType
+         * */
+        val level: Short,
 
         /**
-         * 地区供奉 (非神像)
+         * 探索度
          * */
-        @Serializable
-        data class Offering(
-            /**
-             * 昵称
-             * */
-            val name: String,
+        @SerialName("exploration_percentage") val explorationPercentage: Short,
 
-            /**
-             * 供奉等级
-             * */
-            val level: Short,
+        /**
+         * 图片链接
+         * */
+        @SerialName("icon") val iconUrl: String,
+
+        /**
+         * 地区名称
+         * */
+        val name: String,
+
+        /**
+         * 地区类型
+         * */
+        val type: RegionType,
+
+        /**
+         * 供奉
+         * */
+        val offerings: List<Offering>,
+
+        /**
+         * 地区ID, 或许是按照时间顺序
+         * */
+        val id: Short,
+    )
+
+    @Serializable
+    data class Home(
+        /**
+         * 信任等阶
+         * */
+        val level: Short,
+
+        /**
+         * 访客数量
+         * */
+        @SerialName("visit_num") val totalVistors: Int,
+
+        /**
+         * 洞天仙力 (舒适度)
+         * */
+        @SerialName("comfort_num") val comfort: Int,
+
+        /**
+         * 获得摆件数
+         * */
+        @SerialName("item_num") val totalGotItems: Int,
+
+        /**
+         * 名称
+         * */
+        val name: String,
+
+        /**
+         * 图标地址
+         * */
+        @SerialName("icon") val iconUrl: String,
+
+        /**
+         * 舒适等级
+         * */
+        @SerialName("comfort_level_name") val comfortLevel: String,
+
+        /**
+         * 舒适度图标
+         * */
+        @SerialName("comfort_level_icon") val comfortLevelIconUrl: String,
+
         )
 
-        enum class RegionType {
-            /**
-             * 声望
-             * */
-            Reputation,
+    /**
+     * 地区供奉 (非神像)
+     * */
+    @Serializable
+    data class Offering(
+        /**
+         * 昵称
+         * */
+        val name: String,
 
-            /**
-             * 供奉
-             * */
-            Offering,
-        }
+        /**
+         * 供奉等级
+         * */
+        val level: Short,
+    )
+
+    enum class RegionType {
+        /**
+         * 声望
+         * */
+        Reputation,
+
+        /**
+         * 供奉
+         * */
+        Offering,
     }
 }
