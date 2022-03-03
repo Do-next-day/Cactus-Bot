@@ -3,6 +3,11 @@ package org.laolittle.plugin.genshin
 import net.mamoe.mirai.console.data.ReadOnlyPluginConfig
 import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
+import net.mamoe.mirai.event.events.MessageEvent
+import net.mamoe.mirai.message.code.MiraiCode.deserializeMiraiCode
+import net.mamoe.mirai.message.data.MessageChain
+import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
+import org.laolittle.plugin.genshin.service.PluginDispatcher
 
 object CactusConfig : ReadOnlyPluginConfig("GenshinPluginConfig") {
     @ValueDescription("机器人昵称")
@@ -16,4 +21,24 @@ object CactusConfig : ReadOnlyPluginConfig("GenshinPluginConfig") {
 
     @ValueDescription("开启自动签到")
     val autoSign by value(true)
+
+    private val guideResourceFolder = CactusBot.dataFolder.resolve("GuideRes").also { it.mkdir() }
+    val MessageEvent.guideMessage: MessageChain
+        get() {
+            var foo = guideResourceFolder
+                .resolve("guide.txt")
+                .also { if (!it.isFile) it.writeText("请百度如何获取Cookie") }
+                .readText()
+
+            val r = Regex("%p(.+?)%")
+            val result = r.findAll(foo)
+            result.forEach {
+                val image = PluginDispatcher.runBlocking {
+                    guideResourceFolder.resolve("${it.groupValues[1]}.png").uploadAsImage(subject)
+                }
+
+                foo = foo.replace("%p${it.groupValues[1]}%", image.imageId)
+            }
+            return foo.deserializeMiraiCode(subject)
+        }
 }

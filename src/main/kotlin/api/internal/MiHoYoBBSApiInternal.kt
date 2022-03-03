@@ -83,7 +83,7 @@ private fun getRandomString(size: Int): String {
  */
 internal suspend inline fun getBBS(
     url: String,
-    cookies: String = CactusData.cookies,
+    cookies: String = CactusData.cookie,
     uuid: String = randomUUID,
     block: HttpRequestBuilder.() -> Unit = {}
 ) = Json.decodeFromString(Response.serializer(), client.get(url) {
@@ -96,7 +96,7 @@ internal suspend inline fun getBBS(
  */
 internal suspend inline fun postBBS(
     url: String,
-    cookies: String = CactusData.cookies,
+    cookies: String = CactusData.cookie,
     uuid: String = randomUUID,
     header: HeadersBuilder.() -> Any = {},
     block: HttpRequestBuilder.() -> Unit = {}
@@ -107,7 +107,7 @@ internal suspend inline fun postBBS(
 })
 
 internal fun HttpRequestBuilder.setHeaders(
-    url: String, body: String = "", cookies: String = CactusData.cookies, uuid: String = randomUUID
+    url: String, body: String = "", cookies: String = CactusData.cookie, uuid: String = randomUUID
 ) {
     headers.apply {
         userAgent("Mozilla/5.0 (iPhone; CPU iPhone OS 14_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/$LAB_APP_VER")

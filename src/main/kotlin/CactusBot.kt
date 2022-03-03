@@ -1,9 +1,10 @@
 package org.laolittle.plugin.genshin
 
 import io.ktor.client.request.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.atTime
-import kotlinx.datetime.toKotlinLocalDate
+import kotlinx.datetime.toKotlinLocalDateTime
 import kotlinx.serialization.SerializationException
 import net.mamoe.mirai.console.plugin.description.PluginDependency
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
@@ -21,6 +22,7 @@ import net.mamoe.mirai.utils.ExternalResource.Companion.toExternalResource
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
 import net.mamoe.mirai.utils.info
 import org.jetbrains.skia.EncodedImageFormat
+import org.laolittle.plugin.genshin.CactusConfig.guideMessage
 import org.laolittle.plugin.genshin.api.ApiAccessDeniedException
 import org.laolittle.plugin.genshin.api.bbs.BBSApi
 import org.laolittle.plugin.genshin.api.bbs.data.GameRole
@@ -29,6 +31,7 @@ import org.laolittle.plugin.genshin.api.internal.client
 import org.laolittle.plugin.genshin.api.internal.getAppVersion
 import org.laolittle.plugin.genshin.database.cactusSuspendedTransaction
 import org.laolittle.plugin.genshin.database.getUserData
+import org.laolittle.plugin.genshin.mirai.messageContext
 import org.laolittle.plugin.genshin.model.GachaSimulator.gachaCharacter
 import org.laolittle.plugin.genshin.model.GachaSimulator.renderGachaImage
 import org.laolittle.plugin.genshin.service.GenshinGachaCache
@@ -69,7 +72,7 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
                         val userData = if (CactusConfig.allowAnonymous) getUserData(sender.id)
                         else sender.requireCookie { return@Listener }
 
-                        val cookies = userData.data.cookies.takeIf { it.isNotBlank() } ?: CactusData.cookies
+                        val cookies = userData.data.cookies.takeIf { it.isNotBlank() } ?: CactusData.cookie
 
                         val uid = result[2].replace(Regex("""[\s]+"""), "").toLongOrNull()
                         if (uid == null || uid < 100000100 || uid > 700000000) {
@@ -118,8 +121,28 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
         }
 
         globalEventChannel().subscribeFriendMessages {
-            "原神登录" Login@{
-                subject.sendMessage("请发送Cookie")
+            finding(Regex("原神登[录陆]")) Login@{
+
+                messageContext {
+                    send(
+                        """
+                    免责声明: 
+                    本项目仅用作学习交流, 存储的Cookie仅用于米游社相关操作
+                    如果您认可本条例, 在20s内发送"同意"即可
+                    项目地址: https://github.com/LaoLittle/Cactus-Bot
+                """.trimIndent()
+                    )
+
+                    receiveWithResult("同意", seconds(20)).onFailure {
+                        subject.sendMessage("超时")
+                        return@Login
+                    }
+                    delay(232)
+                    send(guideMessage)
+                    delay(1_320)
+                    send("请发送Cookie")
+                }
+
                 val cookies = nextMessageOrNull(30_000)?.content ?: kotlin.run {
                     subject.sendMessage("超时")
                     return@Login
@@ -206,7 +229,7 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
                                 """
                             旅行者: ${userData.genshinUID}
                             体力: $currentResin / $maxResin
-                            (__恢复时间: $resinRecoveryTime)
+                            (恢复时间: $resinRecoveryTime)
                             每日委托: $finishedTask / $totalTask
                             周本奖励折扣剩余次数: $resinDiscountRemain / $resinDiscountLimit
                             派遣任务: $currentExpedition / $maxExpedition
@@ -217,7 +240,23 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
                     }
                 }
             }
+
+            "开启自动签到" AutoSign@{
+                sender.requireCookie {
+                    return@AutoSign
+                }
+
+                if (CactusData.autoSign.add(sender.id))
+                    subject.sendMessage("开启成功! ")
+                else subject.sendMessage("你已经开启了自动签到")
+            }
         }
+    }
+
+    override fun onDisable() {
+        GenshinGachaCache.cancel()
+        if (CactusConfig.autoSign)
+            GenshinSignProver.cancel()
     }
 
     private fun init() {
@@ -232,10 +271,9 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
 
         // Services
         val nowDay = JLocalDate.now()
-        val date = JLocalDate.ofYearDay(nowDay.year, nowDay.dayOfYear + 1).toKotlinLocalDate()
-        GenshinGachaCache.startOnce(date.atTime(4, 15))
+        val dateTime = JLocalDate.ofYearDay(nowDay.year, nowDay.dayOfYear + 1).atStartOfDay().toKotlinLocalDateTime()
+        GenshinGachaCache.start(dateTime.date.atTime(4, 15))
         if (CactusConfig.autoSign)
-            GenshinSignProver.startAt(date)
+            GenshinSignProver.start(dateTime)
     }
-
 }

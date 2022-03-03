@@ -36,7 +36,7 @@ object GenshinBBSApi {
 
     suspend fun getPlayerInfo(
         uid: Long,
-        cookies: String = CactusData.cookies,
+        cookies: String = CactusData.cookie,
         uuid: String = randomUUID
     ): GenshinRecord {
         val response = getBBS(
@@ -135,7 +135,7 @@ object GenshinBBSApi {
         val url = "https://api-takumi.mihoyo.com/game_record/app/card/wapi/getGameRecordCard"
 
         return client.get(url) {
-            setHeaders(url, "", CactusData.cookies)
+            setHeaders(url, "", CactusData.cookie)
         }
     }
 

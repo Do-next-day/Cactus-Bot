@@ -9,6 +9,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import net.mamoe.mirai.utils.info
 import org.laolittle.plugin.genshin.CactusBot
+import org.laolittle.plugin.genshin.api.internal.logger
 import org.laolittle.plugin.genshin.util.currentTimeMillis
 import kotlin.coroutines.CoroutineContext
 
@@ -28,20 +29,22 @@ abstract class AbstractCactusTimerService(
     override fun start(): Boolean {
         return if (job?.isActive != true) {
             job = launch(coroutineContext) {
-                while (this.isActive) {
-                    main()
-                }
+                while (this.isActive)
+                    try {
+                        main()
+                    } catch (e: Throwable) {
+                        logger.error(e)
+                    }
             }
             CactusBot.logger.info { "Service: $serviceName started successfully" }
             true
         } else false
     }
 
-    fun startOnce(time: LocalDateTime) {
+    fun start(time: LocalDateTime) {
         launch {
+            CactusBot.logger.info { "Service: $serviceName will start at $time" }
             val remain = time.toInstant(TimeZone.of("+8")).toEpochMilliseconds() - currentTimeMillis
-            if (remain > 0)
-                main()
             delay(remain)
             start()
         }

@@ -18,8 +18,7 @@ object GenshinSignProver : AbstractCactusTimerService(
     private val logger get() = CactusBot.logger
     override suspend fun main() {
         cactusSuspendedTransaction {
-            User.find { Users.id inList CactusData.autoSign }
-        }.forEach { userData ->
+            User.find { Users.id inList CactusData.autoSign }.forEach { userData ->
                 delay(3_000)
                 var friend: Friend? = null
                 for (bot in Bot.instances) {
@@ -40,6 +39,7 @@ object GenshinSignProver : AbstractCactusTimerService(
 
                 delay(Random.nextLong(10_000, 30_000))
             }
+        }
 
         delay(aDay + Random.nextLong(aDay shr 4))
     }
