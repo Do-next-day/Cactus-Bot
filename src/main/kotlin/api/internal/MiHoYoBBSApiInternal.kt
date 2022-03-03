@@ -62,11 +62,11 @@ private val ALL_CHAR = ('0'..'9') + ('A'..'Z') + ('a'..'z')
 
 @Suppress("SameParameterValue")
 private fun getRandomString(size: Int): String {
-    val builder = StringBuilder()
-    repeat(size) {
-        builder.append(ALL_CHAR.random())
+    return buildString {
+        repeat(size) {
+            append(ALL_CHAR.random())
+        }
     }
-    return builder.toString()
 }
 
 /**

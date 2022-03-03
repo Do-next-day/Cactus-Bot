@@ -3,19 +3,52 @@ package org.laolittle.plugin.genshin.mirai
 import kotlinx.coroutines.delay
 import net.mamoe.mirai.event.globalEventChannel
 import net.mamoe.mirai.event.subscribeFriendMessages
+import net.mamoe.mirai.event.whileSelectMessages
 import net.mamoe.mirai.message.data.buildMessageChain
 import net.mamoe.mirai.message.data.content
 import net.mamoe.mirai.message.nextMessageOrNull
 import org.laolittle.plugin.genshin.CactusConfig.guideMessage
 import org.laolittle.plugin.genshin.api.bbs.BBSApi
 import org.laolittle.plugin.genshin.api.bbs.data.GameRole
+import org.laolittle.plugin.genshin.database.UserSetting
 import org.laolittle.plugin.genshin.database.cactusSuspendedTransaction
 import org.laolittle.plugin.genshin.service.AbstractCactusService
+import org.laolittle.plugin.genshin.util.requireCookie
 import org.laolittle.plugin.genshin.util.seconds
+import org.laolittle.plugin.genshin.util.userSettings
 
 object FriendMessageListener : AbstractCactusService() {
     override suspend fun main() {
         globalEventChannel().subscribeFriendMessages {
+            "原神设置" Setting@{
+                sender.requireCookie { return@Setting }
+
+                val setting = userSettings.getOrPut(sender.id) { UserSetting(pushSubject = sender.id) }
+
+                subject.sendMessage("""
+                    设置说明
+                """.trimIndent())
+
+                var keep = false
+                whileSelectMessages {
+                    startsWith("") {
+                        true
+                    }
+
+                    "" {
+                        true
+                    }
+
+                    timeout(30_000) {
+                        val foo = keep
+                        if (!foo)
+                            subject.sendMessage("设置结束")
+                        keep = false
+                        foo
+                    }
+                }
+            }
+
             finding(Regex("原神登[录陆]")) Login@{
                 messageContext {
                     send(
@@ -34,10 +67,10 @@ object FriendMessageListener : AbstractCactusService() {
                     delay(232)
                     send(guideMessage)
                     delay(1_320)
-                    send("请发送Cookie")
+                    send("请在5分钟内内发送Cookie")
                 }
 
-                val cookies = nextMessageOrNull(30_000)?.content ?: kotlin.run {
+                val cookies = nextMessageOrNull(300_000)?.content ?: kotlin.run {
                     subject.sendMessage("超时")
                     return@Login
                 }

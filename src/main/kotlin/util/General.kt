@@ -9,6 +9,7 @@ import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.message.data.PlainText
 import org.jetbrains.skia.Image
 import org.laolittle.plugin.genshin.CactusBot
+import org.laolittle.plugin.genshin.CactusData
 import org.laolittle.plugin.genshin.database.*
 import java.io.File
 import java.util.*
@@ -85,6 +86,8 @@ suspend inline fun <reified T : MiraiUser> T.requireCookie(lazy: () -> Unit = {}
 }
 
 val currentTimeMillis get() = System.currentTimeMillis()
+
+val userSettings by CactusData::userSetting
 
 fun seconds(timeMillis: Long) = timeMillis * 1000
 
