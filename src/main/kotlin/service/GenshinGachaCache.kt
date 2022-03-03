@@ -1,6 +1,5 @@
 package org.laolittle.plugin.genshin.service
 
-import kotlinx.coroutines.delay
 import kotlinx.serialization.serializer
 import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi
 import org.laolittle.plugin.genshin.util.Json
@@ -11,7 +10,6 @@ object GenshinGachaCache : AbstractCactusTimerService(
 ) {
     override suspend fun main() {
         cacheGachaServer(GenshinBBSApi.GenshinServer.CN_GF01)
-        delay(aDay)
     }
 
     private suspend fun cacheGachaServer(server: GenshinBBSApi.GenshinServer) {
