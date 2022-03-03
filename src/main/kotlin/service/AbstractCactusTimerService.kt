@@ -1,6 +1,5 @@
 package org.laolittle.plugin.genshin.service
 
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -15,18 +14,15 @@ import kotlin.coroutines.CoroutineContext
 
 abstract class AbstractCactusTimerService(
     ctx: CoroutineContext? = null,
-) : AbstractCactusService(ctx, Type.Task) {
+    serviceName: String
+) : AbstractCactusService(ctx, Type.Task, serviceName) {
     constructor(
         ctx: CoroutineContext? = null,
-        serviceName: String
-    ) : this(ctx) {
-        this.serviceName = serviceName
+    ) : this(ctx, "Unknown Timer Service") {
+        this.serviceName = this::class.simpleName ?: return
     }
 
-    private var serviceName: String = this::class.simpleName ?: "Unknown"
-    private var job: Job? = null
-
-    override fun start(): Boolean {
+    fun start(delay: Long): Boolean {
         return if (job?.isActive != true) {
             job = launch(coroutineContext) {
                 while (this.isActive)
@@ -34,6 +30,8 @@ abstract class AbstractCactusTimerService(
                         main()
                     } catch (e: Throwable) {
                         logger.error(e)
+                    } finally {
+                        delay(delay)
                     }
             }
             CactusBot.logger.info { "Service: $serviceName started successfully" }
@@ -41,12 +39,12 @@ abstract class AbstractCactusTimerService(
         } else false
     }
 
-    fun start(time: LocalDateTime) {
+    fun startAt(time: LocalDateTime, delay: Long = 0) {
         launch {
             CactusBot.logger.info { "Service: $serviceName will start at $time" }
             val remain = time.toInstant(TimeZone.of("+8")).toEpochMilliseconds() - currentTimeMillis
             delay(remain)
-            start()
+            start(delay)
         }
     }
 }

@@ -13,12 +13,19 @@ import org.laolittle.plugin.genshin.util.signGenshin
 import kotlin.random.Random
 
 object GenshinSignProver : AbstractCactusTimerService(
-    serviceName = "GenshinSign"
+    serviceName = "GenshinSign",
 ) {
     private val logger get() = CactusBot.logger
+    private val autoSign: Set<Long> get() {
+        val foo = mutableSetOf<Long>()
+        CactusData.userSetting.forEach { (userId, setting) ->
+            if (setting.autoSign) foo.add(userId)
+        }
+        return foo
+    }
     override suspend fun main() {
         cactusSuspendedTransaction {
-            User.find { Users.id inList CactusData.autoSign }.forEach { userData ->
+            User.find { Users.id inList autoSign }.forEach { userData ->
                 delay(3_000)
                 var friend: Friend? = null
                 for (bot in Bot.instances) {
@@ -33,6 +40,7 @@ object GenshinSignProver : AbstractCactusTimerService(
                         friend?.sendMessage("旅行者${userData.genshinUID}签到成功！")
                     }.getOrElse { e ->
                         friend?.sendMessage("签到失败！原因: ${e.message}")
+                        //if (e is ApiAccessDeniedException && e.restCode == 0)
                         return@forEach
                     }
                 }

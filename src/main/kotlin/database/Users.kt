@@ -37,6 +37,16 @@ data class UserData(
     override fun toString() = Json.encodeToString(serializer(), this)
 }
 
+@Serializable
+data class UserSetting(
+    var push: Boolean = true,
+    var autoSign: Boolean = true,
+    var pushSubject: Long,
+
+) {
+    override fun toString(): String = Json.encodeToString(serializer(), this)
+}
+
 suspend fun getUserData(id: Long) = cactusSuspendedTransaction {
     User.findById(id) ?: User.new(id) {
         card = 100

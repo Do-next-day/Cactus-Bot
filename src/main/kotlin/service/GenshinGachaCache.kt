@@ -7,7 +7,7 @@ import org.laolittle.plugin.genshin.util.Json
 import org.laolittle.plugin.genshin.util.cacheFolder
 
 object GenshinGachaCache : AbstractCactusTimerService(
-    serviceName = "GachaCache"
+    serviceName = "GachaCache",
 ) {
     override suspend fun main() {
         cacheGachaServer(GenshinBBSApi.GenshinServer.CN_GF01)

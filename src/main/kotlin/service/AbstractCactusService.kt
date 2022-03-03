@@ -11,8 +11,16 @@ abstract class AbstractCactusService(
     private val ctx: CoroutineContext? = null,
     private val type: Type = Type.Job,
 ) : CoroutineScope, CompletableJob by SupervisorJob(CactusBot.coroutineContext.job) {
-    private val serviceName: String = this::class.simpleName ?: "Unknown"
-    private var job: Job? = null
+    constructor(
+        ctx: CoroutineContext? = null,
+        type: Type = Type.Job,
+        serviceName: String,
+    ) : this(ctx, type) {
+        this.serviceName = serviceName
+    }
+
+    protected var serviceName: String = this::class.simpleName ?: "Unknown"
+    protected var job: Job? = null
 
     final override val coroutineContext: CoroutineContext
         get() = if (ctx != null) this + ctx else this
@@ -39,6 +47,7 @@ abstract class AbstractCactusService(
 
     open fun startAt(time: LocalDateTime) {
         launch {
+            CactusBot.logger.info { "Service: $serviceName will start at $time" }
             delay(time.toInstant(TimeZone.of("+8")).toEpochMilliseconds() - currentTimeMillis)
             start()
         }

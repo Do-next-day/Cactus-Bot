@@ -16,7 +16,7 @@ data class DailyNote(
     @SerialName("max_resin") val maxResin: Short,
 
     /**
-     * 树脂恢复完毕时间
+     * 树脂恢复完毕时间 (单位: 秒)
      */
     @SerialName("resin_recovery_time") val resinRecoveryTime: Long,
 

@@ -72,7 +72,8 @@ data class Response(
                 -108 -> "语言错误"
                 10103 -> "无绑定米游社账号 $message"
                 else -> message
-            }
+            },
+            restCode = restCode
         )
 
     fun getOrThrow() = if (isSuccess) this else throw cause

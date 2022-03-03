@@ -6,6 +6,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.atTime
 import kotlinx.datetime.toKotlinLocalDateTime
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.serializer
 import net.mamoe.mirai.console.plugin.description.PluginDependency
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
@@ -29,6 +30,7 @@ import org.laolittle.plugin.genshin.api.bbs.data.GameRole
 import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi
 import org.laolittle.plugin.genshin.api.internal.client
 import org.laolittle.plugin.genshin.api.internal.getAppVersion
+import org.laolittle.plugin.genshin.database.UserSetting
 import org.laolittle.plugin.genshin.database.cactusSuspendedTransaction
 import org.laolittle.plugin.genshin.database.getUserData
 import org.laolittle.plugin.genshin.mirai.messageContext
@@ -36,6 +38,7 @@ import org.laolittle.plugin.genshin.model.GachaSimulator.gachaCharacter
 import org.laolittle.plugin.genshin.model.GachaSimulator.renderGachaImage
 import org.laolittle.plugin.genshin.service.GenshinGachaCache
 import org.laolittle.plugin.genshin.service.GenshinSignProver
+import org.laolittle.plugin.genshin.service.aDay
 import org.laolittle.plugin.genshin.util.*
 import org.laolittle.plugin.toExternalResource
 import java.time.LocalDate as JLocalDate
@@ -122,7 +125,6 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
 
         globalEventChannel().subscribeFriendMessages {
             finding(Regex("原神登[录陆]")) Login@{
-
                 messageContext {
                     send(
                         """
@@ -246,17 +248,29 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
                     return@AutoSign
                 }
 
-                if (CactusData.autoSign.add(sender.id))
+                val autoSign = CactusData.userSetting.getOrPut(sender.id) {
+                    UserSetting(autoSign = false, pushSubject = sender.id)
+                }::autoSign
+
+                if (!autoSign.get()) {
+                    autoSign.set(true)
                     subject.sendMessage("开启成功! ")
-                else subject.sendMessage("你已经开启了自动签到")
+                } else subject.sendMessage("你已经开启了自动签到")
             }
         }
     }
 
     override fun onDisable() {
         GenshinGachaCache.cancel()
-        if (CactusConfig.autoSign)
-            GenshinSignProver.cancel()
+        if (CactusConfig.autoSign) GenshinSignProver.cancel()
+
+        val settingFile = CactusBot.configFolder.resolve("userSettings.json")
+        settingFile.writeText(
+            Json.encodeToString(
+                Json.serializersModule.serializer(),
+                CactusData.userSetting
+            )
+        )
     }
 
     private fun init() {
@@ -272,8 +286,7 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
         // Services
         val nowDay = JLocalDate.now()
         val dateTime = JLocalDate.ofYearDay(nowDay.year, nowDay.dayOfYear + 1).atStartOfDay().toKotlinLocalDateTime()
-        GenshinGachaCache.start(dateTime.date.atTime(4, 15))
-        if (CactusConfig.autoSign)
-            GenshinSignProver.start(dateTime)
+        GenshinGachaCache.startAt(dateTime.date.atTime(4, 15), aDay)
+        if (CactusConfig.autoSign) GenshinSignProver.startAt(dateTime, aDay)
     }
 }

@@ -58,7 +58,7 @@ internal fun getSignDS(): String {
     return "${time},${random},${check}"
 }
 
-private const val ALL_CHAR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+private val ALL_CHAR = ('0'..'9') + ('A'..'Z') + ('a'..'z')
 
 @Suppress("SameParameterValue")
 private fun getRandomString(size: Int): String {
