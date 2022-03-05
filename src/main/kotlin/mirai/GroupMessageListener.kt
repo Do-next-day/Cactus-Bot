@@ -90,10 +90,9 @@ object GroupMessageListener : AbstractCactusService() {
                 }
             }
 
-            "原神登录" {
+            finding(Regex("原神登[录陆]")) {
                 subject.sendMessage("请加好友私聊发送")
             }
         }
-
     }
 }
