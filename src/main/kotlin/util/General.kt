@@ -10,6 +10,7 @@ import net.mamoe.mirai.message.data.PlainText
 import org.jetbrains.skia.Image
 import org.laolittle.plugin.genshin.CactusBot
 import org.laolittle.plugin.genshin.CactusData
+import org.laolittle.plugin.genshin.api.internal.SignResponse
 import org.laolittle.plugin.genshin.database.*
 import java.io.File
 import java.util.*
@@ -83,6 +84,17 @@ suspend inline fun <reified T : MiraiUser> T.requireCookie(lazy: () -> Unit = {}
         lazy()
     }
     return userData
+}
+
+fun SignResponse.buildSuccessMessage(uid: Long): String = buildString {
+    append("旅行者: $uid")
+    if (signInfo.isSign){
+        append("今天已经签过到了哦")
+    }else{
+        appendLine("签到成功")
+        appendLine("今日奖励: ${award.name}x${award.count}")
+        append("签到天数: ${signInfo.totalSignDay}")
+    }
 }
 
 val currentTimeMillis get() = System.currentTimeMillis()

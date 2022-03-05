@@ -13,6 +13,7 @@ import org.laolittle.plugin.genshin.mirai.AllMessageListener
 import org.laolittle.plugin.genshin.mirai.FriendMessageListener
 import org.laolittle.plugin.genshin.mirai.GroupMessageListener
 import org.laolittle.plugin.genshin.service.GenshinGachaCache
+import org.laolittle.plugin.genshin.service.GenshinSignAwardsCache
 import org.laolittle.plugin.genshin.service.GenshinSignProver
 import org.laolittle.plugin.genshin.service.aDay
 import org.laolittle.plugin.genshin.util.Json

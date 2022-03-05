@@ -9,6 +9,7 @@ import org.laolittle.plugin.genshin.database.UserSetting
 import org.laolittle.plugin.genshin.database.Users
 import org.laolittle.plugin.genshin.database.cactusSuspendedTransaction
 import org.laolittle.plugin.genshin.mirai.getSubjectFromBots
+import org.laolittle.plugin.genshin.util.buildSuccessMessage
 import org.laolittle.plugin.genshin.util.signGenshin
 import org.laolittle.plugin.genshin.util.userSettings
 import kotlin.random.Random
@@ -38,7 +39,7 @@ object GenshinSignProver : AbstractCactusTimerService(
                     runCatching {
                         userData.signGenshin()
                     }.onSuccess {
-                        subject?.sendMessage("旅行者${userData.genshinUID}签到成功！")
+                        friend?.sendMessage(it.buildSuccessMessage(userData.genshinUID))
                     }.getOrElse { e ->
                         subject?.sendMessage("签到失败！原因: ${e.message}")
                         //if (e is ApiAccessDeniedException && e.restCode == 0)
