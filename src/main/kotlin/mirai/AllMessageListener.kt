@@ -6,6 +6,7 @@ import org.laolittle.plugin.genshin.CactusConfig
 import org.laolittle.plugin.genshin.CactusData
 import org.laolittle.plugin.genshin.database.UserSetting
 import org.laolittle.plugin.genshin.service.AbstractCactusService
+import org.laolittle.plugin.genshin.util.buildSuccessMessage
 import org.laolittle.plugin.genshin.util.getDailyNote
 import org.laolittle.plugin.genshin.util.requireCookie
 import org.laolittle.plugin.genshin.util.signGenshin
@@ -22,7 +23,7 @@ object AllMessageListener : AbstractCactusService() {
                         kotlin.runCatching {
                             userData.signGenshin()
                         }.onSuccess {
-                            subject.sendMessage("旅行者: ${userData.genshinUID}签到成功")
+                            subject.sendMessage(it.buildSuccessMessage(userData.genshinUID))
                         }.onFailure {
                             subject.sendMessage("签到失败: ${it.message}")
                         }
