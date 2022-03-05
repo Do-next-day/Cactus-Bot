@@ -77,7 +77,7 @@ data class DailyNote(
     @SerialName("max_home_coin") val maxHomeCoin: Int,
 
     /**
-     * 家园币剩余恢复时间
+     * 家园币剩余恢复时间 (单位: 秒)
      */
     @SerialName("home_coin_recovery_time") val homeCoinRecoveryTime: Long,
 

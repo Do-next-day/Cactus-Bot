@@ -79,7 +79,7 @@ fun Iterable<GachaItem>.sort(): List<GachaItem> {
 suspend inline fun <reified T : MiraiUser> T.requireCookie(lazy: () -> Unit = {}): User {
     val userData = getUserData(this.id)
     if (userData.data.cookies.isBlank()) {
-        val message = PlainText("请先私聊发送“原神登录”进行登录")
+        val message = PlainText("请先加好友私聊发送“原神登录”进行登录")
         when (this) {
             is Friend -> sendMessage(message)
             is Member -> group.sendMessage(message)

@@ -11,6 +11,7 @@ import org.laolittle.plugin.genshin.CactusData
 import org.laolittle.plugin.genshin.api.Action.GENSHIN_SIGN
 import org.laolittle.plugin.genshin.api.TAKUMI_API
 import org.laolittle.plugin.genshin.api.WEB_STATIC
+import org.laolittle.plugin.genshin.api.buildUrlParameters
 import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi.GenshinServer.CN_GF01
 import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi.GenshinServer.CN_QD01
 import org.laolittle.plugin.genshin.api.genshin.data.*
@@ -21,14 +22,18 @@ import org.laolittle.plugin.genshin.util.decode
 import org.laolittle.plugin.genshin.util.randomUUID
 
 object GenshinBBSApi {
+    private const val GAME_RECORD = "$TAKUMI_API/game_record/app"
+
     /**
      * ```
      * ?role_id=&server=
      * ```
      *
-     * [GENSHIN_GAME_RECORD]
+     * ```
+     * ?dailyNote&server=
+     * ```
      */
-    private const val GENSHIN_GAME_RECORD = "$TAKUMI_API/game_record/app/genshin/api"
+    private const val GENSHIN_GAME_RECORD = "$GAME_RECORD/genshin/api"
     private const val SIGN_API = "$TAKUMI_API/event/bbs_sign_reward"
     private const val GACHA_INFO = "$WEB_STATIC/hk4e/gacha_info"
 
@@ -37,10 +42,15 @@ object GenshinBBSApi {
         cookies: String = CactusData.cookie,
         uuid: String = randomUUID
     ): GenshinRecord {
+        val params = buildUrlParameters {
+            "role_id" sets uid
+            "server" sets getServerFromUID(uid)
+        }
+
         val response = getBBS(
-            url = "$GENSHIN_GAME_RECORD/index?role_id=$uid&server=${getServerFromUID(uid)}",
-            cookies = cookies,
-            uuid = uuid
+            url = "$GENSHIN_GAME_RECORD/index?$params",
+            cookies,
+            uuid
         )
 
         return response.getOrThrow().data.decode()
@@ -66,13 +76,37 @@ object GenshinBBSApi {
         cookies: String,
         uuid: String = randomUUID
     ): DailyNote {
+        val params = buildUrlParameters {
+            "role_id" sets uid
+            "server" sets getServerFromUID(uid)
+        }
+
         val response = getBBS(
-            url = "$GENSHIN_GAME_RECORD/dailyNote?role_id=$uid&server=${getServerFromUID(uid)}",
+            url = "$GENSHIN_GAME_RECORD/dailyNote?$params",
             cookies,
             uuid
         )
 
         return response.getOrThrow().data.decode()
+    }
+
+    suspend fun getSpiralAbyss(
+        uid: Long,
+        cookies: String,
+        uuid: String = randomUUID,
+        period: Boolean = false,
+    ) {
+        val params = buildUrlParameters {
+            "role_id" sets uid
+            "schedule_type" sets if (!period) 1 else 2
+            "server" sets getServerFromUID(uid)
+        }
+
+        val response = getBBS(
+            url = "$GENSHIN_GAME_RECORD/spiralAbyss?$params",
+            cookies,
+            uuid
+        )
     }
 
     /**
@@ -102,17 +136,17 @@ object GenshinBBSApi {
         region: GenshinServer,
         cookies: String,
         uuid: String = randomUUID
-    ): SignInfo{
+    ): SignInfo {
         val response = getBBS(
             "$SIGN_API/info?act_id=$GENSHIN_SIGN&region=$region&uid=$uid",
             cookies,
             uuid
-        ).getOrThrow()
+        )
 
-        return response.data.decode()
+        return response.getOrThrow().data.decode()
     }
 
-    suspend fun getAwards(): Award{
+    suspend fun getAwards(): Award {
         return getBBS("$SIGN_API/home?act_id=$GENSHIN_SIGN").getOrThrow().data.decode()
     }
 
@@ -159,12 +193,10 @@ object GenshinBBSApi {
         return SignResponse(response, signInfo, CactusData.awards[signInfo.totalSignDay])
     }
 
-    suspend fun getGameRecordCard(): String {
-        val url = "https://api-takumi.mihoyo.com/game_record/app/card/wapi/getGameRecordCard"
+    suspend fun getGameRecordCard(uid: Long): Response {
+        val url = "$GAME_RECORD/card/wapi/getGameRecordCard?uid=$uid"
 
-        return client.get(url) {
-            setHeaders(url, "", CactusData.cookie)
-        }
+        return getBBS(url)
     }
 
     fun getServerFromUID(uid: Long) = if (uid < 500000000) CN_GF01
