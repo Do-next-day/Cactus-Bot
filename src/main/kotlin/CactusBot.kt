@@ -37,6 +37,7 @@ import org.laolittle.plugin.genshin.mirai.messageContext
 import org.laolittle.plugin.genshin.model.GachaSimulator.gachaCharacter
 import org.laolittle.plugin.genshin.model.GachaSimulator.renderGachaImage
 import org.laolittle.plugin.genshin.service.GenshinGachaCache
+import org.laolittle.plugin.genshin.service.GenshinSignAwardsCache
 import org.laolittle.plugin.genshin.service.GenshinSignProver
 import org.laolittle.plugin.genshin.service.aDay
 import org.laolittle.plugin.genshin.util.*
@@ -211,7 +212,7 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
                         kotlin.runCatching {
                             userData.signGenshin()
                         }.onSuccess {
-                            subject.sendMessage("旅行者: ${userData.genshinUID}签到成功")
+                            subject.sendMessage(it.buildSuccessMessage(userData.genshinUID))
                         }.onFailure {
                             subject.sendMessage("签到失败: ${it.message}")
                         }
@@ -287,6 +288,7 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
         val nowDay = JLocalDate.now()
         val dateTime = JLocalDate.ofYearDay(nowDay.year, nowDay.dayOfYear + 1).atStartOfDay().toKotlinLocalDateTime()
         GenshinGachaCache.startAt(dateTime.date.atTime(4, 15), aDay)
+        GenshinSignAwardsCache.start(aDay)
         if (CactusConfig.autoSign) GenshinSignProver.startAt(dateTime, aDay)
     }
 }

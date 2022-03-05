@@ -2,6 +2,7 @@ package org.laolittle.plugin.genshin.service
 
 import kotlinx.coroutines.delay
 import net.mamoe.mirai.Bot
+import net.mamoe.mirai.console.command.ConsoleCommandSender.subject
 import net.mamoe.mirai.contact.Friend
 import net.mamoe.mirai.utils.verbose
 import org.laolittle.plugin.genshin.CactusBot
@@ -9,6 +10,7 @@ import org.laolittle.plugin.genshin.CactusData
 import org.laolittle.plugin.genshin.database.User
 import org.laolittle.plugin.genshin.database.Users
 import org.laolittle.plugin.genshin.database.cactusSuspendedTransaction
+import org.laolittle.plugin.genshin.util.buildSuccessMessage
 import org.laolittle.plugin.genshin.util.signGenshin
 import kotlin.random.Random
 
@@ -37,7 +39,7 @@ object GenshinSignProver : AbstractCactusTimerService(
                     runCatching {
                         userData.signGenshin()
                     }.onSuccess {
-                        friend?.sendMessage("旅行者${userData.genshinUID}签到成功！")
+                        friend?.sendMessage(it.buildSuccessMessage(userData.genshinUID))
                     }.getOrElse { e ->
                         friend?.sendMessage("签到失败！原因: ${e.message}")
                         //if (e is ApiAccessDeniedException && e.restCode == 0)
