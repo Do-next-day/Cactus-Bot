@@ -22,7 +22,7 @@ object CactusConfig : ReadOnlyPluginConfig("GenshinPluginConfig") {
     @ValueDescription("开启自动签到")
     val autoSign by value(true)
 
-    private val guideResourceFolder = CactusBot.dataFolder.resolve("GuideRes").also { it.mkdir() }
+    private val guideResourceFolder = CactusBot.configFolder.resolve("GuideRes").also { it.mkdir() }
     val MessageEvent.guideMessage: MessageChain
         get() {
             var foo = guideResourceFolder
@@ -34,7 +34,7 @@ object CactusConfig : ReadOnlyPluginConfig("GenshinPluginConfig") {
             val result = r.findAll(foo)
             result.forEach {
                 val image = PluginDispatcher.runBlocking {
-                    guideResourceFolder.resolve("${it.groupValues[1]}.png").uploadAsImage(subject)
+                    guideResourceFolder.resolve(it.groupValues[1]).uploadAsImage(subject)
                 }
 
                 foo = foo.replace("%p${it.groupValues[1]}%", image.imageId)

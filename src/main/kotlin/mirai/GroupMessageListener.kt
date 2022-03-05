@@ -89,6 +89,10 @@ object GroupMessageListener : AbstractCactusService() {
                     }
                 }
             }
+
+            "原神登录" {
+                subject.sendMessage("请加好友私聊发送")
+            }
         }
 
     }

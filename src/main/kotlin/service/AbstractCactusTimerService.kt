@@ -27,7 +27,9 @@ abstract class AbstractCactusTimerService(
             job = launch(coroutineContext) {
                 while (this.isActive)
                     try {
-                        main()
+                        launch {
+                            main()
+                        }
                     } catch (e: Throwable) {
                         logger.error(e)
                     } finally {

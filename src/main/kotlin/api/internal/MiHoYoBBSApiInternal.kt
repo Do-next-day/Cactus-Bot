@@ -98,7 +98,7 @@ internal suspend inline fun postBBS(
     url: String,
     cookies: String = CactusData.cookie,
     uuid: String = randomUUID,
-    header: HeadersBuilder.() -> Any = {},
+    header: HeadersBuilder.() -> Unit = {},
     block: HttpRequestBuilder.() -> Unit = {}
 ) = Json.decodeFromString(Response.serializer(), client.post(url) {
     block()

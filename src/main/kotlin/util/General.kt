@@ -1,5 +1,8 @@
 package org.laolittle.plugin.genshin.util
 
+import io.ktor.client.*
+import io.ktor.client.engine.okhttp.*
+import io.ktor.client.request.*
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
@@ -25,8 +28,8 @@ val cacheFolder = dataFolder.resolve("cache")
 
 val File.skikoImage: Image get() = Image.makeFromEncoded(readBytes())
 
-inline fun <reified R> Json.decodeFromStringOrNull(str: String) =
-    decodeFromStringOrNull<R>(serializersModule.serializer(), str)
+inline fun <reified T> Json.decodeFromStringOrNull(str: String) =
+    decodeFromStringOrNull<T>(serializersModule.serializer(), str)
 
 
 fun <T> Json.decodeFromStringOrNull(deserializer: DeserializationStrategy<T>, string: String): T? =
@@ -75,7 +78,7 @@ fun Iterable<GachaItem>.sort(): List<GachaItem> {
 suspend inline fun <reified T : MiraiUser> T.requireCookie(lazy: () -> Unit = {}): User {
     val userData = getUserData(this.id)
     if (userData.data.cookies.isBlank()) {
-        val message = PlainText("请先私聊发送”原神登录“进行登录")
+        val message = PlainText("请先加好友私聊发送”原神登录“进行登录")
         when (this) {
             is Friend -> sendMessage(message)
             is Member -> group.sendMessage(message)
@@ -83,6 +86,19 @@ suspend inline fun <reified T : MiraiUser> T.requireCookie(lazy: () -> Unit = {}
         lazy()
     }
     return userData
+}
+
+suspend fun getOrDownload(url: String, block: HttpRequestBuilder.() -> Unit = {}): ByteArray {
+    val fileName = Regex("(.+)/(.+)$").find(url)?.groupValues?.last()
+    val file = fileName?.let { cacheFolder.resolve(it) }
+    return if (file?.isFile == true) file.readBytes()
+    else {
+        HttpClient(OkHttp).use { client ->
+            client.get<ByteArray>(url, block).also { data ->
+                file?.writeBytes(data)
+            }
+        }
+    }
 }
 
 val currentTimeMillis get() = System.currentTimeMillis()

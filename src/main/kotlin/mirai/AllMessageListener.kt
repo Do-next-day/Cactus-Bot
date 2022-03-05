@@ -9,6 +9,7 @@ import org.laolittle.plugin.genshin.service.AbstractCactusService
 import org.laolittle.plugin.genshin.util.getDailyNote
 import org.laolittle.plugin.genshin.util.requireCookie
 import org.laolittle.plugin.genshin.util.signGenshin
+import org.laolittle.plugin.sendImage
 
 object AllMessageListener : AbstractCactusService() {
     override suspend fun main() {
@@ -36,24 +37,28 @@ object AllMessageListener : AbstractCactusService() {
                             return@Fun
                         }
 
-                        with(dailyNote) {
-                            subject.sendMessage(
-                                """
-                            旅行者: ${userData.genshinUID}
-                            体力: $currentResin / $maxResin
-                            (恢复时间: $resinRecoveryTime)
-                            每日委托: $finishedTask / $totalTask
-                            周本奖励折扣剩余次数: $resinDiscountRemain / $resinDiscountLimit
-                            派遣任务: $currentExpedition / $maxExpedition
-                            日历链接: $calendarUrl
+                        subject.sendImage(dailyNote.image)
+
+                        /**
+                         * with(dailyNote) {
+                        subject.sendMessage(
+                        """
+                        旅行者: ${userData.genshinUID}
+                        体力: $currentResin / $maxResin
+                        (恢复时间: $resinRecoveryTime)
+                        每日委托: $finishedTask / $totalTask
+                        周本奖励折扣剩余次数: $resinDiscountRemain / $resinDiscountLimit
+                        派遣任务: $currentExpedition / $maxExpedition
+                        日历链接: $calendarUrl
                         """.trimIndent()
-                            )
+                        )
                         }
+                         */
                     }
                 }
             }
 
-            finding(Regex("(.*)自动签到")) AutoSign@{
+            finding(Regex("(.*)自动签到$")) AutoSign@{
                 sender.requireCookie { return@AutoSign }
                 val autoSign = CactusData.userSetting.getOrPut(sender.id) {
                     UserSetting(pushSubject = sender.id)

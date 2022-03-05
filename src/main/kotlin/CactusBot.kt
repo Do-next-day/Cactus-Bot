@@ -1,5 +1,6 @@
 package org.laolittle.plugin.genshin
 
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.datetime.atTime
 import kotlinx.datetime.toKotlinLocalDateTime
@@ -14,6 +15,7 @@ import org.laolittle.plugin.genshin.mirai.FriendMessageListener
 import org.laolittle.plugin.genshin.mirai.GroupMessageListener
 import org.laolittle.plugin.genshin.service.GenshinGachaCache
 import org.laolittle.plugin.genshin.service.GenshinSignProver
+import org.laolittle.plugin.genshin.service.PluginDispatcher
 import org.laolittle.plugin.genshin.service.aDay
 import org.laolittle.plugin.genshin.util.Json
 import org.laolittle.plugin.genshin.util.avatarDataFolder
@@ -55,6 +57,7 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
     }
 
     override fun onDisable() {
+        PluginDispatcher.cancel()
         GenshinGachaCache.cancel()
         if (CactusConfig.autoSign) GenshinSignProver.cancel()
 

@@ -49,7 +49,5 @@ object GenshinSignProver : AbstractCactusTimerService(
                 delay(Random.nextLong(10_000, 30_000))
             }
         }
-
-        delay(Random.nextLong(aDay shr 4))
     }
 }

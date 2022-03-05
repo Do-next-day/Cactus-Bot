@@ -21,9 +21,9 @@ object CactusData : AutoSavePluginData("GenshinPluginData") {
     val userSetting: MutableMap<Long, UserSetting>
 
     init {
-        val settingFile = CactusBot.configFolder.resolve("userSettings.json")
+        val settingFile = CactusBot.dataFolder.resolve("userSettings.json").also { it.createNewFile() }
         userSetting =
-            Json.decodeFromStringOrNull(Json.serializersModule.serializer(), settingFile.readText()) ?: mutableMapOf()
+            Json.decodeFromStringOrNull(settingFile.readText()) ?: mutableMapOf()
         val saveJson = fun() {
             settingFile.writeText(
                 Json.encodeToString(
