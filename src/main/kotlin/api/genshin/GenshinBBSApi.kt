@@ -21,9 +21,6 @@ import org.laolittle.plugin.genshin.util.decode
 import org.laolittle.plugin.genshin.util.randomUUID
 
 object GenshinBBSApi {
-
-    private const val SIGN_EVENT = "/event/bbs_sign_reward"
-
     /**
      * ```
      * ?role_id=&server=
@@ -32,10 +29,8 @@ object GenshinBBSApi {
      * [GENSHIN_GAME_RECORD]
      */
     private const val GENSHIN_GAME_RECORD = "$TAKUMI_API/game_record/app/genshin/api"
-    private const val SIGN_API = "$TAKUMI_API$SIGN_EVENT/sign"
+    private const val SIGN_API = "$TAKUMI_API/event/bbs_sign_reward"
     private const val GACHA_INFO = "$WEB_STATIC/hk4e/gacha_info"
-    private const val SIGN_INFO = "$TAKUMI_API$SIGN_EVENT/info?act_id=$GENSHIN_SIGN"
-    private const val AWARD_INFO = "$TAKUMI_API$SIGN_EVENT/home?act_id=$GENSHIN_SIGN"
 
     suspend fun getPlayerInfo(
         uid: Long,
@@ -109,7 +104,7 @@ object GenshinBBSApi {
         uuid: String = randomUUID
     ): SignInfo{
         val response = getBBS(
-            "$SIGN_INFO&region=$region&uid=$uid",
+            "$SIGN_API/info?act_id=$GENSHIN_SIGN&region=$region&uid=$uid",
             cookies,
             uuid
         ).getOrThrow()
@@ -118,7 +113,7 @@ object GenshinBBSApi {
     }
 
     suspend fun getAwards(): AwardInfo{
-        return getBBS(AWARD_INFO).getOrThrow().data.decode()
+        return getBBS("$SIGN_API/home?act_id=$GENSHIN_SIGN").getOrThrow().data.decode()
     }
 
     private const val SIGN_REFERRER =
@@ -132,7 +127,7 @@ object GenshinBBSApi {
     ): Response {
         val appVersion = "2.10.2"
         val response = postBBS(
-            url = SIGN_API,
+            url = "$SIGN_API/sign",
             cookies,
             uuid,
             header = {
