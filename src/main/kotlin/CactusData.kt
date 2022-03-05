@@ -7,6 +7,7 @@ import kotlinx.serialization.serializer
 import net.mamoe.mirai.console.data.AutoSavePluginData
 import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
+import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi
 import org.laolittle.plugin.genshin.api.genshin.data.Award
 import org.laolittle.plugin.genshin.database.UserSetting
 import org.laolittle.plugin.genshin.service.PluginDispatcher
@@ -42,7 +43,11 @@ object CactusData : AutoSavePluginData("GenshinPluginData") {
         awards = Json.decodeFromStringOrNull(
             Json.serializersModule.serializer(),
             cacheFolder.resolve("awards.json").readText()
-        ) ?: listOf()
+        ) ?: PluginDispatcher.runBlocking {
+            GenshinBBSApi.getAwards().also {
+                awardMonth = it.month
+            }.awards
+        }
 
         if (!settingFile.isFile) saveJson()
 
