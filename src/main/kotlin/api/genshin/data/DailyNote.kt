@@ -112,7 +112,6 @@ data class DailyNote(
         get() {
             val w = 745
             val h = 1200
-            val data = listOf(resin, homeCoin, dailyTask, weeklyZones)
             return Surface.makeRasterN32Premul(w, h).apply {
                 canvas.apply {
                     clear(Color.makeRGB(240, 235, 230))
@@ -137,8 +136,7 @@ data class DailyNote(
                     }
                     val fontBig = Fonts["MiSans-Regular", 28f]
                     val fontSmall = Fonts["MiSans-Regular", 24f]
-                    repeat(4) { time ->
-                        val note = data[time]
+                    listOf(resin, homeCoin, dailyTask, weeklyZones).forEachIndexed { time, note ->
                         val top = 60f + 125 * time
                         val box = Rect.makeXYWH(30f, top, 685f, 105f)
                         val infoBox = Rect.makeXYWH(555f, top, 160f, 105f)
@@ -157,7 +155,6 @@ data class DailyNote(
                         drawRect(box, paintBorder)
                     }
 
-
                     val exp = Rect.makeXYWH(30f, 555f, 685f, 565f)
                     drawRect(exp, paintBox)
                     drawRect(exp, paintBorder)
@@ -172,14 +169,20 @@ data class DailyNote(
                         color = Color.WHITE
                     }
 
+                    val paintGreenText = Paint().apply {
+                        color = Color.makeRGB(125, 185, 15)
+                    }
+
+                    val finishedText = TextLine.make("探险完成", fontSmall)
+
                     expeditions.forEachIndexed { index, status ->
                         val avatar = Image.makeFromEncoded(PluginDispatcher.runBlocking {
                             getOrDownload(status.avatarIconUrl)
                         })
 
-                        val y = 675f + 95 * index
-                        val firstPoint = Point(95f, y)
-                        val lastPoint = Point(660f, y)
+                        val top = 675f + 95 * index
+                        val firstPoint = Point(95f, top)
+                        val lastPoint = Point(660f, top)
 
                         drawPath(Path().apply {
                             moveTo(firstPoint)
@@ -195,9 +198,37 @@ data class DailyNote(
                             )
                         })
 
-                        drawCircle(120f, y, 30f, paintWhite)
-                        drawCircle(120f, y, 25f, paintGreen)
-                        drawImageRect(avatar, Rect.makeXYWH(70f, y - 70, (avatar.width * 0.8).toFloat(), (avatar.height * 0.8 - 5).toFloat()))
+                        drawCircle(120f, top, 30f, paintWhite)
+                        drawCircle(120f, top, 25f, paintGreen)
+                        drawImageRect(
+                            avatar,
+                            Rect.makeXYWH(
+                                70f,
+                                top - 70,
+                                (avatar.width * 0.8).toFloat(),
+                                (avatar.height * 0.8 - 5).toFloat()
+                            )
+                        )
+                        drawTextLine(
+                            if (status.status == AvatarExploreStatus.Status.Finished) finishedText
+                            else TextLine.make(buildString {
+                                append("剩余探索时间 ")
+                                val hour = status.remaining / 3600
+                                if (hour > 0) append("${hour}小时")
+                                append(
+                                    if (status.remaining < 60) "${status.remaining}秒"
+                                    else {
+                                        val minute = (round(status.remaining / 60f) - hour * 60).toInt()
+                                        if (minute > 0)
+                                            "${minute}分钟"
+                                        else ""
+                                    }
+                                )
+                            }, fontBig),
+                            170f,
+                            top + 10,
+                            if (status.status == AvatarExploreStatus.Status.Ongoing) paintGrayText else paintGreenText // 为了消去烦人的感叹号
+                        )
                     }
                 }
             }.makeImageSnapshot()
