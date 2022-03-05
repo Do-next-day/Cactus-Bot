@@ -112,7 +112,7 @@ object GenshinBBSApi {
         return response.data.decode()
     }
 
-    suspend fun getAwards(): AwardInfo{
+    suspend fun getAwards(): Award{
         return getBBS("$SIGN_API/home?act_id=$GENSHIN_SIGN").getOrThrow().data.decode()
     }
 

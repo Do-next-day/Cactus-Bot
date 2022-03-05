@@ -7,7 +7,7 @@ import kotlinx.serialization.serializer
 import net.mamoe.mirai.console.data.AutoSavePluginData
 import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
-import org.laolittle.plugin.genshin.api.genshin.data.AwardInfo
+import org.laolittle.plugin.genshin.api.genshin.data.Award
 import org.laolittle.plugin.genshin.database.UserSetting
 import org.laolittle.plugin.genshin.service.PluginDispatcher
 import org.laolittle.plugin.genshin.util.Json
@@ -24,7 +24,7 @@ object CactusData : AutoSavePluginData("GenshinPluginData") {
 
     var awardMonth: Int by value(0)
 
-    var awards: List<AwardInfo.AwardItem>
+    var awards: List<Award.AwardItem>
 
     init {
         val settingFile = CactusBot.dataFolder.resolve("userSettings.json").also { it.createNewFile() }

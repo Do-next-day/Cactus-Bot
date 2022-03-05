@@ -1,17 +1,17 @@
 package org.laolittle.plugin.genshin.service
 
 import kotlinx.coroutines.delay
+import kotlinx.serialization.serializer
 import net.mamoe.mirai.utils.verbose
 import org.laolittle.plugin.genshin.CactusBot
 import org.laolittle.plugin.genshin.CactusData
+import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi
 import org.laolittle.plugin.genshin.database.User
 import org.laolittle.plugin.genshin.database.UserSetting
 import org.laolittle.plugin.genshin.database.Users
 import org.laolittle.plugin.genshin.database.cactusSuspendedTransaction
 import org.laolittle.plugin.genshin.mirai.getSubjectFromBots
-import org.laolittle.plugin.genshin.util.buildSuccessMessage
-import org.laolittle.plugin.genshin.util.signGenshin
-import org.laolittle.plugin.genshin.util.userSettings
+import org.laolittle.plugin.genshin.util.*
 import kotlin.random.Random
 
 object GenshinSignProver : AbstractCactusTimerService(
@@ -28,6 +28,16 @@ object GenshinSignProver : AbstractCactusTimerService(
         }
 
     override suspend fun main() {
+        val awards = GenshinBBSApi.getAwards()
+        CactusData.awardMonth = awards.month
+        CactusData.awards = awards.awards
+
+        Json.encodeToString(
+            Json.serializersModule.serializer(),
+            awards
+        ).also {
+            cacheFolder.resolve("awards.json").writeText(it)
+        }
         cactusSuspendedTransaction {
             User.find { Users.id inList autoSign }.forEach { userData ->
                 delay(3_000)
