@@ -64,7 +64,7 @@ data class DailyNote(
     /**
      * 派遣角色具体状态
      */
-    @SerialName("expeditions") val expeditions: List<AvatarExploreStatus>,
+    @SerialName("expeditions") val expeditions: List<AvatarExploreInfo>,
 
     /**
      * 家园币
@@ -90,7 +90,7 @@ data class DailyNote(
      * 角色派遣状态
      */
     @Serializable
-    data class AvatarExploreStatus(
+    data class AvatarExploreInfo(
         @SerialName("avatar_side_icon") val avatarIconUrl: String,
         val status: Status,
         @SerialName("remained_time") val remaining: Long
@@ -175,9 +175,10 @@ data class DailyNote(
 
                     val finishedText = TextLine.make("探险完成", fontSmall)
 
-                    expeditions.forEachIndexed { index, status ->
+                    drawTextLine(TextLine.make("探索派遣限制（${currentResin}/${maxExpedition}）", fontBig), 45f, 445f, paintBlackText)
+                    expeditions.forEachIndexed { index, info ->
                         val avatar = Image.makeFromEncoded(PluginDispatcher.runBlocking {
-                            getOrDownload(status.avatarIconUrl)
+                            getOrDownload(info.avatarIconUrl)
                         })
 
                         val top = 675f + 95 * index
@@ -210,24 +211,24 @@ data class DailyNote(
                             )
                         )
                         drawTextLine(
-                            if (status.status == AvatarExploreStatus.Status.Finished) finishedText
+                            if (info.status == AvatarExploreInfo.Status.Finished) finishedText
                             else TextLine.make(buildString {
                                 append("剩余探索时间 ")
-                                val hour = status.remaining / 3600
+                                val hour = info.remaining / 3600
                                 if (hour > 0) append("${hour}小时")
                                 append(
-                                    if (status.remaining < 60) "${status.remaining}秒"
+                                    if (info.remaining < 60) "${info.remaining}秒"
                                     else {
-                                        val minute = (round(status.remaining / 60f) - hour * 60).toInt()
+                                        val minute = (round(info.remaining / 60f) - hour * 60).toInt()
                                         if (minute > 0)
                                             "${minute}分钟"
                                         else ""
                                     }
                                 )
-                            }, fontBig),
+                            }, fontSmall),
                             170f,
                             top + 10,
-                            if (status.status == AvatarExploreStatus.Status.Ongoing) paintGrayText else paintGreenText // 为了消去烦人的感叹号
+                            if (info.status == AvatarExploreInfo.Status.Ongoing) paintGrayText else paintGreenText // 为了消去烦人的感叹号
                         )
                     }
                 }
@@ -275,7 +276,7 @@ data class DailyNote(
             CactusBot::class.java.getResource("/DailyNote/home_coin.png")!!.openStream().use {
                 Image.makeFromEncoded(it.readBytes())
             },
-            "洞天财翁",
+            "洞天财翁 - 洞天宝钱",
             when (homeCoinRecoveryTime) {
                 0L -> "已满"
                 else -> {
@@ -306,7 +307,7 @@ data class DailyNote(
             },
             "每日委托任务",
             if (rewardRecived) "「每日委托」奖励已领取"
-            else if (finishedTask == totalTask) "「每日委托」奖励已领取暂未领取"
+            else if (finishedTask == totalTask) "「每日委托」奖励暂未领取"
             else "今日完成委托数量不足",
             "$finishedTask/$totalTask"
         )
