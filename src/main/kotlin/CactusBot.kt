@@ -14,6 +14,7 @@ import org.laolittle.plugin.genshin.mirai.AllMessageListener
 import org.laolittle.plugin.genshin.mirai.FriendMessageListener
 import org.laolittle.plugin.genshin.mirai.GroupMessageListener
 import org.laolittle.plugin.genshin.service.GenshinGachaCache
+import org.laolittle.plugin.genshin.service.GenshinSignAwardsCache
 import org.laolittle.plugin.genshin.service.GenshinSignProver
 import org.laolittle.plugin.genshin.service.PluginDispatcher
 import org.laolittle.plugin.genshin.service.aDay
@@ -51,6 +52,7 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
         val nowDay = JLocalDate.now()
         val dateTime = JLocalDate.ofYearDay(nowDay.year, nowDay.dayOfYear + 1).atStartOfDay().toKotlinLocalDateTime()
         GenshinGachaCache.startAt(dateTime.date.atTime(4, 15), aDay)
+        GenshinSignAwardsCache.startAt(dateTime, aDay)
         if (CactusConfig.autoSign) GenshinSignProver.startAt(dateTime, aDay)
         logger.info { "Cactus-Bot loaded" }
 
@@ -59,6 +61,7 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
     override fun onDisable() {
         PluginDispatcher.cancel()
         GenshinGachaCache.cancel()
+        GenshinSignAwardsCache.cancel()
         if (CactusConfig.autoSign) GenshinSignProver.cancel()
 
         val settingFile = CactusBot.configFolder.resolve("userSettings.json")

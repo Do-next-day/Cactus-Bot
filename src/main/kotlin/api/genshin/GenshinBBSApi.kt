@@ -13,10 +13,7 @@ import org.laolittle.plugin.genshin.api.TAKUMI_API
 import org.laolittle.plugin.genshin.api.WEB_STATIC
 import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi.GenshinServer.CN_GF01
 import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi.GenshinServer.CN_QD01
-import org.laolittle.plugin.genshin.api.genshin.data.DailyNote
-import org.laolittle.plugin.genshin.api.genshin.data.GachaDetail
-import org.laolittle.plugin.genshin.api.genshin.data.GachaInfo
-import org.laolittle.plugin.genshin.api.genshin.data.GenshinRecord
+import org.laolittle.plugin.genshin.api.genshin.data.*
 import org.laolittle.plugin.genshin.api.internal.*
 import org.laolittle.plugin.genshin.util.Json
 import org.laolittle.plugin.genshin.util.cacheFolder
@@ -24,6 +21,9 @@ import org.laolittle.plugin.genshin.util.decode
 import org.laolittle.plugin.genshin.util.randomUUID
 
 object GenshinBBSApi {
+
+    private const val SIGN_EVENT = "/event/bbs_sign_reward"
+
     /**
      * ```
      * ?role_id=&server=
@@ -31,10 +31,11 @@ object GenshinBBSApi {
      *
      * [GENSHIN_GAME_RECORD]
      */
-
     private const val GENSHIN_GAME_RECORD = "$TAKUMI_API/game_record/app/genshin/api"
-    private const val SIGN_API = "$TAKUMI_API/event/bbs_sign_reward/sign"
+    private const val SIGN_API = "$TAKUMI_API$SIGN_EVENT/sign"
     private const val GACHA_INFO = "$WEB_STATIC/hk4e/gacha_info"
+    private const val SIGN_INFO = "$TAKUMI_API$SIGN_EVENT/info?act_id=$GENSHIN_SIGN"
+    private const val AWARD_INFO = "$TAKUMI_API$SIGN_EVENT/home?act_id=$GENSHIN_SIGN"
 
     suspend fun getPlayerInfo(
         uid: Long,
@@ -101,6 +102,25 @@ object GenshinBBSApi {
         })
     }
 
+    suspend fun getSignInfo(
+        uid: Long,
+        region: GenshinServer,
+        cookies: String,
+        uuid: String = randomUUID
+    ): SignInfo{
+        val response = getBBS(
+            "$SIGN_INFO&region=$region&uid=$uid",
+            cookies,
+            uuid
+        ).getOrThrow()
+
+        return response.data.decode()
+    }
+
+    suspend fun getAwards(): AwardInfo{
+        return getBBS(AWARD_INFO).getOrThrow().data.decode()
+    }
+
     private const val SIGN_REFERRER =
         "https://webstatic.mihoyo.com/bbs/event/signin-ys/index.html?bbs_auth_required=true&act_id=$GENSHIN_SIGN&utm_source=bbs&utm_medium=mys&utm_campaign=icon"
 
@@ -131,6 +151,17 @@ object GenshinBBSApi {
         }
 
         return response.getOrThrow()
+    }
+
+    suspend fun signGenshinWithAward(
+        genshinUID: Long,
+        region: GenshinServer,
+        cookies: String,
+        uuid: String = randomUUID
+    ): SignResponse {
+        val signInfo = getSignInfo(genshinUID, region, cookies, uuid)
+        val response = if (!signInfo.isSign) signGenshin(genshinUID, region, cookies, uuid) else null
+        return SignResponse(response, signInfo, CactusData.awards[signInfo.totalSignDay])
     }
 
     suspend fun getGameRecordCard(): String {

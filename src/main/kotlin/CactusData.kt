@@ -7,9 +7,11 @@ import kotlinx.serialization.serializer
 import net.mamoe.mirai.console.data.AutoSavePluginData
 import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
+import org.laolittle.plugin.genshin.api.genshin.data.AwardInfo
 import org.laolittle.plugin.genshin.database.UserSetting
 import org.laolittle.plugin.genshin.service.PluginDispatcher
 import org.laolittle.plugin.genshin.util.Json
+import org.laolittle.plugin.genshin.util.cacheFolder
 import org.laolittle.plugin.genshin.util.decodeFromStringOrNull
 
 object CactusData : AutoSavePluginData("GenshinPluginData") {
@@ -19,6 +21,10 @@ object CactusData : AutoSavePluginData("GenshinPluginData") {
     val cookie get() = cookies.random()
 
     val userSetting: MutableMap<Long, UserSetting>
+
+    var awardMonth: Int by value(0)
+
+    var awards: List<AwardInfo.AwardItem>
 
     init {
         val settingFile = CactusBot.dataFolder.resolve("userSettings.json").also { it.createNewFile() }
@@ -32,6 +38,11 @@ object CactusData : AutoSavePluginData("GenshinPluginData") {
                 )
             )
         }
+
+        awards = Json.decodeFromStringOrNull(
+            Json.serializersModule.serializer(),
+            cacheFolder.resolve("awards.json").readText()
+        ) ?: listOf()
 
         if (!settingFile.isFile) saveJson()
 

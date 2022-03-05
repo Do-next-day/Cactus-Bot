@@ -13,6 +13,7 @@ import net.mamoe.mirai.message.data.PlainText
 import org.jetbrains.skia.Image
 import org.laolittle.plugin.genshin.CactusBot
 import org.laolittle.plugin.genshin.CactusData
+import org.laolittle.plugin.genshin.api.internal.SignResponse
 import org.laolittle.plugin.genshin.database.*
 import java.io.File
 import java.util.*
@@ -78,7 +79,7 @@ fun Iterable<GachaItem>.sort(): List<GachaItem> {
 suspend inline fun <reified T : MiraiUser> T.requireCookie(lazy: () -> Unit = {}): User {
     val userData = getUserData(this.id)
     if (userData.data.cookies.isBlank()) {
-        val message = PlainText("请先加好友私聊发送”原神登录“进行登录")
+        val message = PlainText("请先私聊发送“原神登录”进行登录")
         when (this) {
             is Friend -> sendMessage(message)
             is Member -> group.sendMessage(message)
@@ -86,6 +87,17 @@ suspend inline fun <reified T : MiraiUser> T.requireCookie(lazy: () -> Unit = {}
         lazy()
     }
     return userData
+}
+
+fun SignResponse.buildSuccessMessage(uid: Long): String = buildString {
+    append("旅行者: $uid")
+    if (signInfo.isSign){
+        append("今天已经签过到了哦")
+    }else{
+        appendLine("签到成功")
+        appendLine("今日奖励: ${award.name}x${award.count}")
+        append("签到天数: ${signInfo.totalSignDay}")
+    }
 }
 
 suspend fun getOrDownload(url: String, block: HttpRequestBuilder.() -> Unit = {}): ByteArray {
