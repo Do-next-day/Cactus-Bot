@@ -175,7 +175,7 @@ data class DailyNote(
 
                     val finishedText = TextLine.make("探险完成", fontSmall)
 
-                    drawTextLine(TextLine.make("探索派遣限制（${currentResin}/${maxExpedition}）", fontBig), 45f, 445f, paintBlackText)
+                    drawTextLine(TextLine.make("探索派遣限制（${currentExpedition}/${maxExpedition}）", fontBig), 60f, 615f, paintBlackText)
                     expeditions.forEachIndexed { index, info ->
                         val avatar = Image.makeFromEncoded(PluginDispatcher.runBlocking {
                             getOrDownload(info.avatarIconUrl)
