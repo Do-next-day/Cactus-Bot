@@ -131,14 +131,20 @@ object GenshinBBSApi {
         })
     }
 
-    suspend fun getSignInfo(
+    private suspend fun getSignInfo(
         uid: Long,
         region: GenshinServer,
         cookies: String,
         uuid: String = randomUUID
     ): SignInfo {
+        val params = buildUrlParameters {
+            "act_id" sets GENSHIN_SIGN
+            "region" sets region
+            "uid" sets uid
+        }
+
         val response = getBBS(
-            "$SIGN_API/info?act_id=$GENSHIN_SIGN&region=$region&uid=$uid",
+            "$SIGN_API/info?$params",
             cookies,
             uuid
         )
@@ -147,13 +153,17 @@ object GenshinBBSApi {
     }
 
     suspend fun getAwards(): Award {
-        return getBBS("$SIGN_API/home?act_id=$GENSHIN_SIGN").getOrThrow().data.decode()
+        val params = buildUrlParameters {
+            "act_id" sets GENSHIN_SIGN
+        }
+
+        return getBBS("$SIGN_API/home?$params").getOrThrow().data.decode()
     }
 
     private const val SIGN_REFERRER =
         "https://webstatic.mihoyo.com/bbs/event/signin-ys/index.html?bbs_auth_required=true&act_id=$GENSHIN_SIGN&utm_source=bbs&utm_medium=mys&utm_campaign=icon"
 
-    suspend fun signGenshin(
+    private suspend fun signGenshin(
         genshinUID: Long,
         region: GenshinServer,
         cookies: String,
@@ -193,7 +203,7 @@ object GenshinBBSApi {
         return SignResponse(response, signInfo, CactusData.awards[signInfo.totalSignDay])
     }
 
-    suspend fun getGameRecordCard(uid: Long): Response {
+    suspend fun getGameRecordCard(uid: Long): Response { //todo 解析
         val url = "$GAME_RECORD/card/wapi/getGameRecordCard?uid=$uid"
 
         return getBBS(url)
