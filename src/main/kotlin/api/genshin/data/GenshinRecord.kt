@@ -3,6 +3,7 @@ package org.laolittle.plugin.genshin.api.genshin.data
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonArray
+import org.laolittle.plugin.genshin.api.genshin.data.GenshinRecord.WorldExploration.RegionType
 import org.laolittle.plugin.genshin.database.AvatarElement
 
 @Serializable
@@ -210,7 +211,35 @@ data class GenshinRecord(
          * 地区ID, 或许是按照时间顺序
          * */
         val id: Short,
-    )
+    ) {
+        /**
+         * 地区供奉 (非神像)
+         * */
+        @Serializable
+        data class Offering(
+            /**
+             * 昵称
+             * */
+            val name: String,
+
+            /**
+             * 供奉等级
+             * */
+            val level: Short,
+        )
+
+        enum class RegionType {
+            /**
+             * 声望
+             * */
+            Reputation,
+
+            /**
+             * 供奉
+             * */
+            Offering,
+        }
+    }
 
     @Serializable
     data class Home(
@@ -222,7 +251,7 @@ data class GenshinRecord(
         /**
          * 访客数量
          * */
-        @SerialName("visit_num") val totalVistors: Int,
+        @SerialName("visit_num") val totalVisitors: Int,
 
         /**
          * 洞天仙力 (舒适度)
@@ -253,34 +282,5 @@ data class GenshinRecord(
          * 舒适度图标
          * */
         @SerialName("comfort_level_icon") val comfortLevelIconUrl: String,
-
-        )
-
-    /**
-     * 地区供奉 (非神像)
-     * */
-    @Serializable
-    data class Offering(
-        /**
-         * 昵称
-         * */
-        val name: String,
-
-        /**
-         * 供奉等级
-         * */
-        val level: Short,
     )
-
-    enum class RegionType {
-        /**
-         * 声望
-         * */
-        Reputation,
-
-        /**
-         * 供奉
-         * */
-        Offering,
-    }
 }
