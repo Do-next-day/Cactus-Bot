@@ -4,8 +4,8 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.skia.*
 import org.laolittle.plugin.Fonts
-import org.laolittle.plugin.genshin.CactusBot
 import org.laolittle.plugin.genshin.service.PluginDispatcher
+import org.laolittle.plugin.genshin.util.getImageFromResource
 import org.laolittle.plugin.genshin.util.getOrDownload
 import kotlin.math.round
 
@@ -145,7 +145,7 @@ data class DailyNote(
                         val info = TextLine.make(note.info, fontBig)
                         drawRect(box, paintBox)
                         drawRect(infoBox, paintInfo)
-                        drawImage(Back, 30f, top)
+                        drawImage(back, 30f, top)
                         drawImage(note.image, 55f, top + 20)
 
                         drawTextLine(title, 100f, top + 50, paintBlackText)
@@ -244,9 +244,7 @@ data class DailyNote(
 
     private val resin
         get() = Note(
-            CactusBot::class.java.getResource("/DailyNote/resin.png")!!.openStream().use {
-                Image.makeFromEncoded(it.readBytes())
-            },
+            getImageFromResource("/DailyNote/resin.png"),
             "原粹树脂",
             when (resinRecoveryTime) {
                 0L -> "树脂已满"
@@ -273,9 +271,7 @@ data class DailyNote(
 
     private val homeCoin
         get() = Note(
-            CactusBot::class.java.getResource("/DailyNote/home_coin.png")!!.openStream().use {
-                Image.makeFromEncoded(it.readBytes())
-            },
+            getImageFromResource("/DailyNote/home_coin.png"),
             "洞天财翁 - 洞天宝钱",
             when (homeCoinRecoveryTime) {
                 0L -> "已满"
@@ -302,9 +298,7 @@ data class DailyNote(
 
     private val dailyTask
         get() = Note(
-            CactusBot::class.java.getResource("/DailyNote/daily_task.png")!!.openStream().use {
-                Image.makeFromEncoded(it.readBytes())
-            },
+            getImageFromResource("/DailyNote/daily_task.png"),
             "每日委托任务",
             when {
                 rewardRecived -> "「每日委托」奖励已领取"
@@ -316,19 +310,15 @@ data class DailyNote(
 
     private val weeklyZones
         get() = Note(
-            CactusBot::class.java.getResource("/DailyNote/weekly_zones.png")!!.openStream().use {
-                Image.makeFromEncoded(it.readBytes())
-            },
+           getImageFromResource("/DailyNote/weekly_zones.png"),
             "值得铭记的强敌",
             "本周剩余消耗减半次数",
             "$resinDiscountRemain/$resinDiscountLimit"
         )
 
-    companion object {
-        val Back by lazy {
-            CactusBot::class.java.getResource("/DailyNote/back.png")!!.openStream().use {
-                Image.makeFromEncoded(it.readBytes())
-            }
+    private companion object {
+        val back by lazy {
+            getImageFromResource("/DailyNote/back.png")
         }
     }
 }

@@ -1,13 +1,9 @@
 package org.laolittle.plugin.genshin.mirai
 
-import io.ktor.client.request.*
 import kotlinx.serialization.SerializationException
 import net.mamoe.mirai.event.globalEventChannel
 import net.mamoe.mirai.event.subscribeGroupMessages
 import net.mamoe.mirai.message.data.MessageSource.Key.quote
-import net.mamoe.mirai.message.data.buildForwardMessage
-import net.mamoe.mirai.message.data.buildMessageChain
-import net.mamoe.mirai.utils.ExternalResource.Companion.toExternalResource
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
 import org.jetbrains.skia.EncodedImageFormat
 import org.laolittle.plugin.genshin.CactusBot
@@ -15,11 +11,11 @@ import org.laolittle.plugin.genshin.CactusConfig
 import org.laolittle.plugin.genshin.CactusData
 import org.laolittle.plugin.genshin.api.ApiAccessDeniedException
 import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi
-import org.laolittle.plugin.genshin.api.internal.client
 import org.laolittle.plugin.genshin.database.getUserData
 import org.laolittle.plugin.genshin.model.GachaSimulator
 import org.laolittle.plugin.genshin.service.AbstractCactusService
 import org.laolittle.plugin.genshin.util.requireCookie
+import org.laolittle.plugin.sendImage
 import org.laolittle.plugin.toExternalResource
 
 object GroupMessageListener : AbstractCactusService() {
@@ -60,21 +56,7 @@ object GroupMessageListener : AbstractCactusService() {
                             return@Listener
                         }
 
-                        subject.sendMessage(buildForwardMessage {
-                            query.avatars.forEach { cInfo ->
-                                add(bot, buildMessageChain {
-                                    add(
-                                        client.get<ByteArray>(cInfo.imageUrl).toExternalResource()
-                                            .use { subject.uploadImage(it) })
-                                    add(
-                                        """
-                                        名称: ${cInfo.name}
-                                        命座: ${cInfo.constellation}
-                                    """.trimIndent()
-                                    )
-                                })
-                            }
-                        })
+                        subject.sendImage(query.infoImage)
                     }
 
                     "test" -> {

@@ -113,6 +113,8 @@ suspend fun getOrDownload(url: String, block: HttpRequestBuilder.() -> Unit = {}
     }
 }
 
+fun getImageFromResource(name: String) = Image.makeFromEncoded(CactusBot::class.java.getResource(name)!!.openStream().use { it.readBytes() })
+
 val currentTimeMillis get() = System.currentTimeMillis()
 
 val userSettings by CactusData::userSetting
