@@ -235,7 +235,7 @@ data class DailyNote(
             }.makeImageSnapshot()
         }
 
-    private inner class Note(
+    private data class Note(
         val image: Image,
         val title: String,
         val subtitle: String,
@@ -306,9 +306,11 @@ data class DailyNote(
                 Image.makeFromEncoded(it.readBytes())
             },
             "每日委托任务",
-            if (rewardRecived) "「每日委托」奖励已领取"
-            else if (finishedTask == totalTask) "「每日委托」奖励暂未领取"
-            else "今日完成委托数量不足",
+            when {
+                rewardRecived -> "「每日委托」奖励已领取"
+                finishedTask == totalTask -> "「每日委托」奖励暂未领取"
+                else -> "今日完成委托数量不足"
+            },
             "$finishedTask/$totalTask"
         )
 
