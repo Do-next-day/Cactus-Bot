@@ -21,7 +21,7 @@ data class DynamicList(
     val nextOffset: Long? = null
 ){
 
-    val hasMore = more == 1
+    val hasMore get() = more == 1
 
     /**
      *
