@@ -1,10 +1,10 @@
-package org.laolittle.plugin.genshin.api.bbs
+package org.laolittle.plugin.genshin.api.mihoyobbs
 
 import kotlinx.serialization.json.JsonObject
 import org.laolittle.plugin.genshin.api.BBS_API_BASE
 import org.laolittle.plugin.genshin.api.TAKUMI_API
-import org.laolittle.plugin.genshin.api.bbs.data.GameRole
 import org.laolittle.plugin.genshin.api.internal.getBBS
+import org.laolittle.plugin.genshin.api.mihoyobbs.data.GameRole
 import org.laolittle.plugin.genshin.util.decode
 
 object BBSApi {

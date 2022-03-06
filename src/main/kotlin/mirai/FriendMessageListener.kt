@@ -8,8 +8,8 @@ import net.mamoe.mirai.message.data.buildMessageChain
 import net.mamoe.mirai.message.data.content
 import net.mamoe.mirai.message.nextMessageOrNull
 import org.laolittle.plugin.genshin.CactusConfig.guideMessage
-import org.laolittle.plugin.genshin.api.bbs.BBSApi
-import org.laolittle.plugin.genshin.api.bbs.data.GameRole
+import org.laolittle.plugin.genshin.api.mihoyobbs.BBSApi
+import org.laolittle.plugin.genshin.api.mihoyobbs.data.GameRole
 import org.laolittle.plugin.genshin.database.UserSetting
 import org.laolittle.plugin.genshin.database.cactusSuspendedTransaction
 import org.laolittle.plugin.genshin.service.AbstractCactusService

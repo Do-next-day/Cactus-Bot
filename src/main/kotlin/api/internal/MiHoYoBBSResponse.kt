@@ -47,7 +47,7 @@ import java.rmi.UnexpectedException
 ///////////////////////////////////////////////////////////////////////////
 
 @Serializable
-data class Response(
+data class MiHoYoBBSResponse(
     @SerialName("retcode") val restCode: Int,
     val message: String,
     @SerialName("data") private val originData: JsonObject?,
@@ -73,7 +73,7 @@ data class Response(
                 10103 -> "无绑定米游社账号 $message"
                 else -> message
             },
-            restCode = restCode
+            code = restCode
         )
 
     fun getOrThrow() = if (isSuccess) this else throw cause

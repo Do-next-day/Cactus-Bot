@@ -1,4 +1,4 @@
-package org.laolittle.plugin.genshin.api.bbs.data
+package org.laolittle.plugin.genshin.api.mihoyobbs.data
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

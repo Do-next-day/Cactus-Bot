@@ -81,14 +81,14 @@ private fun getRandomString(size: Int): String {
  *    data: ""
  * }
  * ```
- * @see Response
+ * @see MiHoYoBBSResponse
  */
 internal suspend inline fun getBBS(
     url: String,
     cookies: String = CactusData.cookie,
     uuid: String = randomUUID,
     block: HttpRequestBuilder.() -> Unit = {}
-) = Json.decodeFromString(Response.serializer(), client.get(url) {
+) = Json.decodeFromString(MiHoYoBBSResponse.serializer(), client.get(url) {
     setHeaders(url, "", cookies, uuid)
     block()
 })
@@ -102,7 +102,7 @@ internal suspend inline fun postBBS(
     uuid: String = randomUUID,
     header: HeadersBuilder.() -> Unit = {},
     block: HttpRequestBuilder.() -> Unit = {}
-) = Json.decodeFromString(Response.serializer(), client.post(url) {
+) = Json.decodeFromString(MiHoYoBBSResponse.serializer(), client.post(url) {
     block()
     setHeaders(url, if (this.body !== EmptyContent) this.body.toString() else "", cookies, uuid)
     headers.header()

@@ -4,5 +4,5 @@ class ApiAccessDeniedException
     (
     override val message: String? = null,
     override val cause: Throwable? = null,
-    val restCode: Int
+    val code: Int
 ) : Exception()

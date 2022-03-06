@@ -95,7 +95,7 @@ object GenshinBBSApi {
         cookies: String,
         uuid: String = randomUUID,
         period: Boolean = false,
-    ): Response {
+    ): MiHoYoBBSResponse {
         val params = buildUrlParameters {
             "role_id" sets uid
             "schedule_type" sets if (!period) 1 else 2
@@ -113,7 +113,7 @@ object GenshinBBSApi {
 
     /**
      * returns a JsonObject
-     * not [Response]
+     * not [MiHoYoBBSResponse]
      */
     suspend fun getGachaDetail(
         server: GenshinServer,
@@ -170,8 +170,8 @@ object GenshinBBSApi {
         region: GenshinServer,
         cookies: String,
         uuid: String = randomUUID
-    ): Response {
-        val appVersion = "2.11.1"
+    ): MiHoYoBBSResponse {
+        val appVersion = "2.10.2"
         val response = postBBS(
             url = "$SIGN_API/sign",
             cookies,
@@ -205,7 +205,7 @@ object GenshinBBSApi {
         return SignResponse(response, signInfo, CactusData.awards[signInfo.totalSignDay])
     }
 
-    suspend fun getGameRecordCard(uid: Long): Response { //todo 解析
+    suspend fun getGameRecordCard(uid: Long): MiHoYoBBSResponse { //todo 解析
         val url = "$GAME_RECORD/card/wapi/getGameRecordCard?uid=$uid"
 
         return getBBS(url)
