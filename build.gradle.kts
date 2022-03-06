@@ -29,5 +29,6 @@ dependencies {
     compileOnly(skikoAwt("windows-x64"))
     compileOnly(skikoAwt("linux-x64"))
     compileOnly(skikoAwt("linux-arm64"))
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.2")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-datetime:0.3.2")
+    testImplementation(kotlin("test", "1.6.20-M1"))
 }
