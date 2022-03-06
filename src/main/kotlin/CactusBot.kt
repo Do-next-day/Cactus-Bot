@@ -68,5 +68,7 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
                 CactusData.userSetting
             )
         )
+
+        logger.info { "All services closed successfully" }
     }
 }

@@ -41,6 +41,7 @@ data class UserData(
 data class UserSetting(
     var push: Boolean = true,
     var autoSign: Boolean = true,
+    var resinRemind: Long = 30 * 60,
     var pushSubject: Long,
     ) {
     override fun toString(): String = Json.encodeToString(serializer(), this)

@@ -3,6 +3,7 @@ package org.laolittle.plugin.genshin
 import net.mamoe.mirai.console.data.ReadOnlyPluginConfig
 import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
+import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.event.events.MessageEvent
 import net.mamoe.mirai.message.code.MiraiCode.deserializeMiraiCode
 import net.mamoe.mirai.message.data.MessageChain
@@ -23,7 +24,7 @@ object CactusConfig : ReadOnlyPluginConfig("GenshinPluginConfig") {
     val autoSign by value(true)
 
     private val guideResourceFolder = CactusBot.configFolder.resolve("GuideRes").also { it.mkdir() }
-    val MessageEvent.guideMessage: MessageChain
+    val Contact.guideMessage: MessageChain
         get() {
             var foo = guideResourceFolder
                 .resolve("guide.txt")
@@ -34,11 +35,11 @@ object CactusConfig : ReadOnlyPluginConfig("GenshinPluginConfig") {
             val result = r.findAll(foo)
             result.forEach {
                 val image = PluginDispatcher.runBlocking {
-                    guideResourceFolder.resolve(it.groupValues[1]).uploadAsImage(subject)
+                    guideResourceFolder.resolve(it.groupValues[1]).uploadAsImage(this@guideMessage)
                 }
 
                 foo = foo.replace("%p${it.groupValues[1]}%", image.imageId)
             }
-            return foo.deserializeMiraiCode(subject)
+            return foo.deserializeMiraiCode(this)
         }
 }

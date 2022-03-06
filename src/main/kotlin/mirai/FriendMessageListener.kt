@@ -26,7 +26,10 @@ object FriendMessageListener : AbstractCactusService() {
                 val setting = userSettings.getOrPut(sender.id) { UserSetting(pushSubject = sender.id) }
 
                 subject.sendMessage("""
-                    设置说明
+                    修改推送对象: 
+                    推送到+群号 或 推送到这里 (好友推送)
+                    树脂多少分钟满提醒 (默认: 30分钟)
+                    数字+提醒我
                 """.trimIndent())
 
                 var keep = false
@@ -39,11 +42,15 @@ object FriendMessageListener : AbstractCactusService() {
                         true
                     }
 
+                    "结束设置" {
+
+                        false
+                    }
+
                     timeout(30_000) {
                         val foo = keep
-                        if (!foo)
-                            subject.sendMessage("设置结束")
-                        keep = false
+                        if (!foo) subject.sendMessage("设置结束")
+                        else keep = false
                         foo
                     }
                 }
@@ -65,7 +72,7 @@ object FriendMessageListener : AbstractCactusService() {
                         return@Login
                     }
                     delay(232)
-                    send(guideMessage)
+                    send(subject.guideMessage)
                     delay(1_320)
                     send("请在5分钟内内发送Cookie")
                 }
@@ -118,10 +125,12 @@ object FriendMessageListener : AbstractCactusService() {
                     return@Login
                 }
 
+                userSettings.putIfAbsent(sender.id, UserSetting(pushSubject = sender.id))
                 subject.sendMessage(
                     """
                     旅行者${gameRole.nickname}登录成功!
                     你的UID: ${gameRole.gameUID}
+                    发送“原神设置”即可自定义设置
                 """.trimIndent()
                 )
             }

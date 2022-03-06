@@ -6,174 +6,104 @@ import kotlinx.serialization.json.JsonArray
 import org.laolittle.plugin.genshin.api.genshin.data.GenshinRecord.WorldExploration.RegionType
 import org.laolittle.plugin.genshin.database.AvatarElement
 
+/**
+ * 原神玩家信息记录
+ *
+ * @param role 未知
+ * @param avatars 角色列表
+ * @param stats 玩家状态
+ * @param cityExplorations 城市探索度
+ * @param worldExplorations 世界探索度
+ * @param homes 家园
+ */
 @Serializable
 data class GenshinRecord(
-    // ？
     val role: String?,
-
-    /**
-     * 角色列表
-     * */
     val avatars: List<GenshiAvatarInfo>,
-
-    /**
-     * 玩家状态
-     * */
     val stats: PlayerStats,
-
-    /**
-     * 城市探索度
-     * */
     @SerialName("city_explorations") val cityExplorations: JsonArray, // TODO: 2022/2/27 need city data
-
-    /**
-     * 世界探索度
-     * */
     @SerialName("world_explorations") val worldExplorations: List<WorldExploration>,
-
-    /**
-     * 家园
-     * */
     val homes: List<Home>
 ) {
     /**
-     * 玩家信息
+     * 玩家状态
+     *
+     * @param activeDays 总计活跃天数
+     * @param totalAchievements 获得成就数
+     * @param winRate 未知
+     * @param totalAnemoculus 风神瞳
+     * @param totalGeoculus 岩神瞳
+     * @param totalElectroculus 雷神瞳
+     * @param totalAvatars 获得角色数量
+     * @param unlockedPoints 解锁的传送点数量
+     * @param totalDomains 解锁的秘境数量
+     * @param spiralAbyss 深渊层数
+     * @param totalPreciousChests 珍贵宝箱数
+     * @param totalLuxuriousChests 华丽宝箱数
+     * @param totalExquisiteChests 精致宝箱数
+     * @param totalCommonChests 普通宝箱数
+     * @param totalMagicChests 奇馈宝箱数
      * */
     @Serializable
     data class PlayerStats(
-        /**
-         * 总计活跃天数
-         * */
         @SerialName("active_day_number") val activeDays: Int,
-
-        /**
-         * 获得成就数
-         * */
         @SerialName("achievement_number") val totalAchievements: Int,
-
-        /**
-         * 胜率？？
-         * */
         @SerialName("win_rate") val winRate: Int,
-
-        /**
-         * 风神瞳
-         * */
         @SerialName("anemoculus_number") val totalAnemoculus: Short,
-
-        /**
-         * 岩神瞳
-         * */
         @SerialName("geoculus_number") val totalGeoculus: Short,
-
-        /**
-         * 雷神瞳
-         * */
         @SerialName("electroculus_number") val totalElectroculus: Short,
-
-        /**
-         * 获得角色数量
-         * */
         @SerialName("avatar_number") val totalAvatars: Short,
-
-        /**
-         * 解锁的传送点数量
-         * */
         @SerialName("way_point_number") val unlockedPoints: Short,
-
-        /**
-         * 解锁的秘境数量
-         * */
         @SerialName("domain_number") val totalDomains: Short,
-
-        /**
-         * 深渊层数
-         * */
         @SerialName("spiral_abyss") val spiralAbyss: String,
-
-        /**
-         * 珍贵宝箱数
-         * */
         @SerialName("precious_chest_number") val totalPreciousChests: Int,
-
-        /**
-         * 华丽宝箱数
-         * */
         @SerialName("luxurious_chest_number") val totalLuxuriousChests: Int,
-
-        /**
-         * 精致宝箱数
-         * */
         @SerialName("exquisite_chest_number") val totalExquisiteChests: Int,
-
-        /**
-         * 普通宝箱数
-         * */
         @SerialName("common_chest_number") val totalCommonChests: Int,
-
-        /**
-         * 奇馈宝箱数
-         *
-         * 魔力宝箱 (bushi
-         * */
         @SerialName("magic_chest_number") val totalMagicChests: Int,
-
-
         )
 
+    /**
+     * 角色信息
+     * @param id unknown
+     * @param imageUrl 角色头像图片链接
+     * @param name 角色名称
+     * @param element 元素
+     * @param fetter 好感度
+     * @param level 等级
+     * @param rarity 稀有度 (星级)
+     * @param constellation 命座
+     * @param cardImageUrl 人物卡片图片链接
+     * @param isChosen
+     */
     @Serializable
     data class GenshiAvatarInfo(
-        // unknown
-        val id: Long, @SerialName("image") val imageUrl: String,
-
-
-        /**
-         * 角色名称
-         * */
+        val id: Long,
+        @SerialName("image") val imageUrl: String,
         val name: String,
-
-
-        /**
-         * 角色元素
-         * */
         val element: AvatarElement,
-
-
-        /**
-         * 好感度
-         * */
         val fetter: Short,
-
-
-        /**
-         * 等级
-         * */
         val level: Short,
-
-        /**
-         * 稀有度 (星级)
-         * */
         val rarity: Short,
-
-
-        /**
-         * 命座
-         * */
-        @SerialName("actived_constellation_num") val constellation: Int,
-
-
-        /**
-         * 人物卡片图片链接
-         * */
+        @SerialName("actived_constellation_num") val constellation: Short,
         @SerialName("card_image") val cardImageUrl: String,
-
         // unknown, maybe it can be used in App
         @SerialName("is_chosen") val isChosen: Boolean
     )
 
+    @Suppress("unused")
     @Serializable
     class City
 
+    /**
+     * @param level
+     * @param explorationPercentage 探索度
+     * @param iconUrl 图片链接
+     * @param name 地区名称
+     * @param type 地区类型[RegionType]
+     * @param offerings 供奉的对象[Offering]
+     * @param id 地区ID, 或许是按照时间顺序
+     */
     @Serializable
     data class WorldExploration(
         /**
@@ -181,57 +111,34 @@ data class GenshinRecord(
          * @see RegionType
          * */
         val level: Short,
-
-        /**
-         * 探索度
-         * */
         @SerialName("exploration_percentage") val explorationPercentage: Short,
-
-        /**
-         * 图片链接
-         * */
         @SerialName("icon") val iconUrl: String,
-
-        /**
-         * 地区名称
-         * */
         val name: String,
-
-        /**
-         * 地区类型
-         * */
         val type: RegionType,
-
-        /**
-         * 供奉
-         * */
         val offerings: List<Offering>,
-
-        /**
-         * 地区ID, 或许是按照时间顺序
-         * */
         val id: Short,
     ) {
         /**
          * 地区供奉 (非神像)
+         *
+         * @param name 昵称
+         * @param level 供奉等级
          * */
         @Serializable
         data class Offering(
-            /**
-             * 昵称
-             * */
             val name: String,
-
-            /**
-             * 供奉等级
-             * */
             val level: Short,
         )
 
+        /**
+         * [Reputation]
+         *
+         * [Offering]
+         */
         enum class RegionType {
             /**
              * 声望
-             * */
+             */
             Reputation,
 
             /**
@@ -241,46 +148,25 @@ data class GenshinRecord(
         }
     }
 
+    /**
+     * @param level 信任等阶
+     * @param totalVisitors 访客数量
+     * @param comfort 洞天仙力 (舒适度)
+     * @param totalGotItems 获得摆件数
+     * @param name 名称
+     * @param iconUrl 图标地址
+     * @param comfortLevel 舒适等级
+     * @param comfortLevelIconUrl 舒适度图标
+     */
     @Serializable
     data class Home(
-        /**
-         * 信任等阶
-         * */
         val level: Short,
-
-        /**
-         * 访客数量
-         * */
         @SerialName("visit_num") val totalVisitors: Int,
-
-        /**
-         * 洞天仙力 (舒适度)
-         * */
         @SerialName("comfort_num") val comfort: Int,
-
-        /**
-         * 获得摆件数
-         * */
         @SerialName("item_num") val totalGotItems: Int,
-
-        /**
-         * 名称
-         * */
         val name: String,
-
-        /**
-         * 图标地址
-         * */
         @SerialName("icon") val iconUrl: String,
-
-        /**
-         * 舒适等级
-         * */
         @SerialName("comfort_level_name") val comfortLevel: String,
-
-        /**
-         * 舒适度图标
-         * */
         @SerialName("comfort_level_icon") val comfortLevelIconUrl: String,
     )
 }

@@ -13,6 +13,7 @@ import org.laolittle.plugin.genshin.util.currentTimeMillis
 import org.laolittle.plugin.genshin.util.randomUUID
 import java.security.MessageDigest
 import java.util.concurrent.TimeUnit
+import kotlin.random.Random
 
 internal val client = HttpClient(OkHttp) {
     engine {
@@ -64,7 +65,8 @@ private val ALL_CHAR = ('0'..'9') + ('A'..'Z') + ('a'..'z')
 private fun getRandomString(size: Int): String {
     return buildString {
         repeat(size) {
-            append(ALL_CHAR.random())
+            val rand = Math.random().let { r -> if (r == 0.0) 5.42367 else r } * 100000 + 100000
+            append(ALL_CHAR.random(Random(rand.toLong())))
         }
     }
 }

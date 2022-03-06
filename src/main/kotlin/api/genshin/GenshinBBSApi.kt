@@ -95,7 +95,7 @@ object GenshinBBSApi {
         cookies: String,
         uuid: String = randomUUID,
         period: Boolean = false,
-    ) {
+    ): Response {
         val params = buildUrlParameters {
             "role_id" sets uid
             "schedule_type" sets if (!period) 1 else 2
@@ -107,6 +107,8 @@ object GenshinBBSApi {
             cookies,
             uuid
         )
+
+        return response
     }
 
     /**
@@ -169,7 +171,7 @@ object GenshinBBSApi {
         cookies: String,
         uuid: String = randomUUID
     ): Response {
-        val appVersion = "2.10.2"
+        val appVersion = "2.11.1"
         val response = postBBS(
             url = "$SIGN_API/sign",
             cookies,
