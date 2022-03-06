@@ -316,7 +316,7 @@ data class DailyNote(
             "$resinDiscountRemain/$resinDiscountLimit"
         )
 
-    private companion object {
+    internal companion object {
         val back by lazy {
             getImageFromResource("/DailyNote/back.png")
         }
