@@ -30,6 +30,16 @@ internal class ImageTest {
              */
 //            val image = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_AchievementIcon_O001.png").readBytes())
 
+            val infoBgMain = Surface.makeRasterN32Premul(650, 920).apply {
+                canvas.apply {
+                    drawInfoBgMain(0f, 8f, 600f, 810f)
+                    drawRect(Rect(40f, 45f, 610f, 880f), Paint().apply {
+                        color = Color.makeRGB(240, 235, 227)
+                    })
+                }
+
+                File("bgMain.png").writeBytes(makeImageSnapshot().getBytes())
+            }
 
             Surface.makeRasterN32Premul(1505, 920).apply {
                 canvas.apply {
@@ -37,7 +47,7 @@ internal class ImageTest {
                     drawBackGround()
 
                     // InfoBgMain
-                    drawInfoBgMain(50f, 8f, 600f, 810f)
+                    infoBgMain.draw(this, 50, 0, null)
 
                     // 名片
                     drawImageRect(
@@ -53,6 +63,8 @@ internal class ImageTest {
                     // 200 205 180
                     drawLevelBox(85f, 420f, Color.makeRGB(165, 185, 130))
                     drawLevelBox(380f, 420f, Color.makeRGB(205,185,165))
+
+
                 }
 
                 File("bg.png").writeBytes(makeImageSnapshot().getBytes())
