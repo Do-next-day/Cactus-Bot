@@ -21,11 +21,11 @@ import net.mamoe.mirai.contact.User as MiraiUser
 
 private val dataFolder get() = CactusBot.dataFolder
 
-val gachaDataFolder = dataFolder.resolve("GachaImages")
+val gachaDataFolder = dataFolder.resolve("GachaImages").also { it.mkdir() }
 
-val avatarDataFolder = dataFolder.resolve("Avatars")
+val avatarDataFolder = dataFolder.resolve("Avatars").also { it.mkdir() }
 
-val cacheFolder = dataFolder.resolve("cache")
+val cacheFolder = dataFolder.resolve("cache").also { it.mkdir() }
 
 val File.skikoImage: Image get() = Image.makeFromEncoded(readBytes())
 

@@ -38,9 +38,6 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
         CactusConfig.reload()
         CactusData.reload()
         dataFolder.mkdirs()
-        gachaDataFolder.mkdir()
-        avatarDataFolder.mkdir()
-        cacheFolder.mkdir()
 
         // Listener
         AllMessageListener.start()

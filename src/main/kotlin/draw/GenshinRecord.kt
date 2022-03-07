@@ -9,7 +9,7 @@ private const val infoBgWidth = 650
 private const val infoBgHeight = 920
 
 
-fun GenshinRecord.infoImage(): Image{
+fun GenshinRecord.infoImage(): Image {
     return Surface.makeRasterN32Premul(bgWidth, bgHeight).apply {
         canvas.apply {
             // 背景
@@ -24,7 +24,7 @@ fun GenshinRecord.infoImage(): Image{
     }.makeImageSnapshot()
 }
 
-fun GenshinRecord.recordInfo(): Surface{
+fun GenshinRecord.recordInfo(): Surface {
     return Surface.makeRasterN32Premul(infoBgWidth, infoBgHeight).apply {
         canvas.apply {
             infoBg.draw(this, 0, 0, Paint())
@@ -33,11 +33,16 @@ fun GenshinRecord.recordInfo(): Surface{
             val leftPadding = 15
             val topPadding = 14
 
-            val nameCardWidth = infoBgWidth-leftPadding*2+4
+            val nameCardWidth = infoBgWidth - leftPadding * 2 + 4
             val nameCardHeight = nameCardWidth * 6 / 16
             drawImageRect(
                 getNameCardImage(),
-                Rect.makeXYWH(leftPadding.toFloat(), topPadding.toFloat(), nameCardWidth.toFloat(), nameCardHeight.toFloat())
+                Rect.makeXYWH(
+                    leftPadding.toFloat(),
+                    topPadding.toFloat(),
+                    nameCardWidth.toFloat(),
+                    nameCardHeight.toFloat()
+                )
             )
 
             // 透明名片装饰线
@@ -46,40 +51,44 @@ fun GenshinRecord.recordInfo(): Surface{
 
             // 头像框
             val avatarRadius = 100f
-            drawAvatarFrame(avatarRadius, (nameCardWidth / 2 + leftPadding).toFloat(),(nameCardHeight - avatarRadius / 4))
-
+            drawAvatarFrame(
+                avatarRadius,
+                (nameCardWidth / 2 + leftPadding).toFloat(),
+                (nameCardHeight - avatarRadius / 4)
+            )
 
             // 200 205 180
             drawLevelBox(35f, 420f, Color.makeRGB(165, 185, 130))
-            drawLevelBox(330f, 420f, Color.makeRGB(205,185,165))
+            drawLevelBox(330f, 420f, Color.makeRGB(205, 185, 165))
 
+            drawInfoBgA(35f, 600f, 270f)
             // todo
 
         }
     }
 }
 
-private fun getNameCardImage(): Image{
+private fun getNameCardImage(): Image {
     return getImageFromResource("$resourceFolder/UI_NameCardPic_Kokomi_P.png")
 }
 
 private val infoBg: Surface by lazy {
-    infoBG.zoomAroundAtCornerWidth(56f,infoBgWidth, infoBgHeight)
+    infoBG.zoomAroundAtCornerWidth(56f, infoBgWidth, infoBgHeight)
 }
 
 private val recordBg: Surface by lazy {
-    Surface.makeRasterN32Premul(bgWidth,bgHeight).apply {
+    Surface.makeRasterN32Premul(bgWidth, bgHeight).apply {
         canvas.apply {
             val centerWidth = 100
             val halfWidth = (bgWidth - centerWidth) / 2
-            val bgPadding = Rect(0f,10f,0f,10f)
+            val bgPadding = Rect(0f, 10f, 0f, 10f)
             val bglSf = recordBGL.zoomLeftAtPoint(46f, 48f, halfWidth, bgHeight, bgPadding)
             val bgrSf = recordBGR.zoomRightAtPoint(46f, 48f, halfWidth, bgHeight, bgPadding)
-            val bgcSf = recordBGC.zoomVerticalAtPoint(20f, 36f, centerWidth, bgHeight, Rect(0f,12f,0f,12f))
+            val bgcSf = recordBGC.zoomVerticalAtPoint(20f, 36f, centerWidth, bgHeight, Rect(0f, 12f, 0f, 12f))
 
-            bglSf.draw(this, 0,0, Paint())
-            bgcSf.draw(this, halfWidth,0, Paint())
-            bgrSf.draw(this, halfWidth + centerWidth,0, Paint())
+            bglSf.draw(this, 0, 0, Paint())
+            bgcSf.draw(this, halfWidth, 0, Paint())
+            bgrSf.draw(this, halfWidth + centerWidth, 0, Paint())
         }
     }
 }
@@ -110,7 +119,7 @@ private fun Canvas.drawAvatarFrame(radius: Float, x: Float, y: Float) {
     })
 }
 
-private fun Canvas.drawLevelBox(l: Float, t: Float, colorR: Int){
+private fun Canvas.drawLevelBox(l: Float, t: Float, colorR: Int) {
     drawRRect(RRect.makeComplexXYWH(l, t, 285f, 52f, floatArrayOf(1f)), Paint().apply {
         color = colorR
     })
@@ -122,10 +131,24 @@ private fun Canvas.drawLevelBox(l: Float, t: Float, colorR: Int){
     })
 }
 
+private fun Canvas.drawInfoBgA(l: Float, t: Float, len: Float) {
+    drawRect(Rect.makeXYWH(l + 40, t + 2, len, 114f), Paint().apply {
+        mode = PaintMode.STROKE
+        strokeWidth = 2f
+        color = Color.makeRGB(213, 191, 145)
+    })
+    drawRect(Rect.makeXYWH(l + 40, t + 3, len, 112f), Paint().apply {
+        color = Color.makeRGB(240, 240, 235)
+    })
+    drawImageRectTo(recordBGA, Rect.makeXYWH(0f, 0f, 40f, 118f), l, t)
+    drawImageRectTo(recordBGA, Rect.makeXYWH(40f, 0f, 40f, 118f), l + 40 + len, t)
+}
+
 private const val resourceFolder = "/GenshinRecord"
 private val recordBGL = getImageFromResource("$resourceFolder/UI_FriendInfo_BGL.png")
 private val recordBGR = getImageFromResource("$resourceFolder/UI_FriendInfo_BGR.png")
 private val recordBGC = getImageFromResource("$resourceFolder/UI_FriendInfo_BGC.png")
+private val recordBGA = getImageFromResource("$resourceFolder/UI_FriendInfo_BgA.png")
 
 private val infoBG = getImageFromResource("$resourceFolder/UI_FriendInfo_Bg.png")
 private val lineNC = getImageFromResource("$resourceFolder/UI_FriendInfo_Line_NC.png")

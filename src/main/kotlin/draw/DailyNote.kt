@@ -9,7 +9,7 @@ import org.jetbrains.skia.*
 import org.laolittle.plugin.Fonts
 import kotlin.math.round
 
-fun DailyNote.getImage(): Image {
+fun DailyNote.infoImage(): Image {
     val w = 745
     val h = 1200
 
@@ -187,6 +187,7 @@ fun DailyNote.getImage(): Image {
                         (avatar.height * 0.8 - 5).toFloat()
                     )
                 )
+
                 drawTextLine(
                     when (info.status) {
                         Finished -> finishedText

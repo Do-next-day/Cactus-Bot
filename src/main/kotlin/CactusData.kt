@@ -42,7 +42,7 @@ object CactusData : AutoSavePluginData("GenshinPluginData") {
 
         awards = Json.decodeFromStringOrNull(
             Json.serializersModule.serializer(),
-            cacheFolder.resolve("awards.json").also { if (!it.isFile) it.createNewFile() }.readText()
+            cacheFolder.resolve("awards.json").also { it.createNewFile() }.readText()
         ) ?: PluginDispatcher.runBlocking {
             GenshinBBSApi.getAwards().also {
                 awardMonth = it.month

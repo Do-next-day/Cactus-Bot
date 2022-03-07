@@ -3,7 +3,7 @@ package icu.dnddl.plugin.genshin.mirai
 import icu.dnddl.plugin.genshin.CactusConfig
 import icu.dnddl.plugin.genshin.CactusData
 import icu.dnddl.plugin.genshin.database.UserSetting
-import icu.dnddl.plugin.genshin.draw.getImage
+import icu.dnddl.plugin.genshin.draw.infoImage
 import icu.dnddl.plugin.genshin.service.AbstractCactusService
 import icu.dnddl.plugin.genshin.util.buildSuccessMessage
 import icu.dnddl.plugin.genshin.util.getDailyNote
@@ -39,7 +39,7 @@ object AllMessageListener : AbstractCactusService() {
                             return@Fun
                         }
 
-                        subject.sendImage(dailyNote.getImage())
+                        subject.sendImage(dailyNote.infoImage())
 
                         /**
                          * with(dailyNote) {
