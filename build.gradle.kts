@@ -6,7 +6,7 @@ plugins {
     id("net.mamoe.mirai-console") version "2.10.0"
 }
 
-group = "org.laolittle.plugin"
+group = "icu.dnddl.plugin"
 version = "1.0"
 
 repositories {
