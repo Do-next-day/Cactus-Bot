@@ -1,3 +1,4 @@
+import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.skia.*
 import org.junit.Test
@@ -30,15 +31,15 @@ internal class ImageTest {
              */
 //            val image = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_AchievementIcon_O001.png").readBytes())
 
-            val infoBgMain = Surface.makeRasterN32Premul(650, 920).apply {
-                canvas.apply {
-                    drawInfoBgMain(0f, 8f, 600f, 810f)
-                    drawRect(Rect(40f, 45f, 610f, 880f), Paint().apply {
-                        color = Color.makeRGB(240, 235, 227)
-                    })
+            val infoBgMain = async {
+                Surface.makeRasterN32Premul(650, 920).apply {
+                    canvas.apply {
+                        drawInfoBgMain(0f, 8f, 600f, 810f)
+                        drawRect(Rect(40f, 45f, 610f, 880f), Paint().apply {
+                            color = Color.makeRGB(240, 235, 227)
+                        })
+                    }
                 }
-
-                File("bgMain.png").writeBytes(makeImageSnapshot().getBytes())
             }
 
             Surface.makeRasterN32Premul(1505, 920).apply {
@@ -47,7 +48,7 @@ internal class ImageTest {
                     drawBackGround()
 
                     // InfoBgMain
-                    infoBgMain.draw(this, 50, 0, null)
+                    infoBgMain.await().draw(this, 50, 0, null)
 
                     // 名片
                     drawImageRect(
@@ -75,7 +76,7 @@ internal class ImageTest {
     fun Canvas.drawBackGround(){
         val bgl = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_BGL.png").readBytes())
         val bgr = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_BGR.png").readBytes())
-        val bgc = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_BGC.png").readBytes())
+        val bgc = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_BGC.png").readBytes()) // 100 x 56
 
         drawImageRect(bgl, Rect(3f, 46f, 47f, 47f), Rect.makeXYWH(12f, 54f, 44f, 900 - 50f)) // 左竖直
         drawImageRect(bgl, Rect(45f, 3f, 47f, 47f), Rect.makeXYWH(56f, 12f, 1485 - 55f, 44f)) // 上水平
@@ -87,9 +88,15 @@ internal class ImageTest {
         drawImageRect(bgl, Rect(1f, 48f, 47f, 92f), Rect.makeXYWH(10f, 900 - 34f, 46f, 44f)) // 左下角
         drawImageRect(bgr, Rect(0f, 48f, 46f, 92f), Rect.makeXYWH(1495f - 46f, 900 - 34f, 46f, 44f)) // 右下角
 
+        drawImageRect(bgc, Rect(0f, 1f, 100f, 28f), Rect.makeXYWH(1505 * .5f, 12f, 100f, 27f))
+        drawImageRect(bgc, Rect(0f, 27f, 100f, 54f), Rect.makeXYWH(1505 * .5f, 881f, 100f, 27f))
+
         drawRect(Rect(55f, 55f, 1447f, 870f), Paint().apply {
             color = Color.makeRGB(240, 235, 227)
-        })
+        }) // 背景色填充
+
+        drawImageRect(bgc, Rect(0f, 16f, 100f, 39f), Rect.makeXYWH(1505 * .5f, 39f, 100f, 850f))
+
     }
 
     fun Canvas.drawInfoBgMain(l: Float, t: Float, w: Float, h: Float) {
