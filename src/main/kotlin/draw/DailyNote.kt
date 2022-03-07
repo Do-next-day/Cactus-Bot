@@ -178,7 +178,7 @@ fun DailyNote.getImage(): Image {
 
                 drawCircle(120f, top, 30f, paintWhite)
                 drawCircle(120f, top, 25f, paintGreen)
-                drawImageRect(
+                drawImageRectNearest(
                     avatar,
                     Rect.makeXYWH(
                         70f,

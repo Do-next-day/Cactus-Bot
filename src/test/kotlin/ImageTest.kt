@@ -473,4 +473,19 @@ internal class ImageTest {
         drawImageRect(image, Rect.makeXYWH(0f, 0f, 40f, 118f), Rect.makeXYWH(l, t, 40f, 118f))
         drawImageRect(image, Rect.makeXYWH(40f, 0f, 40f, 118f), Rect.makeXYWH(l + 40 + len, t, 40f, 118f))
     }
+
+    @Test
+    fun scaleImage() {
+        val image = Image.makeFromEncoded(this::class.java.getResource("/UI_HomeworldModule_3_Pic.png")!!.openStream().readBytes())
+
+        Surface.makeRasterN32Premul(512, 256).apply {
+            canvas.apply {
+                drawImageRect(image, Rect(0f, 0f, image.width.toFloat(), image.height.toFloat()), Rect(0f, 0f, 512f, 256f), FilterMipmap(FilterMode.LINEAR, MipmapMode.NEAREST) , Paint().apply {
+                    isAntiAlias = true
+                }, false)
+            }
+
+            File("scale_test.png").writeBytes(makeImageSnapshot().getBytes())
+        }
+    }
 }
