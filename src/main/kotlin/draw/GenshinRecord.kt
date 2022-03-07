@@ -31,10 +31,10 @@ fun GenshinRecord.recordInfo(): Surface{
 
             // 名片 比例:16/6
             val leftPadding = 15
-            val topPadding = 13
+            val topPadding = 14
 
             val nameCardWidth = infoBgWidth-leftPadding*2+4
-            val nameCardHeight = nameCardWidth * 9 / 16
+            val nameCardHeight = nameCardWidth * 6 / 16
             drawImageRect(
                 getNameCardImage(),
                 Rect.makeXYWH(leftPadding.toFloat(), topPadding.toFloat(), nameCardWidth.toFloat(), nameCardHeight.toFloat())
@@ -46,7 +46,7 @@ fun GenshinRecord.recordInfo(): Surface{
 
             // 头像框
             val avatarRadius = 100f
-            drawAvatarFrame(avatarRadius, nameCardWidth / 2 - avatarRadius / 2,(nameCardHeight - avatarRadius / 2))
+            drawAvatarFrame(avatarRadius, (nameCardWidth / 2 + leftPadding).toFloat(),(nameCardHeight - avatarRadius / 4))
 
 
             // 200 205 180
@@ -84,7 +84,7 @@ private val recordBg: Surface by lazy {
     }
 }
 
-fun Canvas.drawAvatarFrame(radius: Float, x: Float, y: Float) {
+private fun Canvas.drawAvatarFrame(radius: Float, x: Float, y: Float) {
     // (30 + 600) / 2
     // 中部实心圆
     drawCircle(x, y, radius, Paint().apply {
@@ -110,7 +110,7 @@ fun Canvas.drawAvatarFrame(radius: Float, x: Float, y: Float) {
     })
 }
 
-fun Canvas.drawLevelBox(l: Float, t: Float, colorR: Int){
+private fun Canvas.drawLevelBox(l: Float, t: Float, colorR: Int){
     drawRRect(RRect.makeComplexXYWH(l, t, 285f, 52f, floatArrayOf(1f)), Paint().apply {
         color = colorR
     })

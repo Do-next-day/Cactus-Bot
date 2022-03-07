@@ -1,3 +1,4 @@
+import icu.dnddl.plugin.genshin.draw.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.skia.*
@@ -60,7 +61,7 @@ internal class ImageTest {
                     drawLineNC()
 
                     // 头像框
-                    drawAvatarFrame(375f, 300f)
+                    drawAvatarFrame(100f,375f, 300f)
                     // 200 205 180
                     drawLevelBox(85f, 420f, Color.makeRGB(165, 185, 130))
                     drawLevelBox(380f, 420f, Color.makeRGB(205,185,165))
@@ -77,278 +78,71 @@ internal class ImageTest {
     @Test
     fun testBg(): Unit = runBlocking{
 
-        val infoBgMainWidth = 650
-        val infoBgMainHeight = 920
+        val bgWidth = 1500
+        val bgHeight = 920
+        val infoBgWidth = 650
+        val infoBgHeight = 920
+
 
         val infoBgMain = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_Bg.png").readBytes())
-        val infoBgMainSf = infoBgMain.zoomAroundAtCornerWidth(56f,infoBgMainWidth, infoBgMainHeight)
+        val infoBgMainSf = infoBgMain.zoomAroundAtCornerWidth(56f,infoBgWidth, infoBgHeight)
         infoBgMainSf.apply {
             canvas.apply {
-                // 名片
+
+                // 名片 比例:16/6
+                val leftPadding = 15
+                val topPadding = 14
+
+                val nameCardWidth = infoBgWidth-leftPadding*2+4
+                val nameCardHeight = nameCardWidth * 6 / 16
+                println(nameCardHeight)
                 drawImageRect(
                     Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_NameCardPic_Kokomi_P.png").readBytes()),
-                    Rect.makeXYWH(14f, 13f, infoBgMainWidth+4-14f*2, 319f)
+                    Rect.makeXYWH(leftPadding.toFloat(), topPadding.toFloat(), nameCardWidth.toFloat(), nameCardHeight.toFloat())
                 )
 
                 // 透明名片装饰线
                 val lineNC = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_Line_NC.png").readBytes())
-                val lineNCSf = lineNC.zoomTopAtPoint(47f, 48f, infoBgMainWidth+4-14*2, 319)
-                lineNCSf.draw(this, 14,13, Paint().setAlphaf(0.2f))
+                val lineNCSf = lineNC.zoomTopAtPoint(47f, 48f, nameCardWidth, nameCardHeight)
+                lineNCSf.draw(this, leftPadding, topPadding, Paint().setAlphaf(0.2f))
 
                 // 头像框
-                drawAvatarFrame(325f, 300f)
+                val avatarRadius = 100f
+                drawAvatarFrame(avatarRadius, (nameCardWidth / 2 + leftPadding).toFloat(),(nameCardHeight - avatarRadius / 4))
+
+
                 // 200 205 180
                 drawLevelBox(35f, 420f, Color.makeRGB(165, 185, 130))
                 drawLevelBox(330f, 420f, Color.makeRGB(205,185,165))
+
             }
         }
 
-        val bgl = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_BGL.png").readBytes())
-        val bgr = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_BGR.png").readBytes())
-        val bgc = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_BGC.png").readBytes())
-        val bgPadding = Rect(0f,10f,0f,10f)
-        val bglSf = bgl.zoomLeftAtPoint(46f, 48f, 702, 920, bgPadding)
-        val bgrSf = bgr.zoomRightAtPoint(46f, 48f, 702, 920, bgPadding)
-        val bgcSf = bgc.zoomVerticalAtPoint(20f, 36f, 100, 920, Rect(0f,12f,0f,12f))
+        val recordBGL = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_BGL.png").readBytes())
+        val recordBGR = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_BGR.png").readBytes())
+        val recordBGC = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_BGC.png").readBytes())
 
-        val bg = Surface.makeRasterN32Premul(1505, 920).apply {
+        val bg = Surface.makeRasterN32Premul(bgWidth, bgHeight).apply {
             canvas.apply {
-                bglSf.draw(this, 0,0, Paint())
-                bgcSf.draw(this, 702,0, Paint())
-                bgrSf.draw(this, 802,0, Paint())
+                val centerWidth = 100
+                val halfWidth = (bgWidth - centerWidth) / 2
+                val bgPadding = Rect(0f,10f,0f,10f)
+                val bglSf = recordBGL.zoomLeftAtPoint(46f, 48f, halfWidth, bgHeight, bgPadding)
+                val bgrSf = recordBGR.zoomRightAtPoint(46f, 48f, halfWidth, bgHeight, bgPadding)
+                val bgcSf = recordBGC.zoomVerticalAtPoint(20f, 36f, centerWidth, bgHeight, Rect(0f,12f,0f,12f))
 
-                infoBgMainSf.draw(this, 50,0,Paint())
+                bglSf.draw(this, 0,0, Paint())
+                bgcSf.draw(this, halfWidth,0, Paint())
+                bgrSf.draw(this, halfWidth + centerWidth,0, Paint())
+
+
+                infoBgMainSf.draw(this, 30,0,Paint())
             }
         }
 
         File("bg.png").writeBytes(bg.makeImageSnapshot().getBytes())
 
     }
-
-
-    fun Image.zoomLeftAtPoint(
-        verticalTopPoint: Float,
-        verticalBottomPoint: Float,
-        dstWidth: Int,
-        dstHeight: Int,
-        dstPadding: Rect = Rect(0f,0f,0f,0f),
-        srcPadding: Rect = Rect(0f,0f,0f,0f)
-    ) = zoomAroundAtPoint(
-        (this.width - 2).toFloat(),
-        (this.width - 1).toFloat(),
-        verticalTopPoint,
-        verticalBottomPoint,
-        dstWidth,
-        dstHeight,
-        dstPadding,
-        srcPadding,
-    )
-
-    fun Image.zoomRightAtPoint(
-        verticalTopPoint: Float,
-        verticalBottomPoint: Float,
-        dstWidth: Int,
-        dstHeight: Int,
-        dstPadding: Rect = Rect(0f,0f,0f,0f),
-        srcPadding: Rect = Rect(0f,0f,0f,0f)
-    ) = zoomAroundAtPoint(
-        1f,
-        2f,
-        verticalTopPoint,
-        verticalBottomPoint,
-        dstWidth,
-        dstHeight,
-        dstPadding,
-        srcPadding
-    )
-
-    fun Image.zoomTopAtPoint(
-        horizontalLeftPoint: Float,
-        horizontalRightPoint: Float,
-        dstWidth: Int,
-        dstHeight: Int,
-        dstPadding: Rect = Rect(0f,0f,0f,0f),
-        srcPadding: Rect = Rect(0f,0f,0f,0f)
-    ) = zoomAroundAtPoint(
-        horizontalLeftPoint,
-        horizontalRightPoint,
-        (this.height - 2).toFloat(),
-        (this.height - 1).toFloat(),
-        dstWidth,
-        dstHeight,
-        dstPadding,
-        srcPadding,
-    )
-
-    fun Image.zoomVerticalAtPoint(
-        verticalTopPoint: Float,
-        verticalBottomPoint: Float,
-        dstWidth: Int,
-        dstHeight: Int,
-        dstPadding: Rect = Rect(0f,0f,0f,0f),
-        srcPadding: Rect = Rect(0f,0f,0f,0f)
-    ) = zoomAroundAtPoint(
-        this.height.toFloat(),
-        this.height.toFloat(),
-        verticalTopPoint,
-        verticalBottomPoint,
-        dstWidth,
-        dstHeight,
-        dstPadding,
-        srcPadding
-    )
-
-    fun Image.zoomAroundAtCornerWidth(
-        cornerWidth: Float,
-        dstWidth: Int,
-        dstHeight: Int,
-        dstPadding: Rect = Rect(0f,0f,0f,0f),
-        srcPadding: Rect = Rect(0f,0f,0f,0f)
-    ) = zoomAroundAtPoint(
-        cornerWidth,
-        this.width - cornerWidth,
-        cornerWidth,
-        this.height - cornerWidth,
-        dstWidth,
-        dstHeight,
-        dstPadding,
-        srcPadding
-    )
-
-    fun Image.zoomAroundAtPoint(
-        horizontalLeftPoint: Float,
-        horizontalRightPoint: Float,
-        verticalTopPoint: Float,
-        verticalBottomPoint: Float,
-        dstWidth: Int,
-        dstHeight: Int,
-        dstPadding: Rect = Rect(0f,0f,0f,0f),
-        srcPadding: Rect = Rect(0f,0f,0f,0f)
-    ): Surface = zoomAroundAtRect(
-        Rect(srcPadding.left, srcPadding.top, horizontalLeftPoint, verticalTopPoint),
-        Rect(horizontalRightPoint, srcPadding.top, this.width.toFloat() - srcPadding.right, verticalTopPoint),
-        Rect(horizontalRightPoint, verticalBottomPoint, this.width.toFloat() - srcPadding.right, this.height.toFloat() - srcPadding.bottom),
-        Rect(srcPadding.left, verticalBottomPoint, horizontalLeftPoint, this.height.toFloat() - srcPadding.bottom),
-
-        Rect(horizontalLeftPoint, srcPadding.top, horizontalRightPoint, verticalTopPoint),
-        Rect(horizontalLeftPoint, verticalBottomPoint, horizontalRightPoint, this.height.toFloat() - srcPadding.bottom),
-        Rect(srcPadding.left, verticalTopPoint, horizontalLeftPoint, verticalBottomPoint),
-        Rect(horizontalRightPoint, verticalTopPoint, this.width.toFloat() - srcPadding.right, verticalBottomPoint),
-        dstWidth,
-        dstHeight,
-        dstPadding
-    )
-
-
-    /**
-     *
-     */
-    fun Image.zoomAroundAtRect(
-        leftTopCornerRect: Rect,
-        rightTopCornerRect: Rect,
-        rightBottomCornerRect: Rect,
-        leftBottomCornerRect: Rect,
-        topHorizontalRect: Rect,
-        bottomHorizontalRect: Rect,
-        leftVerticalRect: Rect,
-        rightVerticalRect: Rect,
-        dstWidth: Int,
-        dstHeight: Int,
-        padding: Rect = Rect(0f,0f,0f,0f),
-    ): Surface = Surface.makeRasterN32Premul(dstWidth, dstHeight).apply surface@{
-        canvas.apply {
-
-            // 左上角
-            drawImageRect(
-                this@zoomAroundAtRect, leftTopCornerRect,
-                Rect.makeXYWH(padding.left, padding.top, leftTopCornerRect.width, leftTopCornerRect.height)
-            )
-            // 右上角
-            drawImageRect(
-                this@zoomAroundAtRect, rightTopCornerRect,
-                Rect.makeXYWH(
-                    this@surface.width - padding.right - rightTopCornerRect.width,
-                    padding.top,
-                    rightTopCornerRect.width,
-                    rightTopCornerRect.height
-                )
-            )
-            // 右下角
-            drawImageRect(
-                this@zoomAroundAtRect, rightBottomCornerRect,
-                Rect.makeXYWH(
-                    this@surface.width - padding.right - rightBottomCornerRect.width,
-                    this@surface.height - padding.bottom - rightBottomCornerRect.height,
-                    rightBottomCornerRect.width,
-                    rightBottomCornerRect.height
-                )
-            )
-            // 左下角
-            drawImageRect(
-                this@zoomAroundAtRect, leftBottomCornerRect,
-                Rect.makeXYWH(
-                    padding.left,
-                    this@surface.height - padding.bottom - leftBottomCornerRect.height,
-                    leftBottomCornerRect.width,
-                    leftBottomCornerRect.height
-                )
-            )
-
-            // 上水平
-            drawImageRect(
-                this@zoomAroundAtRect, topHorizontalRect,
-                Rect.makeXYWH(
-                    padding.left + leftTopCornerRect.width,
-                    padding.top,
-                    this@surface.width - padding.left - padding.right - leftTopCornerRect.width - rightTopCornerRect.width,
-                    topHorizontalRect.height
-                )
-            )
-            // 下水平
-            drawImageRect(
-                this@zoomAroundAtRect, bottomHorizontalRect,
-                Rect.makeXYWH(
-                    padding.left + leftTopCornerRect.width,
-                    this@surface.height - padding.bottom - bottomHorizontalRect.height,
-                    this@surface.width - padding.left - padding.right - leftTopCornerRect.width - rightTopCornerRect.width,
-                    bottomHorizontalRect.height
-                )
-            )
-            // 左竖直
-            drawImageRect(
-                this@zoomAroundAtRect, leftVerticalRect,
-                Rect.makeXYWH(
-                    padding.left,
-                    padding.top + leftTopCornerRect.height,
-                    leftVerticalRect.width,
-                    this@surface.height - padding.top - padding.bottom - leftTopCornerRect.height - leftBottomCornerRect.height
-                )
-            )
-            // 右竖直
-            drawImageRect(
-                this@zoomAroundAtRect, rightVerticalRect,
-                Rect.makeXYWH(
-                    this@surface.width - padding.right - rightVerticalRect.width,
-                    padding.top + rightTopCornerRect.height,
-                    rightVerticalRect.width,
-                    this@surface.height - padding.top - padding.bottom - rightTopCornerRect.height - rightBottomCornerRect.height
-                )
-            )
-
-            // 中心
-            drawImageRect(
-                this@zoomAroundAtRect,
-                Rect(leftVerticalRect.right, topHorizontalRect.height, rightVerticalRect.left, bottomHorizontalRect.top),
-                Rect.makeXYWH(
-                    padding.left + leftVerticalRect.width,
-                    padding.top + topHorizontalRect.height,
-                    this@surface.width - padding.left - padding.right - leftTopCornerRect.width - rightTopCornerRect.width,
-                    this@surface.height - padding.top - padding.bottom - rightTopCornerRect.height - rightBottomCornerRect.height
-                )
-            )
-        }
-    }
-
 
     fun Canvas.drawBackGround(){
         val bgl = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_BGL.png").readBytes())
@@ -426,26 +220,30 @@ internal class ImageTest {
         ) // 右竖直
     }
 
-    fun Canvas.drawAvatarFrame(x: Float, y: Float) {
+    fun Canvas.drawAvatarFrame(radius: Float, x: Float, y: Float) {
         // (30 + 600) / 2
-        drawCircle(x, y, 100f, Paint().apply {
+        // 中部实心圆
+        drawCircle(x, y, radius, Paint().apply {
             color = Color.makeRGB(210, 160, 120)
-        }) // 中部实心圆
-        drawCircle(x, y, 90f, Paint().apply {
+        })
+        // 内边框
+        drawCircle(x, y, radius - 10, Paint().apply {
             color = Color.makeRGB(220, 200, 165)
             mode = PaintMode.STROKE
             strokeWidth = 2f
-        }) // 内边框
-        drawCircle(x, y, 95f, Paint().apply {
+        })
+        // 中边框
+        drawCircle(x, y, radius - 5, Paint().apply {
             mode = PaintMode.STROKE
             strokeWidth = 10f
             color = Color.makeRGB(240, 235, 227)
-        }) // 中边框
-        drawCircle(x, y, 100f, Paint().apply {
+        })
+        // 外边框
+        drawCircle(x, y, radius, Paint().apply {
             mode = PaintMode.STROKE
             strokeWidth = 3.5f
             color = Color.makeRGB(220, 200, 165)
-        }) // 外边框
+        })
     }
 
     fun Canvas.drawLevelBox(l: Float, t: Float, colorR: Int){
