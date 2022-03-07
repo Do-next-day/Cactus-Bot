@@ -5,6 +5,7 @@ import net.mamoe.mirai.event.subscribeMessages
 import org.laolittle.plugin.genshin.CactusConfig
 import org.laolittle.plugin.genshin.CactusData
 import org.laolittle.plugin.genshin.database.UserSetting
+import org.laolittle.plugin.genshin.draw.getImage
 import org.laolittle.plugin.genshin.service.AbstractCactusService
 import org.laolittle.plugin.genshin.util.buildSuccessMessage
 import org.laolittle.plugin.genshin.util.getDailyNote
@@ -38,7 +39,7 @@ object AllMessageListener : AbstractCactusService() {
                             return@Fun
                         }
 
-                        subject.sendImage(dailyNote.image)
+                        subject.sendImage(dailyNote.getImage())
 
                         /**
                          * with(dailyNote) {
