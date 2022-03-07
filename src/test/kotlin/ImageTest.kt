@@ -32,14 +32,13 @@ internal class ImageTest {
              */
 //            val image = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_AchievementIcon_O001.png").readBytes())
 
-            val infoBgMain = async {
+            val infoBg = async {
                 Surface.makeRasterN32Premul(650, 920).apply {
                     canvas.apply {
-                        drawInfoBgMain(0f, 8f, 600f, 810f)
-                        drawRect(Rect(40f, 45f, 610f, 880f), Paint().apply {
-                            color = Color.makeRGB(240, 235, 227)
-                        })
+                        infoBgMain.draw(this, 0, 0, null)
                     }
+
+                    File("infoBgMain.png").writeBytes(makeImageSnapshot().getBytes())
                 }
             }
 
@@ -49,7 +48,7 @@ internal class ImageTest {
                     drawBackGround()
 
                     // InfoBgMain
-                    infoBgMain.await().draw(this, 50, 0, null)
+                    infoBg.await().draw(this, 50, 0, null)
 
                     // 名片
                     drawImageRect(
@@ -74,19 +73,14 @@ internal class ImageTest {
         })
     }
 
-
-    @Test
-    fun testBg(): Unit = runBlocking{
-
-        val bgWidth = 1500
-        val bgHeight = 920
+    val infoBgMain by lazy {
         val infoBgWidth = 650
         val infoBgHeight = 920
 
 
         val infoBgMain = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_Bg.png").readBytes())
-        val infoBgMainSf = infoBgMain.zoomAroundAtCornerWidth(56f,infoBgWidth, infoBgHeight)
-        infoBgMainSf.apply {
+
+        infoBgMain.zoomAroundAtCornerWidth(56f,infoBgWidth, infoBgHeight).apply {
             canvas.apply {
 
                 // 名片 比例:16/6
@@ -116,6 +110,55 @@ internal class ImageTest {
                 drawLevelBox(330f, 420f, Color.makeRGB(205,185,165))
 
             }
+
+            File("infoBg.png").writeBytes(makeImageSnapshot().getBytes())
+        }
+    }
+
+
+    @Test
+    fun testBg(): Unit = runBlocking{
+
+        val bgWidth = 1500
+        val bgHeight = 920
+        val infoBgWidth = 650
+        val infoBgHeight = 920
+
+
+        val infoBgMain = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_Bg.png").readBytes())
+        val infoBgMainSf = infoBgMain.zoomAroundAtCornerWidth(56f,infoBgWidth, infoBgHeight)
+        infoBgMainSf.apply {
+            canvas.apply {
+
+                // 名片 比例:16/6
+                val leftPadding = 15
+                val topPadding = 14
+
+                val nameCardWidth = infoBgWidth-leftPadding*2+4
+                val nameCardHeight = nameCardWidth * 6 / 16
+                println(nameCardHeight)
+                drawImageClipHeight(
+                    Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_NameCardPic_Kokomi_P.png").readBytes()),
+                    Rect.makeXYWH(leftPadding.toFloat(), topPadding.toFloat(), nameCardWidth.toFloat(), nameCardHeight.toFloat())
+                )
+
+                // 透明名片装饰线
+                val lineNC = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_Line_NC.png").readBytes())
+                val lineNCSf = lineNC.zoomTopAtPoint(47f, 48f, nameCardWidth, nameCardHeight)
+                lineNCSf.draw(this, leftPadding, topPadding, Paint().setAlphaf(0.2f))
+
+                // 头像框
+                val avatarRadius = 100f
+                drawAvatarFrame(avatarRadius, (nameCardWidth / 2 + leftPadding).toFloat(),(nameCardHeight - avatarRadius / 4))
+
+
+                // 200 205 180
+                drawLevelBox(35f, 420f, Color.makeRGB(165, 185, 130))
+                drawLevelBox(330f, 420f, Color.makeRGB(205,185,165))
+
+            }
+
+            File("infoBg.png").writeBytes(makeImageSnapshot().getBytes())
         }
 
         val recordBGL = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_BGL.png").readBytes())
