@@ -33,7 +33,7 @@ internal class ImageTest {
 
             Surface.makeRasterN32Premul(1505, 920).apply {
                 canvas.apply {
-                    //  BackGround
+                    // BackGround
                     drawBackGround()
 
                     // InfoBgMain
@@ -44,55 +44,15 @@ internal class ImageTest {
                         Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_NameCardPic_Kokomi_P.png").readBytes()),
                         Rect.makeXYWH(55f, 12f, 638f, 319f)
                     )
-                    val lineNC = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_Line_NC.png").readBytes())
-                    drawImageRect(
-                        lineNC,
-                        Rect(0f, 0f, 48f, 48f),
-                        Rect.makeXYWH(55f, 12f, 48f, 48f),
-                        Paint().setAlphaf(0.2f)
-                    ) // 左上角
-                    drawImageRect(
-                        lineNC,
-                        Rect(48f, 0f, 96f, 48f),
-                        Rect.makeXYWH(645f, 12f, 48f, 48f),
-                        Paint().setAlphaf(0.2f)
-                    ) // 右上角
 
-                    drawImageRect(
-                        lineNC,
-                        Rect(47f, 0f, 49f, 48f),
-                        Rect.makeXYWH(103f, 12f, 542f, 48f),
-                        Paint().setAlphaf(0.2f)
-                    ) // 上水平
-                    drawImageRect(
-                        lineNC,
-                        Rect(0f, 47f, 48f, 48f),
-                        Rect.makeXYWH(55f, 60f, 48f, 271f),
-                        Paint().setAlphaf(0.2f)
-                    ) // 左竖直
-                    drawImageRect(
-                        lineNC,
-                        Rect(48f, 47f, 96f, 48f),
-                        Rect.makeXYWH(645f, 60f, 48f, 271f),
-                        Paint().setAlphaf(0.2f)
-                    ) // 右竖直
+                    // 透明名片装饰线
+                    drawLineNC()
 
-
-
-                    // (30 + 600) / 2
-                    drawCircle(370f, 300f, 100f, Paint().apply {
-                        color = Color.makeRGB(210, 160, 120)
-                    })
-                    drawCircle(370f, 300f, 95f, Paint().apply {
-                        mode = PaintMode.STROKE
-                        strokeWidth = 10f
-                        color = Color.makeRGB(240, 235, 227)
-                    })
-                    drawCircle(370f, 300f, 100f, Paint().apply {
-                        mode = PaintMode.STROKE
-                        strokeWidth = 3.5f
-                        color = Color.makeRGB(220, 200, 165)
-                    })
+                    // 头像框
+                    drawAvatarFrame(375f, 300f)
+                    // 200 205 180
+                    drawLevelBox(85f, 420f, Color.makeRGB(165, 185, 130))
+                    drawLevelBox(380f, 420f, Color.makeRGB(205,185,165))
                 }
 
                 File("bg.png").writeBytes(makeImageSnapshot().getBytes())
@@ -132,6 +92,76 @@ internal class ImageTest {
         drawImageRect(bgMain, Rect(115f, 115f, 165f, 162f), Rect.makeXYWH(l + w + 1, t + h + 47f, 50f, 47f)) // 右下角
         drawImageRect(bgMain, Rect(115f, 2f, 162f, 55f), Rect.makeXYWH(l + w, t - 6f, 48f, 53f)) // 右上角
         drawImageRect(bgMain, Rect(115f, 55f, 162f, 97f), Rect.makeXYWH(l + w + 1, t + 47f, 47f, h)) // 右竖直
+    }
+
+    fun Canvas.drawLineNC() {
+
+        val lineNC = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_Line_NC.png").readBytes())
+        drawImageRect(
+            lineNC,
+            Rect(0f, 0f, 48f, 48f),
+            Rect.makeXYWH(55f, 12f, 48f, 48f),
+            Paint().setAlphaf(0.2f)
+        ) // 左上角
+        drawImageRect(
+            lineNC,
+            Rect(48f, 0f, 96f, 48f),
+            Rect.makeXYWH(645f, 12f, 48f, 48f),
+            Paint().setAlphaf(0.2f)
+        ) // 右上角
+
+        drawImageRect(
+            lineNC,
+            Rect(47f, 0f, 49f, 48f),
+            Rect.makeXYWH(103f, 12f, 542f, 48f),
+            Paint().setAlphaf(0.2f)
+        ) // 上水平
+        drawImageRect(
+            lineNC,
+            Rect(0f, 47f, 48f, 48f),
+            Rect.makeXYWH(55f, 60f, 48f, 271f),
+            Paint().setAlphaf(0.2f)
+        ) // 左竖直
+        drawImageRect(
+            lineNC,
+            Rect(48f, 47f, 96f, 48f),
+            Rect.makeXYWH(645f, 60f, 48f, 271f),
+            Paint().setAlphaf(0.2f)
+        ) // 右竖直
+    }
+
+    fun Canvas.drawAvatarFrame(x: Float, y: Float) {
+        // (30 + 600) / 2
+        drawCircle(x, y, 100f, Paint().apply {
+            color = Color.makeRGB(210, 160, 120)
+        }) // 中部实心圆
+        drawCircle(x, y, 90f, Paint().apply {
+            color = Color.makeRGB(220, 200, 165)
+            mode = PaintMode.STROKE
+            strokeWidth = 2f
+        }) // 内边框
+        drawCircle(x, y, 95f, Paint().apply {
+            mode = PaintMode.STROKE
+            strokeWidth = 10f
+            color = Color.makeRGB(240, 235, 227)
+        }) // 中边框
+        drawCircle(x, y, 100f, Paint().apply {
+            mode = PaintMode.STROKE
+            strokeWidth = 3.5f
+            color = Color.makeRGB(220, 200, 165)
+        }) // 外边框
+    }
+
+    fun Canvas.drawLevelBox(l: Float, t: Float, colorR: Int){
+        drawRRect(RRect.makeComplexXYWH(l, t, 285f, 52f, floatArrayOf(1f)), Paint().apply {
+            color = colorR
+        })
+
+        drawRRect(RRect.makeComplexXYWH(l, t, 285f, 52f, floatArrayOf(1f)), Paint().apply {
+            mode = PaintMode.STROKE
+            strokeWidth = 1.25f
+            color = Color.makeRGB(200, 205, 180)
+        })
     }
 
     fun Canvas.drawInfoBgA(l: Float, t: Float, len: Float) {
