@@ -1,4 +1,4 @@
-package org.laolittle.plugin.genshin.api.genshin.data
+package icu.dnddl.plugin.genshin.api.genshin.data
 
 import kotlinx.serialization.Serializable
 

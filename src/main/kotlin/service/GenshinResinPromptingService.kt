@@ -1,15 +1,15 @@
-package org.laolittle.plugin.genshin.service
+package icu.dnddl.plugin.genshin.service
 
+import icu.dnddl.plugin.genshin.api.internal.logger
+import icu.dnddl.plugin.genshin.mirai.getSubjectFromBots
+import icu.dnddl.plugin.genshin.util.getDailyNote
+import icu.dnddl.plugin.genshin.util.requireCookie
+import icu.dnddl.plugin.genshin.util.userSettings
 import kotlinx.coroutines.delay
 import net.mamoe.mirai.contact.User
 import net.mamoe.mirai.message.data.At
 import net.mamoe.mirai.message.data.buildMessageChain
 import net.mamoe.mirai.utils.error
-import org.laolittle.plugin.genshin.api.internal.logger
-import org.laolittle.plugin.genshin.mirai.getSubjectFromBots
-import org.laolittle.plugin.genshin.util.getDailyNote
-import org.laolittle.plugin.genshin.util.requireCookie
-import org.laolittle.plugin.genshin.util.userSettings
 
 class GenshinResinPromptingService(private val user: User) : AbstractCactusService() {
     private var repeat = 0

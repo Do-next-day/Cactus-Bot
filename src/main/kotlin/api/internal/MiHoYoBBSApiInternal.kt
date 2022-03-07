@@ -1,16 +1,16 @@
-package org.laolittle.plugin.genshin.api.internal
+package icu.dnddl.plugin.genshin.api.internal
 
+import icu.dnddl.plugin.genshin.CactusBot
+import icu.dnddl.plugin.genshin.CactusData
+import icu.dnddl.plugin.genshin.util.Json
+import icu.dnddl.plugin.genshin.util.currentTimeMillis
+import icu.dnddl.plugin.genshin.util.randomUUID
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.request.*
 import io.ktor.client.utils.*
 import io.ktor.http.*
 import net.mamoe.mirai.utils.error
-import org.laolittle.plugin.genshin.CactusBot
-import org.laolittle.plugin.genshin.CactusData
-import org.laolittle.plugin.genshin.util.Json
-import org.laolittle.plugin.genshin.util.currentTimeMillis
-import org.laolittle.plugin.genshin.util.randomUUID
 import java.security.MessageDigest
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random

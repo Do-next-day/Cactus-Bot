@@ -1,9 +1,9 @@
-package org.laolittle.plugin.genshin.api.internal
+package icu.dnddl.plugin.genshin.api.internal
 
+import icu.dnddl.plugin.genshin.api.ApiAccessDeniedException
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
-import org.laolittle.plugin.genshin.api.ApiAccessDeniedException
 import java.rmi.UnexpectedException
 
 ///////////////////////////////////////////////////////////////////////////
@@ -48,9 +48,11 @@ import java.rmi.UnexpectedException
 
 @Serializable
 data class MiHoYoBBSResponse(
-    @SerialName("retcode") val restCode: Int,
+    @SerialName("retcode")
+    val restCode: Int,
     val message: String,
-    @SerialName("data") private val originData: JsonObject?,
+    @SerialName("data")
+    private val originData: JsonObject?,
 ) {
     val isSuccess get() = restCode == 0
 

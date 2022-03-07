@@ -1,12 +1,12 @@
-package org.laolittle.plugin.genshin.model
+package icu.dnddl.plugin.genshin.model
 
+import icu.dnddl.plugin.genshin.database.Avatar
+import icu.dnddl.plugin.genshin.util.gachaDataFolder
+import icu.dnddl.plugin.genshin.util.skikoImage
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Paint
 import org.jetbrains.skia.Rect
 import org.laolittle.plugin.Fonts
-import org.laolittle.plugin.genshin.database.Avatar
-import org.laolittle.plugin.genshin.util.gachaDataFolder
-import org.laolittle.plugin.genshin.util.skikoImage
 
 
 object GachaImages {

@@ -1,7 +1,7 @@
-package org.laolittle.plugin.genshin.api.internal
+package icu.dnddl.plugin.genshin.api.internal
 
-import org.laolittle.plugin.genshin.api.genshin.data.Award
-import org.laolittle.plugin.genshin.api.genshin.data.SignInfo
+import icu.dnddl.plugin.genshin.api.genshin.data.Award
+import icu.dnddl.plugin.genshin.api.genshin.data.SignInfo
 
 data class SignResponse(
     val response: MiHoYoBBSResponse? = null,

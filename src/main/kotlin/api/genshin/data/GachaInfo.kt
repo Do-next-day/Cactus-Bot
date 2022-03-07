@@ -1,4 +1,4 @@
-package org.laolittle.plugin.genshin.api.genshin.data
+package icu.dnddl.plugin.genshin.api.genshin.data
 
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.SerialName
@@ -6,11 +6,16 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GachaInfo(
-    @SerialName("begin_time") val originBeginTime: String,
-    @SerialName("end_time") val originEndTime: String,
-    @SerialName("gacha_id") val gachaId: String,
-    @SerialName("gacha_name") val gachaName: String,
-    @SerialName("gacha_type") val gachaType: Int,
+    @SerialName("begin_time")
+    val originBeginTime: String,
+    @SerialName("end_time")
+    val originEndTime: String,
+    @SerialName("gacha_id")
+    val gachaId: String,
+    @SerialName("gacha_name")
+    val gachaName: String,
+    @SerialName("gacha_type")
+    val gachaType: Int,
 ) {
     val beginTime get() = originBeginTime.parseToLocalDateTime()
     val endTime get() = originEndTime.parseToLocalDateTime()

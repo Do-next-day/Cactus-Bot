@@ -1,4 +1,4 @@
-package org.laolittle.plugin.genshin.api.bilibili
+package icu.dnddl.plugin.genshin.api.bilibili
 
 object BiliBiliApi {
     private const val BILIBILI_API = "https://api.bilibili.com"
@@ -13,16 +13,14 @@ object BiliBiliApi {
     private const val HISTORY_DYNAMIC_LIST = "$BILIBILI_VC_API$DYNAMIC_ACTION/space_history?visitor_uid=0&platform=web"
 
 
-    fun getNewDynamic(biliUid: Long){
+    fun getNewDynamic(biliUid: Long) {
         getHistoryDynamic(biliUid, 0)
     }
 
-    fun getHistoryDynamic(biliUid: Long, offsetDid: Long){
-
+    fun getHistoryDynamic(biliUid: Long, offsetDid: Long) {
 
 
     }
-
 
 
 }

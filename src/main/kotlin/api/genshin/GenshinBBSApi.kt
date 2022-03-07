@@ -1,5 +1,18 @@
-package org.laolittle.plugin.genshin.api.genshin
+package icu.dnddl.plugin.genshin.api.genshin
 
+import icu.dnddl.plugin.genshin.CactusData
+import icu.dnddl.plugin.genshin.api.Action.GENSHIN_SIGN
+import icu.dnddl.plugin.genshin.api.TAKUMI_API
+import icu.dnddl.plugin.genshin.api.WEB_STATIC
+import icu.dnddl.plugin.genshin.api.buildUrlParameters
+import icu.dnddl.plugin.genshin.api.genshin.GenshinBBSApi.GenshinServer.CN_GF01
+import icu.dnddl.plugin.genshin.api.genshin.GenshinBBSApi.GenshinServer.CN_QD01
+import icu.dnddl.plugin.genshin.api.genshin.data.*
+import icu.dnddl.plugin.genshin.api.internal.*
+import icu.dnddl.plugin.genshin.util.Json
+import icu.dnddl.plugin.genshin.util.cacheFolder
+import icu.dnddl.plugin.genshin.util.decode
+import icu.dnddl.plugin.genshin.util.randomUUID
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.serialization.SerialName
@@ -7,19 +20,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kotlinx.serialization.serializer
-import org.laolittle.plugin.genshin.CactusData
-import org.laolittle.plugin.genshin.api.Action.GENSHIN_SIGN
-import org.laolittle.plugin.genshin.api.TAKUMI_API
-import org.laolittle.plugin.genshin.api.WEB_STATIC
-import org.laolittle.plugin.genshin.api.buildUrlParameters
-import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi.GenshinServer.CN_GF01
-import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi.GenshinServer.CN_QD01
-import org.laolittle.plugin.genshin.api.genshin.data.*
-import org.laolittle.plugin.genshin.api.internal.*
-import org.laolittle.plugin.genshin.util.Json
-import org.laolittle.plugin.genshin.util.cacheFolder
-import org.laolittle.plugin.genshin.util.decode
-import org.laolittle.plugin.genshin.util.randomUUID
 
 object GenshinBBSApi {
     private const val GAME_RECORD = "$TAKUMI_API/game_record/app"

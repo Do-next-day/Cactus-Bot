@@ -1,9 +1,9 @@
-package org.laolittle.plugin.genshin.service
+package icu.dnddl.plugin.genshin.service
 
+import icu.dnddl.plugin.genshin.api.genshin.GenshinBBSApi
+import icu.dnddl.plugin.genshin.util.Json
+import icu.dnddl.plugin.genshin.util.cacheFolder
 import kotlinx.serialization.serializer
-import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi
-import org.laolittle.plugin.genshin.util.Json
-import org.laolittle.plugin.genshin.util.cacheFolder
 
 object GenshinGachaCache : AbstractCactusTimerService(
     serviceName = "GachaCache",

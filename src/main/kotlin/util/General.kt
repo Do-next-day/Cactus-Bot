@@ -1,5 +1,9 @@
-package org.laolittle.plugin.genshin.util
+package icu.dnddl.plugin.genshin.util
 
+import icu.dnddl.plugin.genshin.CactusBot
+import icu.dnddl.plugin.genshin.CactusData
+import icu.dnddl.plugin.genshin.api.internal.SignResponse
+import icu.dnddl.plugin.genshin.database.*
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.request.*
@@ -11,10 +15,6 @@ import net.mamoe.mirai.contact.Friend
 import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.message.data.PlainText
 import org.jetbrains.skia.Image
-import org.laolittle.plugin.genshin.CactusBot
-import org.laolittle.plugin.genshin.CactusData
-import org.laolittle.plugin.genshin.api.internal.SignResponse
-import org.laolittle.plugin.genshin.database.*
 import java.io.File
 import java.util.*
 import net.mamoe.mirai.contact.User as MiraiUser
@@ -38,8 +38,8 @@ fun <T> Json.decodeFromStringOrNull(deserializer: DeserializationStrategy<T>, st
         decodeFromString(deserializer, string)
     }.getOrNull()
 
-inline fun <reified T> JsonElement.decode() = org.laolittle.plugin.genshin.util.Json.decodeFromJsonElement<T>(
-    org.laolittle.plugin.genshin.util.Json.serializersModule.serializer(),
+inline fun <reified T> JsonElement.decode() = icu.dnddl.plugin.genshin.util.Json.decodeFromJsonElement<T>(
+    icu.dnddl.plugin.genshin.util.Json.serializersModule.serializer(),
     this
 )
 
@@ -91,9 +91,9 @@ suspend inline fun <reified T : MiraiUser> T.requireCookie(lazy: () -> Unit = {}
 
 fun SignResponse.buildSuccessMessage(uid: Long): String = buildString {
     append("旅行者: $uid")
-    if (signInfo.isSign){
+    if (signInfo.isSign) {
         append("今天已经签过到了哦")
-    }else{
+    } else {
         appendLine("签到成功")
         appendLine("今日奖励: ${award.name}x${award.count}")
         append("签到天数: ${signInfo.totalSignDay}")
@@ -112,8 +112,6 @@ suspend fun getOrDownload(url: String, block: HttpRequestBuilder.() -> Unit = {}
         }
     }
 }
-
-fun getImageFromResource(name: String) = Image.makeFromEncoded(CactusBot::class.java.getResource(name)!!.openStream().use { it.readBytes() })
 
 val currentTimeMillis get() = System.currentTimeMillis()
 

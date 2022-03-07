@@ -1,5 +1,14 @@
-package org.laolittle.plugin.genshin.mirai
+package icu.dnddl.plugin.genshin.mirai
 
+import icu.dnddl.plugin.genshin.CactusConfig.guideMessage
+import icu.dnddl.plugin.genshin.api.mihoyobbs.BBSApi
+import icu.dnddl.plugin.genshin.api.mihoyobbs.data.GameRole
+import icu.dnddl.plugin.genshin.database.UserSetting
+import icu.dnddl.plugin.genshin.database.cactusSuspendedTransaction
+import icu.dnddl.plugin.genshin.service.AbstractCactusService
+import icu.dnddl.plugin.genshin.util.requireCookie
+import icu.dnddl.plugin.genshin.util.seconds
+import icu.dnddl.plugin.genshin.util.userSettings
 import kotlinx.coroutines.delay
 import net.mamoe.mirai.event.globalEventChannel
 import net.mamoe.mirai.event.subscribeFriendMessages
@@ -7,15 +16,6 @@ import net.mamoe.mirai.event.whileSelectMessages
 import net.mamoe.mirai.message.data.buildMessageChain
 import net.mamoe.mirai.message.data.content
 import net.mamoe.mirai.message.nextMessageOrNull
-import org.laolittle.plugin.genshin.CactusConfig.guideMessage
-import org.laolittle.plugin.genshin.api.mihoyobbs.BBSApi
-import org.laolittle.plugin.genshin.api.mihoyobbs.data.GameRole
-import org.laolittle.plugin.genshin.database.UserSetting
-import org.laolittle.plugin.genshin.database.cactusSuspendedTransaction
-import org.laolittle.plugin.genshin.service.AbstractCactusService
-import org.laolittle.plugin.genshin.util.requireCookie
-import org.laolittle.plugin.genshin.util.seconds
-import org.laolittle.plugin.genshin.util.userSettings
 
 object FriendMessageListener : AbstractCactusService() {
     override suspend fun main() {
@@ -25,12 +25,14 @@ object FriendMessageListener : AbstractCactusService() {
 
                 val setting = userSettings.getOrPut(sender.id) { UserSetting(pushSubject = sender.id) }
 
-                subject.sendMessage("""
+                subject.sendMessage(
+                    """
                     修改推送对象: 
                     推送到+群号 或 推送到这里 (好友推送)
                     树脂多少分钟满提醒 (默认: 30分钟)
                     数字+提醒我
-                """.trimIndent())
+                """.trimIndent()
+                )
 
                 var keep = false
                 whileSelectMessages {
@@ -92,7 +94,7 @@ object FriendMessageListener : AbstractCactusService() {
 
                     var role = roles.first()
                     cactusSuspendedTransaction {
-                        val userData = org.laolittle.plugin.genshin.database.getUserData(subject.id)
+                        val userData = icu.dnddl.plugin.genshin.database.getUserData(subject.id)
                         val data = userData.data
                         // roles not empty
                         if (roles.size != 1) {

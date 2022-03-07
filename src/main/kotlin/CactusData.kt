@@ -1,5 +1,12 @@
-package org.laolittle.plugin.genshin
+package icu.dnddl.plugin.genshin
 
+import icu.dnddl.plugin.genshin.api.genshin.GenshinBBSApi
+import icu.dnddl.plugin.genshin.api.genshin.data.Award
+import icu.dnddl.plugin.genshin.database.UserSetting
+import icu.dnddl.plugin.genshin.service.PluginDispatcher
+import icu.dnddl.plugin.genshin.util.Json
+import icu.dnddl.plugin.genshin.util.cacheFolder
+import icu.dnddl.plugin.genshin.util.decodeFromStringOrNull
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -7,13 +14,6 @@ import kotlinx.serialization.serializer
 import net.mamoe.mirai.console.data.AutoSavePluginData
 import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
-import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi
-import org.laolittle.plugin.genshin.api.genshin.data.Award
-import org.laolittle.plugin.genshin.database.UserSetting
-import org.laolittle.plugin.genshin.service.PluginDispatcher
-import org.laolittle.plugin.genshin.util.Json
-import org.laolittle.plugin.genshin.util.cacheFolder
-import org.laolittle.plugin.genshin.util.decodeFromStringOrNull
 
 object CactusData : AutoSavePluginData("GenshinPluginData") {
     @ValueDescription("全局Cookie, 支持多个")

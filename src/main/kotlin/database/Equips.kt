@@ -1,5 +1,6 @@
-package org.laolittle.plugin.genshin.database
+package icu.dnddl.plugin.genshin.database
 
+import icu.dnddl.plugin.genshin.util.Json
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -7,7 +8,6 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.javatime.date
 import org.jetbrains.skia.Image
-import org.laolittle.plugin.genshin.util.Json
 
 object Equips : IntIdTable() {
     val name = varchar("Name", 6)

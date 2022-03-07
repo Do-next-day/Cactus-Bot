@@ -1,8 +1,8 @@
-package org.laolittle.plugin.genshin.api.internal
+package icu.dnddl.plugin.genshin.api.internal
 
+import icu.dnddl.plugin.genshin.util.Json
 import io.ktor.client.request.*
 import io.ktor.http.*
-import org.laolittle.plugin.genshin.util.Json
 
 internal suspend inline fun biliGet(
     url: String,

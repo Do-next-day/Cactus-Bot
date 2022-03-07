@@ -1,6 +1,5 @@
-package org.laolittle.plugin.genshin.api.internal
+package icu.dnddl.plugin.genshin.api.internal
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 
@@ -11,6 +10,4 @@ data class BiliBiliResponse(
     val status: Boolean? = null,
     val msg: String? = null,
     val data: JsonElement? = null
-) {
-
-}
+)

@@ -1,15 +1,13 @@
-package org.laolittle.plugin.genshin.api.genshin.data
+package icu.dnddl.plugin.genshin.api.genshin.data
 
+import icu.dnddl.plugin.genshin.api.genshin.data.GenshinRecord.WorldExploration.OfferingInfo
+import icu.dnddl.plugin.genshin.api.genshin.data.GenshinRecord.WorldExploration.RegionType
+import icu.dnddl.plugin.genshin.api.genshin.data.GenshinRecord.WorldExploration.RegionType.Offering
+import icu.dnddl.plugin.genshin.api.genshin.data.GenshinRecord.WorldExploration.RegionType.Reputation
+import icu.dnddl.plugin.genshin.database.AvatarElement
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonArray
-import org.jetbrains.skia.*
-import org.laolittle.plugin.genshin.api.genshin.data.GenshinRecord.WorldExploration.RegionType
-import org.laolittle.plugin.genshin.api.genshin.data.GenshinRecord.WorldExploration.RegionType.Offering
-import org.laolittle.plugin.genshin.api.genshin.data.GenshinRecord.WorldExploration.RegionType.Reputation
-import org.laolittle.plugin.genshin.database.AvatarElement
-import org.laolittle.plugin.getBytes
-import java.io.File
 
 /**
  * 原神玩家信息记录
@@ -66,7 +64,7 @@ data class GenshinRecord(
         @SerialName("exquisite_chest_number") val totalExquisiteChests: Int,
         @SerialName("common_chest_number") val totalCommonChests: Int,
         @SerialName("magic_chest_number") val totalMagicChests: Int,
-        )
+    )
 
     /**
      * 角色信息
@@ -106,7 +104,7 @@ data class GenshinRecord(
      * @param iconUrl 图片链接
      * @param name 地区名称
      * @param type 地区类型[RegionType]
-     * @param offerings 供奉的对象[Offering]
+     * @param offerings 供奉的对象[OfferingInfo]
      * @param id 地区ID, 或许是按照时间顺序
      */
     @Serializable
@@ -116,11 +114,13 @@ data class GenshinRecord(
          * @see RegionType
          * */
         val level: Short,
-        @SerialName("exploration_percentage") val explorationPercentage: Short,
-        @SerialName("icon") val iconUrl: String,
+        @SerialName("exploration_percentage")
+        val explorationPercentage: Short,
+        @SerialName("icon")
+        val iconUrl: String,
         val name: String,
         val type: RegionType,
-        val offerings: List<Offering>,
+        val offerings: List<OfferingInfo>,
         val id: Short,
     ) {
         /**
@@ -130,7 +130,7 @@ data class GenshinRecord(
          * @param level 供奉等级
          * */
         @Serializable
-        data class Offering(
+        data class OfferingInfo(
             val name: String,
             val level: Short,
         )
@@ -166,103 +166,18 @@ data class GenshinRecord(
     @Serializable
     data class Home(
         val level: Short,
-        @SerialName("visit_num") val totalVisitors: Int,
-        @SerialName("comfort_num") val comfort: Int,
-        @SerialName("item_num") val totalGotItems: Int,
+        @SerialName("visit_num")
+        val totalVisitors: Int,
+        @SerialName("comfort_num")
+        val comfort: Int,
+        @SerialName("item_num")
+        val totalGotItems: Int,
         val name: String,
-        @SerialName("icon") val iconUrl: String,
-        @SerialName("comfort_level_name") val comfortLevel: String,
-        @SerialName("comfort_level_icon") val comfortLevelIconUrl: String,
+        @SerialName("icon")
+        val iconUrl: String,
+        @SerialName("comfort_level_name")
+        val comfortLevel: String,
+        @SerialName("comfort_level_icon")
+        val comfortLevelIconUrl: String,
     )
-
-    val infoImage: Image get() {
-        Surface.makeRasterN32Premul(1500, 950).apply {
-            canvas.apply {
-                drawImage(backGroundImage, 30f, 30f)
-
-                drawInfoBgMain(30f, 20f, 600f, 830f)
-
-                drawImageRect(
-                    Image.makeFromEncoded(File("resource/UI_Codex_Scenery_DQ2shanhugong #214208.png").readBytes()),
-                    Rect.makeXYWH(35f, 25f, 638f, 319f)
-                )
-
-                // (30 + 600) / 2
-                drawCircle(350f, 300f, 100f, Paint().apply {
-                    color = Color.makeRGB(210, 160, 120)
-                })
-                drawCircle(350f, 300f, 95f, Paint().apply {
-                    mode = PaintMode.STROKE
-                    strokeWidth = 10f
-                    color = Color.makeRGB(240, 235, 227)
-                })
-                drawCircle(350f, 300f, 100f, Paint().apply {
-                    mode = PaintMode.STROKE
-                    strokeWidth = 3.5f
-                    color = Color.makeRGB(220, 200, 165)
-                })
-            }
-            File("bg.png").writeBytes(makeImageSnapshot().getBytes())
-        }
-        return backGroundImage
-    }
-
-    private companion object {
-        val backGroundImage: Image by lazy {
-            val bgl = Image.makeFromEncoded(File("resource/UI_FriendInfo_BGL.png").readBytes())
-            val bgr = Image.makeFromEncoded(File("resource/UI_FriendInfo_BGR.png").readBytes())
-            val bgc = Image.makeFromEncoded(File("resource/UI_FriendInfo_BGC.png").readBytes())
-
-            Surface.makeRasterN32Premul(1485, 900).apply {
-                canvas.apply {
-                    // ------------------------- BackGround ---------------------------------------
-                    drawImageRect(bgl, Rect(3f, 46f, 47f, 47f), Rect.makeXYWH(2f, 44f, 44f, 900 - 50f)) // 左竖直
-                    drawImageRect(bgl, Rect(45f, 3f, 47f, 47f), Rect.makeXYWH(46f, 2f, 1485 - 55f, 44f)) // 上水平
-                    drawImageRect(bgr, Rect(0f, 46f, 44f, 47f), Rect.makeXYWH(1485 - 48f, 44f, 46f, 900 - 50f)) // 右竖直
-                    drawImageRect(bgl, Rect(45f, 46f, 47f, 91f), Rect.makeXYWH(46f, 900 - 45f, 1485 - 60f, 44f)) // 下水平
-
-                    drawImageRect(bgl, Rect(1f, 1f, 47f, 45f), Rect.makeXYWH(0f, 0f, 46f, 44f)) // 左上角
-                    drawImageRect(bgr, Rect(0f, 1f, 46f, 45f), Rect.makeXYWH(1485 - 46f, 0f, 46f, 44f)) // 右上角
-                    drawImageRect(bgl, Rect(1f, 48f, 47f, 92f), Rect.makeXYWH(0f, 900 - 44f, 46f, 44f)) // 左下角
-                    drawImageRect(bgr, Rect(0f, 48f, 46f, 92f), Rect.makeXYWH(1485f - 46f, 900 - 44f, 46f, 44f)) // 右下角
-
-                    drawRect(Rect(45f, 45f, 1437f, 860f), Paint().apply {
-                        color = Color.makeRGB(240, 235, 227)
-                    })
-
-                    // ----------------------------------------------------------------------------
-
-                }
-                File("bg.png").writeBytes(makeImageSnapshot().getBytes())
-            }.makeImageSnapshot()
-        }
-
-        private fun Canvas.drawInfoBgMain(l: Float, t: Float, w: Float, h: Float) {
-            val bgMain = Image.makeFromEncoded(File("resource/UI_FriendInfo_Bg.png").readBytes())
-            drawImageRect(bgMain, Rect(2f, 8f, 55f, 55f), Rect.makeXYWH(l - 5, t, 46f, 47f)) // 左上角
-            drawImageRect(bgMain, Rect(2f, 55f, 55f,97f), Rect.makeXYWH(l - 5, t + 47f, 46f, h)) // 左竖直
-
-            drawImageRect(bgMain, Rect(9f, 115f ,55f ,169f), Rect.makeXYWH(l, t + h + 47f, 46f, 54f)) // 左下角
-            drawImageRect(bgMain, Rect(56f, 115f, 85f, 169f), Rect.makeXYWH(l+ 46, t + h + 47f, w, 54f)) // 下水平
-
-            drawImageRect(bgMain, Rect(90f, 2f, 115f, 55f), Rect.makeXYWH(l + 41, t - 6 , w, 53f)) // 上水平
-            drawImageRect(bgMain, Rect(115f, 115f, 165f, 162f), Rect.makeXYWH(l + w + 1, t + h + 47f, 50f, 47f)) // 右下角
-            drawImageRect(bgMain, Rect(115f, 2f, 162f, 55f), Rect.makeXYWH(l + w, t - 6f, 48f, 53f)) // 右上角
-            drawImageRect(bgMain, Rect(115f, 55f, 162f, 97f), Rect.makeXYWH(l + w + 1, t + 47f, 47f, h)) // 右竖直
-        }
-
-        fun Canvas.drawInfoBgA(l: Float, t: Float, len: Float) {
-            val image = Image.makeFromEncoded(File("resource/UI_FriendInfo_BgA.png").readBytes())
-            drawRect(Rect.makeXYWH(l + 40, t + 2, len, 114f), Paint().apply {
-                mode = PaintMode.STROKE
-                strokeWidth = 2f
-                color = Color.makeRGB(213, 191, 145)
-            })
-            drawRect(Rect.makeXYWH(l + 40, t + 3, len, 112f), Paint().apply {
-                color = Color.makeRGB(240,240,235)
-            })
-            drawImageRect(image, Rect.makeXYWH(0f, 0f, 40f, 118f), Rect.makeXYWH(l, t, 40f, 118f))
-            drawImageRect(image, Rect.makeXYWH(40f, 0f, 40f, 118f), Rect.makeXYWH(l + 40 + len, t, 40f, 118f))
-        }
-    }
 }

@@ -1,4 +1,4 @@
-package org.laolittle.plugin.genshin.api
+package icu.dnddl.plugin.genshin.api
 
 class UrlParameters internal constructor(private val map: Map<String, String>) :
     Map<String, String> by map {

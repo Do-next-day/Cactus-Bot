@@ -1,4 +1,4 @@
-package org.laolittle.plugin.genshin.api.bilibili.data
+package icu.dnddl.plugin.genshin.api.bilibili.data
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -19,7 +19,7 @@ data class DynamicList(
     private val more: Int = 0,
     @SerialName("next_offset")
     val nextOffset: Long? = null
-){
+) {
 
     val hasMore get() = more == 1
 
@@ -34,7 +34,7 @@ data class DynamicList(
         val describe: DynamicDescribe,
         @SerialName("display")
         val display: DynamicDisplay,
-    ){
+    ) {
         @Serializable
         data class DynamicDescribe(
             @SerialName("uid")
@@ -61,12 +61,12 @@ data class DynamicList(
             val origin: DynamicDisplay? = null,
             @SerialName("emoji_info")
             val emojiInfo: EmojiInfo? = null
-        ){
+        ) {
             @Serializable
             data class EmojiInfo(
                 @SerialName("emoji_details")
                 val emojiDetails: List<EmojiDetails>? = null
-            ){
+            ) {
                 @Serializable
                 data class EmojiDetails(
                     @SerialName("id")

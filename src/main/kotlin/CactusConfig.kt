@@ -1,14 +1,13 @@
-package org.laolittle.plugin.genshin
+package icu.dnddl.plugin.genshin
 
+import icu.dnddl.plugin.genshin.service.PluginDispatcher
 import net.mamoe.mirai.console.data.ReadOnlyPluginConfig
 import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
 import net.mamoe.mirai.contact.Contact
-import net.mamoe.mirai.event.events.MessageEvent
 import net.mamoe.mirai.message.code.MiraiCode.deserializeMiraiCode
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
-import org.laolittle.plugin.genshin.service.PluginDispatcher
 
 object CactusConfig : ReadOnlyPluginConfig("GenshinPluginConfig") {
     @ValueDescription("机器人昵称")

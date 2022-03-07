@@ -1,6 +1,7 @@
-package org.laolittle.plugin.genshin.database
+package icu.dnddl.plugin.genshin.database
 
 import com.alibaba.druid.pool.DruidDataSource
+import icu.dnddl.plugin.genshin.CactusBot
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -8,7 +9,6 @@ import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.laolittle.plugin.genshin.CactusBot
 import java.sql.Connection
 import javax.sql.DataSource
 

@@ -1,4 +1,4 @@
-package org.laolittle.plugin.genshin.mirai
+package icu.dnddl.plugin.genshin.mirai
 
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.contact.AudioSupported

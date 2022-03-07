@@ -1,5 +1,9 @@
-package org.laolittle.plugin.genshin.model
+package icu.dnddl.plugin.genshin.model
 
+import icu.dnddl.plugin.genshin.database.*
+import icu.dnddl.plugin.genshin.model.GachaImages.SETTLEMENT_BACKGROUND
+import icu.dnddl.plugin.genshin.model.Tenti.border
+import icu.dnddl.plugin.genshin.service.PluginDispatcher
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -7,10 +11,6 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.skia.Image
 import org.jetbrains.skia.Rect
 import org.jetbrains.skia.Surface
-import org.laolittle.plugin.genshin.database.*
-import org.laolittle.plugin.genshin.model.GachaImages.SETTLEMENT_BACKGROUND
-import org.laolittle.plugin.genshin.model.Tenti.border
-import org.laolittle.plugin.genshin.service.PluginDispatcher
 
 object GachaSimulator {
     @OptIn(ExperimentalSerializationApi::class)

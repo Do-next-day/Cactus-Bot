@@ -1,19 +1,19 @@
-package org.laolittle.plugin.genshin.draw
+package icu.dnddl.plugin.genshin.draw
 
+import icu.dnddl.plugin.genshin.api.genshin.data.DailyNote
+import icu.dnddl.plugin.genshin.api.genshin.data.DailyNote.AvatarExploreInfo.Status.Finished
+import icu.dnddl.plugin.genshin.api.genshin.data.DailyNote.AvatarExploreInfo.Status.Ongoing
+import icu.dnddl.plugin.genshin.service.PluginDispatcher
+import icu.dnddl.plugin.genshin.util.getOrDownload
 import org.jetbrains.skia.*
 import org.laolittle.plugin.Fonts
-import org.laolittle.plugin.genshin.api.genshin.data.DailyNote
-import org.laolittle.plugin.genshin.service.PluginDispatcher
-import org.laolittle.plugin.genshin.util.getImageFromResource
-import org.laolittle.plugin.genshin.util.getOrDownload
 import kotlin.math.round
 
 fun DailyNote.getImage(): Image {
     val w = 745
     val h = 1200
 
-    val homeCoin
-            = Note(
+    val homeCoin = Note(
         homeCoinImage,
         "洞天财翁 - 洞天宝钱",
         when (homeCoinRecoveryTime) {
@@ -40,8 +40,7 @@ fun DailyNote.getImage(): Image {
     )
 
 
-    val dailyTask
-            = Note(
+    val dailyTask = Note(
         dailyTaskImage,
         "每日委托任务",
         when {
@@ -52,8 +51,7 @@ fun DailyNote.getImage(): Image {
         "$finishedTask/$totalTask"
     )
 
-    val resin
-            = Note(
+    val resin = Note(
         resinImage,
         "原粹树脂",
         when (resinRecoveryTime) {
@@ -79,8 +77,7 @@ fun DailyNote.getImage(): Image {
         "$currentResin/$maxResin"
     )
 
-    val weeklyZones
-            = Note(
+    val weeklyZones = Note(
         weeklyZonesImage,
         "值得铭记的强敌",
         "本周剩余消耗减半次数",
@@ -150,7 +147,12 @@ fun DailyNote.getImage(): Image {
 
             val finishedText = TextLine.make("探险完成", fontSmall)
 
-            drawTextLine(TextLine.make("探索派遣限制（${currentExpedition}/${maxExpedition}）", fontBig), 60f, 615f, paintBlackText)
+            drawTextLine(
+                TextLine.make("探索派遣限制（${currentExpedition}/${maxExpedition}）", fontBig),
+                60f,
+                615f,
+                paintBlackText
+            )
             expeditions.forEachIndexed { index, info ->
                 val avatar = Image.makeFromEncoded(PluginDispatcher.runBlocking {
                     getOrDownload(info.avatarIconUrl)
@@ -186,24 +188,31 @@ fun DailyNote.getImage(): Image {
                     )
                 )
                 drawTextLine(
-                    if (info.status == DailyNote.AvatarExploreInfo.Status.Finished) finishedText
-                    else TextLine.make(buildString {
-                        append("剩余探索时间 ")
-                        val hour = info.remaining / 3600
-                        if (hour > 0) append("${hour}小时")
-                        append(
-                            if (info.remaining < 60) "${info.remaining}秒"
-                            else {
-                                val minute = (round(info.remaining / 60f) - hour * 60).toInt()
-                                if (minute > 0)
-                                    "${minute}分钟"
-                                else ""
-                            }
-                        )
-                    }, fontSmall),
+                    when (info.status) {
+                        Finished -> finishedText
+                        Ongoing -> {
+                            TextLine.make(buildString {
+                                append("剩余探索时间 ")
+                                val hour = info.remaining / 3600
+                                if (hour > 0) append("${hour}小时")
+                                append(
+                                    if (info.remaining < 60) "${info.remaining}秒"
+                                    else {
+                                        val minute = (round(info.remaining / 60f) - hour * 60).toInt()
+                                        if (minute > 0)
+                                            "${minute}分钟"
+                                        else ""
+                                    }
+                                )
+                            }, fontSmall)
+                        }
+                    },
                     170f,
                     top + 10,
-                    if (info.status == DailyNote.AvatarExploreInfo.Status.Ongoing) paintGrayText else paintGreenText // 为了消去烦人的感叹号
+                    when (info.status) {
+                        Finished -> paintGreenText
+                        Ongoing -> paintGrayText
+                    }
                 )
             }
         }

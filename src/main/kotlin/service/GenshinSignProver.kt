@@ -1,17 +1,17 @@
-package org.laolittle.plugin.genshin.service
+package icu.dnddl.plugin.genshin.service
 
+import icu.dnddl.plugin.genshin.CactusBot
+import icu.dnddl.plugin.genshin.CactusData
+import icu.dnddl.plugin.genshin.api.genshin.GenshinBBSApi
+import icu.dnddl.plugin.genshin.database.User
+import icu.dnddl.plugin.genshin.database.UserSetting
+import icu.dnddl.plugin.genshin.database.Users
+import icu.dnddl.plugin.genshin.database.cactusSuspendedTransaction
+import icu.dnddl.plugin.genshin.mirai.getSubjectFromBots
+import icu.dnddl.plugin.genshin.util.*
 import kotlinx.coroutines.delay
 import kotlinx.serialization.serializer
 import net.mamoe.mirai.utils.verbose
-import org.laolittle.plugin.genshin.CactusBot
-import org.laolittle.plugin.genshin.CactusData
-import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi
-import org.laolittle.plugin.genshin.database.User
-import org.laolittle.plugin.genshin.database.UserSetting
-import org.laolittle.plugin.genshin.database.Users
-import org.laolittle.plugin.genshin.database.cactusSuspendedTransaction
-import org.laolittle.plugin.genshin.mirai.getSubjectFromBots
-import org.laolittle.plugin.genshin.util.*
 import kotlin.random.Random
 
 object GenshinSignProver : AbstractCactusTimerService(

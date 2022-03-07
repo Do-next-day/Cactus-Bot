@@ -1,5 +1,8 @@
-package org.laolittle.plugin.genshin.service
+package icu.dnddl.plugin.genshin.service
 
+import icu.dnddl.plugin.genshin.CactusBot
+import icu.dnddl.plugin.genshin.api.internal.logger
+import icu.dnddl.plugin.genshin.util.currentTimeMillis
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -7,9 +10,6 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import net.mamoe.mirai.utils.info
-import org.laolittle.plugin.genshin.CactusBot
-import org.laolittle.plugin.genshin.api.internal.logger
-import org.laolittle.plugin.genshin.util.currentTimeMillis
 import kotlin.coroutines.CoroutineContext
 
 abstract class AbstractCactusTimerService(

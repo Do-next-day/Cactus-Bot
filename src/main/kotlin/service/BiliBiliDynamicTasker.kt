@@ -1,6 +1,6 @@
-package org.laolittle.plugin.genshin.service
+package icu.dnddl.plugin.genshin.service
 
-object BiliBiliDynamicTasker: AbstractCactusTimerService(
+object BiliBiliDynamicTasker : AbstractCactusTimerService(
     serviceName = "BiliBiliDynamic",
 ) {
 

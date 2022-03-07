@@ -1,11 +1,11 @@
-package org.laolittle.plugin.genshin.api.mihoyobbs
+package icu.dnddl.plugin.genshin.api.mihoyobbs
 
+import icu.dnddl.plugin.genshin.api.BBS_API_BASE
+import icu.dnddl.plugin.genshin.api.TAKUMI_API
+import icu.dnddl.plugin.genshin.api.internal.getBBS
+import icu.dnddl.plugin.genshin.api.mihoyobbs.data.GameRole
+import icu.dnddl.plugin.genshin.util.decode
 import kotlinx.serialization.json.JsonObject
-import org.laolittle.plugin.genshin.api.BBS_API_BASE
-import org.laolittle.plugin.genshin.api.TAKUMI_API
-import org.laolittle.plugin.genshin.api.internal.getBBS
-import org.laolittle.plugin.genshin.api.mihoyobbs.data.GameRole
-import org.laolittle.plugin.genshin.util.decode
 
 object BBSApi {
     private const val USER_FULL_INFO = "$BBS_API_BASE/user/wapi/getUserFullInfo"

@@ -1,21 +1,20 @@
-package org.laolittle.plugin.genshin.mirai
+package icu.dnddl.plugin.genshin.mirai
 
+import icu.dnddl.plugin.genshin.CactusBot
+import icu.dnddl.plugin.genshin.CactusConfig
+import icu.dnddl.plugin.genshin.CactusData
+import icu.dnddl.plugin.genshin.api.ApiAccessDeniedException
+import icu.dnddl.plugin.genshin.api.genshin.GenshinBBSApi
+import icu.dnddl.plugin.genshin.database.getUserData
+import icu.dnddl.plugin.genshin.model.GachaSimulator
+import icu.dnddl.plugin.genshin.service.AbstractCactusService
+import icu.dnddl.plugin.genshin.util.requireCookie
 import kotlinx.serialization.SerializationException
 import net.mamoe.mirai.event.globalEventChannel
 import net.mamoe.mirai.event.subscribeGroupMessages
 import net.mamoe.mirai.message.data.MessageSource.Key.quote
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
 import org.jetbrains.skia.EncodedImageFormat
-import org.laolittle.plugin.genshin.CactusBot
-import org.laolittle.plugin.genshin.CactusConfig
-import org.laolittle.plugin.genshin.CactusData
-import org.laolittle.plugin.genshin.api.ApiAccessDeniedException
-import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi
-import org.laolittle.plugin.genshin.database.getUserData
-import org.laolittle.plugin.genshin.model.GachaSimulator
-import org.laolittle.plugin.genshin.service.AbstractCactusService
-import org.laolittle.plugin.genshin.util.requireCookie
-import org.laolittle.plugin.sendImage
 import org.laolittle.plugin.toExternalResource
 
 object GroupMessageListener : AbstractCactusService() {
@@ -56,7 +55,7 @@ object GroupMessageListener : AbstractCactusService() {
                             return@Listener
                         }
 
-                        subject.sendImage(query.infoImage)
+                        // subject.sendImage(query)
                     }
 
                     "test" -> {

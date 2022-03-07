@@ -1,10 +1,10 @@
-package org.laolittle.plugin.genshin.model
+package icu.dnddl.plugin.genshin.model
 
-import org.laolittle.plugin.genshin.database.Avatar
-import org.laolittle.plugin.genshin.database.Equip
-import org.laolittle.plugin.genshin.database.GachaItem
-import org.laolittle.plugin.genshin.util.gachaDataFolder
-import org.laolittle.plugin.genshin.util.skikoImage
+import icu.dnddl.plugin.genshin.database.Avatar
+import icu.dnddl.plugin.genshin.database.Equip
+import icu.dnddl.plugin.genshin.database.GachaItem
+import icu.dnddl.plugin.genshin.util.gachaDataFolder
+import icu.dnddl.plugin.genshin.util.skikoImage
 
 object Tenti {
     /**

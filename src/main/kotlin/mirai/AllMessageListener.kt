@@ -1,16 +1,16 @@
-package org.laolittle.plugin.genshin.mirai
+package icu.dnddl.plugin.genshin.mirai
 
+import icu.dnddl.plugin.genshin.CactusConfig
+import icu.dnddl.plugin.genshin.CactusData
+import icu.dnddl.plugin.genshin.database.UserSetting
+import icu.dnddl.plugin.genshin.draw.getImage
+import icu.dnddl.plugin.genshin.service.AbstractCactusService
+import icu.dnddl.plugin.genshin.util.buildSuccessMessage
+import icu.dnddl.plugin.genshin.util.getDailyNote
+import icu.dnddl.plugin.genshin.util.requireCookie
+import icu.dnddl.plugin.genshin.util.signGenshin
 import net.mamoe.mirai.event.globalEventChannel
 import net.mamoe.mirai.event.subscribeMessages
-import org.laolittle.plugin.genshin.CactusConfig
-import org.laolittle.plugin.genshin.CactusData
-import org.laolittle.plugin.genshin.database.UserSetting
-import org.laolittle.plugin.genshin.draw.getImage
-import org.laolittle.plugin.genshin.service.AbstractCactusService
-import org.laolittle.plugin.genshin.util.buildSuccessMessage
-import org.laolittle.plugin.genshin.util.getDailyNote
-import org.laolittle.plugin.genshin.util.requireCookie
-import org.laolittle.plugin.genshin.util.signGenshin
 import org.laolittle.plugin.sendImage
 
 object AllMessageListener : AbstractCactusService() {

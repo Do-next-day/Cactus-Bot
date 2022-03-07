@@ -1,8 +1,8 @@
-package org.laolittle.plugin.genshin.api.mihoyobbs.data
+package icu.dnddl.plugin.genshin.api.mihoyobbs.data
 
+import icu.dnddl.plugin.genshin.api.genshin.GenshinBBSApi.GenshinServer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.laolittle.plugin.genshin.api.genshin.GenshinBBSApi.GenshinServer
 
 @Serializable
 data class GameRole(

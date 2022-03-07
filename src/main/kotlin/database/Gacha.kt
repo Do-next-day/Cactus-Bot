@@ -1,4 +1,4 @@
-package org.laolittle.plugin.genshin.database
+package icu.dnddl.plugin.genshin.database
 
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass

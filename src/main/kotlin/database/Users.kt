@@ -1,13 +1,13 @@
-package org.laolittle.plugin.genshin.database
+package icu.dnddl.plugin.genshin.database
 
+import icu.dnddl.plugin.genshin.util.Json
+import icu.dnddl.plugin.genshin.util.decodeFromStringOrNull
+import icu.dnddl.plugin.genshin.util.randomUUID
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
-import org.laolittle.plugin.genshin.util.Json
-import org.laolittle.plugin.genshin.util.decodeFromStringOrNull
-import org.laolittle.plugin.genshin.util.randomUUID
 
 object Users : LongIdTable() {
     val card = integer("Card")
@@ -43,7 +43,7 @@ data class UserSetting(
     var autoSign: Boolean = true,
     var resinRemind: Long = 30 * 60,
     var pushSubject: Long,
-    ) {
+) {
     override fun toString(): String = Json.encodeToString(serializer(), this)
 }
 

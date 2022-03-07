@@ -1,4 +1,4 @@
-package org.laolittle.plugin.genshin.api
+package icu.dnddl.plugin.genshin.api
 
 class ApiAccessDeniedException
     (

@@ -1,5 +1,17 @@
-package org.laolittle.plugin.genshin
+package icu.dnddl.plugin.genshin
 
+import icu.dnddl.plugin.genshin.api.internal.getAppVersion
+import icu.dnddl.plugin.genshin.mirai.AllMessageListener
+import icu.dnddl.plugin.genshin.mirai.FriendMessageListener
+import icu.dnddl.plugin.genshin.mirai.GroupMessageListener
+import icu.dnddl.plugin.genshin.service.GenshinGachaCache
+import icu.dnddl.plugin.genshin.service.GenshinSignProver
+import icu.dnddl.plugin.genshin.service.PluginDispatcher
+import icu.dnddl.plugin.genshin.service.aDay
+import icu.dnddl.plugin.genshin.util.Json
+import icu.dnddl.plugin.genshin.util.avatarDataFolder
+import icu.dnddl.plugin.genshin.util.cacheFolder
+import icu.dnddl.plugin.genshin.util.gachaDataFolder
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.datetime.atTime
@@ -9,28 +21,16 @@ import net.mamoe.mirai.console.plugin.description.PluginDependency
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.utils.info
-import org.laolittle.plugin.genshin.api.internal.getAppVersion
-import org.laolittle.plugin.genshin.mirai.AllMessageListener
-import org.laolittle.plugin.genshin.mirai.FriendMessageListener
-import org.laolittle.plugin.genshin.mirai.GroupMessageListener
-import org.laolittle.plugin.genshin.service.GenshinGachaCache
-import org.laolittle.plugin.genshin.service.GenshinSignProver
-import org.laolittle.plugin.genshin.service.PluginDispatcher
-import org.laolittle.plugin.genshin.service.aDay
-import org.laolittle.plugin.genshin.util.Json
-import org.laolittle.plugin.genshin.util.avatarDataFolder
-import org.laolittle.plugin.genshin.util.cacheFolder
-import org.laolittle.plugin.genshin.util.gachaDataFolder
 import java.time.LocalDate as JLocalDate
 
 object CactusBot : KotlinPlugin(JvmPluginDescription(
-    id = "org.laolittle.plugin.CactusBot",
+    id = "icu.dnddl.plugin.CactusBot",
     name = "Cactus-Bot",
     version = "1.0",
 ) {
     author("LaoLittle")
     dependsOn(
-        PluginDependency("org.laolittle.plugin.SkikoMirai", ">=1.0.2", true)
+        PluginDependency("icu.dnddl.plugin.SkikoMirai", ">=1.0.2", true)
     )
 }) {
     override fun onEnable() {
