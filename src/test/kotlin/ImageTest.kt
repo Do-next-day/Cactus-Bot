@@ -139,13 +139,13 @@ internal class ImageTest {
                 println(nameCardHeight)
                 drawImageClipHeight(
                     Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_NameCardPic_Kokomi_P.png").readBytes()),
-                    Rect.makeXYWH(leftPadding.toFloat(), topPadding.toFloat(), nameCardWidth.toFloat(), nameCardHeight.toFloat())
+                    Rect.makeXYWH(leftPadding.toFloat() - 1, topPadding.toFloat(), nameCardWidth.toFloat() + 2, nameCardHeight.toFloat())
                 )
 
                 // 透明名片装饰线
                 val lineNC = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_Line_NC.png").readBytes())
-                val lineNCSf = lineNC.zoomTopAtPoint(47f, 48f, nameCardWidth, nameCardHeight)
-                lineNCSf.draw(this, leftPadding, topPadding, Paint().setAlphaf(0.2f))
+                val lineNCSf = lineNC.zoomTopAtPoint(47f, 48f, nameCardWidth + 2, nameCardHeight)
+                lineNCSf.draw(this, leftPadding - 1, topPadding, Paint().setAlphaf(0.2f))
 
                 // 头像框
                 val avatarRadius = 100f
@@ -153,9 +153,16 @@ internal class ImageTest {
 
 
                 // 200 205 180
-                drawLevelBox(35f, 420f, Color.makeRGB(165, 185, 130))
-                drawLevelBox(330f, 420f, Color.makeRGB(205,185,165))
+                drawLevelBox(35f, 340f, Color.makeRGB(165, 185, 130))
+                drawLevelBox(330f, 340f, Color.makeRGB(205,185,165))
 
+                drawInfoBgA(30f, 430f, 210f)
+                drawInfoBgA(330f, 430f, 210f)
+
+                val p1 = Point(infoBgWidth / 2f, infoBgHeight /2f)
+                val p2 = Point(infoBgWidth / 2f, infoBgHeight /2f)
+
+                //drawPoint(p1.x, p2.y, Paint())
             }
 
             File("infoBg.png").writeBytes(makeImageSnapshot().getBytes())
@@ -306,13 +313,13 @@ internal class ImageTest {
         drawRect(Rect.makeXYWH(l + 40, t + 2, len, 114f), Paint().apply {
             mode = PaintMode.STROKE
             strokeWidth = 2f
-            color = Color.makeRGB(213, 191, 145)
+            color = Color.makeRGB(215, 190, 145)
         })
         drawRect(Rect.makeXYWH(l + 40, t + 3, len, 112f), Paint().apply {
             color = Color.makeRGB(240, 240, 235)
         })
-        drawImageRect(image, Rect.makeXYWH(0f, 0f, 40f, 118f), Rect.makeXYWH(l, t, 40f, 118f))
-        drawImageRect(image, Rect.makeXYWH(40f, 0f, 40f, 118f), Rect.makeXYWH(l + 40 + len, t, 40f, 118f))
+        drawImageRectTo(image, Rect.makeXYWH(0f, 0f, 40f, 118f), l, t)
+        drawImageRectTo(image, Rect.makeXYWH(40f, 0f, 40f, 118f), l+ 40+ len, t)
     }
 
     @Test
