@@ -23,16 +23,6 @@ import kotlinx.serialization.serializer
 
 object GenshinBBSApi {
     private const val GAME_RECORD = "$TAKUMI_API/game_record/app"
-
-    /**
-     * ```
-     * ?role_id=&server=
-     * ```
-     *
-     * ```
-     * ?dailyNote&server=
-     * ```
-     */
     private const val GENSHIN_GAME_RECORD = "$GAME_RECORD/genshin/api"
     private const val SIGN_API = "$TAKUMI_API/event/bbs_sign_reward"
     private const val GACHA_INFO = "$WEB_STATIC/hk4e/gacha_info"

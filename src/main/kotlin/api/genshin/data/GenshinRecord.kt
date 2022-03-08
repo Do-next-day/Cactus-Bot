@@ -18,8 +18,6 @@ import kotlinx.serialization.json.JsonArray
  * @param cityExplorations 城市探索度
  * @param worldExplorations 世界探索度
  * @param homes 家园
- *
- * @author LaoLittle
  */
 @Serializable
 data class GenshinRecord(

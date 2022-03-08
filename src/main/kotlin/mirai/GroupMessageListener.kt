@@ -6,6 +6,7 @@ import icu.dnddl.plugin.genshin.CactusData
 import icu.dnddl.plugin.genshin.api.ApiAccessDeniedException
 import icu.dnddl.plugin.genshin.api.genshin.GenshinBBSApi
 import icu.dnddl.plugin.genshin.database.getUserData
+import icu.dnddl.plugin.genshin.draw.infoImage
 import icu.dnddl.plugin.genshin.model.GachaSimulator
 import icu.dnddl.plugin.genshin.service.AbstractCactusService
 import icu.dnddl.plugin.genshin.util.requireCookie
@@ -15,6 +16,7 @@ import net.mamoe.mirai.event.subscribeGroupMessages
 import net.mamoe.mirai.message.data.MessageSource.Key.quote
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
 import org.jetbrains.skia.EncodedImageFormat
+import org.laolittle.plugin.sendImage
 import org.laolittle.plugin.toExternalResource
 
 object GroupMessageListener : AbstractCactusService() {
@@ -22,7 +24,7 @@ object GroupMessageListener : AbstractCactusService() {
     override suspend fun main() {
         globalEventChannel().subscribeGroupMessages {
             (startsWith("原神") or startsWith(CactusConfig.botName)) Listener@{ foo ->
-                val result = Regex("""(人物|十连|单抽|查询|test)(.*)""").find(foo)?.groupValues
+                val result = Regex("""(人物|十连|单抽|查询)(.*)""").find(foo)?.groupValues
                 when (result?.get(1)) {
                     "十连" -> {
                         if (!users.add(sender.id)) return@Listener
@@ -55,18 +57,7 @@ object GroupMessageListener : AbstractCactusService() {
                             return@Listener
                         }
 
-                        // subject.sendImage(query)
-                    }
-
-                    "test" -> {
-                        val userData = getUserData(sender.id)
-
-                        sender.requireCookie { return@Listener }
-
-                        GenshinBBSApi.getDailyNote(userData.genshinUID, userData.data.cookies, userData.data.uuid)
-                            .also {
-                                subject.sendMessage(it.toString())
-                            }
+                        subject.sendImage(query.infoImage())
                     }
                 }
             }
