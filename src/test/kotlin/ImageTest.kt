@@ -7,6 +7,7 @@ import org.laolittle.plugin.getBytes
 import java.io.File
 import kotlin.system.measureTimeMillis
 
+@Suppress("unused")
 internal class ImageTest {
     @Test
     fun test(): Unit = runBlocking {
@@ -179,9 +180,18 @@ internal class ImageTest {
 
         // x 775 - 1490
         // y 15 - 895
-        val infoBgMinor = Surface.makeRasterN32Premul(1490 - 775, 895 - 15).apply {
+        val w = 1490 - 775f
+        val h = 895 - 15f
+        val infoBgMinor = Surface.makeRasterN32Premul(w.toInt(), h.toInt()).apply {
+            val home = getTestImage("UI_HomeworldModule_3_Pic.png")
+            val homeCardWidth = w - 40
+            val homeCardHeight = 200f
+
             canvas.apply {
-                
+                drawRRect(RRect.makeComplexXYWH(0f, 0f, homeCardWidth, homeCardHeight, floatArrayOf(10f)), Paint())
+                drawImageRectNearest(home, Rect(0f, 0f, homeCardWidth, homeCardHeight), Paint().apply {
+                    blendMode = BlendMode.SRC_ATOP
+                })
             }
 
             File("minor.png").writeBytes(makeImageSnapshot().getBytes())
@@ -206,7 +216,7 @@ internal class ImageTest {
 
 
                 infoBgMainSf.draw(this, 30,0, null)
-                infoBgMinor.draw(this, 100, 0, null)
+                //infoBgMinor.draw(this, 100, 0, null)
             }
         }
 
@@ -356,4 +366,6 @@ internal class ImageTest {
             File("scale_test.png").writeBytes(makeImageSnapshot().getBytes())
         }
     }
+
+    fun getTestImage(name: String) = Image.makeFromEncoded(this::class.java.getResource("/$name")!!.openStream().use { it.readBytes() })
 }

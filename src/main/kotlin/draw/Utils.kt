@@ -11,14 +11,14 @@ internal fun getImageFromResource(name: String) =
  *
  * @see Canvas.drawImageRect
  */
-internal fun Canvas.drawImageRectNearest(image: Image, src: Rect, dst: Rect) =
-    drawImageRect(image, src, dst, FilterMipmap(FilterMode.LINEAR, MipmapMode.NEAREST), null, true)
+internal fun Canvas.drawImageRectNearest(image: Image, src: Rect, dst: Rect, paint: Paint? = null) =
+    drawImageRect(image, src, dst, FilterMipmap(FilterMode.LINEAR, MipmapMode.NEAREST), paint, true)
 
 /**
  * @see drawImageRectNearest
  */
-internal fun Canvas.drawImageRectNearest(image: Image, dst: Rect) =
-    drawImageRectNearest(image, Rect(0f, 0f, image.width.toFloat(), image.height.toFloat()), dst)
+internal fun Canvas.drawImageRectNearest(image: Image, dst: Rect, paint: Paint? = null) =
+    drawImageRectNearest(image, Rect(0f, 0f, image.width.toFloat(), image.height.toFloat()), dst, paint)
 
 /**
  * 从目标源截取[Rect]并绘制到指定坐标
@@ -262,13 +262,13 @@ internal fun Image.zoomAroundAtRect(
  * @param src 目标源区域
  * @param dst 指定绘制区域
  */
-internal fun Canvas.drawImageClipHeight(image: Image, src: Rect, dst: Rect) {
+internal fun Canvas.drawImageClipHeight(image: Image, src: Rect, dst: Rect, paint: Paint? = null) {
     val foo = image.height.toFloat() / image.width
     Surface.makeRasterN32Premul(dst.width.toInt(), dst.height.toInt()).apply {
         canvas.apply {
             drawImageRect(image, src, Rect.makeWH(dst.width, dst.width * foo))
         }
-    }.draw(this, dst.left.toInt(), dst.top.toInt(), null)
+    }.draw(this, dst.left.toInt(), dst.top.toInt(), paint)
 }
 
 
@@ -277,5 +277,5 @@ internal fun Canvas.drawImageClipHeight(image: Image, src: Rect, dst: Rect) {
  *
  * @see drawImageClipHeight
  */
-internal fun Canvas.drawImageClipHeight(image: Image, dst: Rect) =
-    drawImageClipHeight(image, Rect.makeWH(image.width.toFloat(), image.height.toFloat()), dst)
+internal fun Canvas.drawImageClipHeight(image: Image, dst: Rect, paint: Paint? = null) =
+    drawImageClipHeight(image, Rect.makeWH(image.width.toFloat(), image.height.toFloat()), dst, paint)
