@@ -27,6 +27,10 @@ val avatarDataFolder = dataFolder.resolve("Avatars").also { it.mkdir() }
 
 val cacheFolder = dataFolder.resolve("cache").also { it.mkdir() }
 
+val settingFile = dataFolder.resolve("userSettings.json").also { it.createNewFile() }
+
+val awardsFile = cacheFolder.resolve("awards.json").also { it.createNewFile() }
+
 val File.skikoImage: Image get() = Image.makeFromEncoded(readBytes())
 
 inline fun <reified T> Json.decodeFromStringOrNull(str: String) =

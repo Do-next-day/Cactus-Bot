@@ -156,8 +156,8 @@ internal class ImageTest {
                 translate(0f, homeCardHeight + 30)
 
                 var i = 0
-                val boxW = 285f
-                val boxH = 150f
+                val boxW = 295f
+                val boxH = 130f
                 val pad = w - (boxW * 2)
                 for (y in 0..1) {
                     for (x in 0..1) {
@@ -177,16 +177,16 @@ internal class ImageTest {
                     }
                 }
 
-                translate(15f, boxH * 2 + pad + 30)
+                translate(0f, boxH * 2 + pad + 30)
                 val cBg = getTestImage("SpriteAtlasTexture-ui_sprite_general_quality_bg-512x256-fmt25.png")
                 val cW = 120f
                 val cH = cW * (95f/78)
-                repeat(2) {
-                    for (cc in 0..1) {
-                        drawImageRectNearest(cBg, Rect.makeXYWH(165f, 59f, 78f, 95f), Rect.makeXYWH(0f, 0f, cW, cH))
-                    }
+                val rectCBg = Rect.makeXYWH(165f, 59f, 78f, 95f)
+                repeat(2) { t ->
+                    val off = 15f + (cW + 30) * t
+                    drawImageRectNearest(cBg, rectCBg, Rect.makeXYWH(off, 0f, cW, cH))
+                    drawImageRectNearest(cBg, rectCBg, Rect(w - (off + cW), 0f, w- off, cH))
                 }
-
 
             }
 

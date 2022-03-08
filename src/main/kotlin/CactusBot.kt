@@ -10,6 +10,7 @@ import icu.dnddl.plugin.genshin.service.PluginDispatcher
 import icu.dnddl.plugin.genshin.service.aDay
 import icu.dnddl.plugin.genshin.util.Json
 import icu.dnddl.plugin.genshin.util.cacheFolder
+import icu.dnddl.plugin.genshin.util.settingFile
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.datetime.atTime
@@ -56,7 +57,6 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
         GenshinGachaCache.cancel()
         if (CactusConfig.autoSign) GenshinSignProver.cancel()
 
-        val settingFile = CactusBot.configFolder.resolve("userSettings.json")
         settingFile.writeText(
             Json.encodeToString(
                 Json.serializersModule.serializer(),

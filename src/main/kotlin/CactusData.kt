@@ -4,9 +4,7 @@ import icu.dnddl.plugin.genshin.api.genshin.GenshinBBSApi
 import icu.dnddl.plugin.genshin.api.genshin.data.Award
 import icu.dnddl.plugin.genshin.database.UserSetting
 import icu.dnddl.plugin.genshin.service.PluginDispatcher
-import icu.dnddl.plugin.genshin.util.Json
-import icu.dnddl.plugin.genshin.util.cacheFolder
-import icu.dnddl.plugin.genshin.util.decodeFromStringOrNull
+import icu.dnddl.plugin.genshin.util.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -21,16 +19,13 @@ object CactusData : AutoSavePluginData("GenshinPluginData") {
 
     val cookie get() = cookies.random()
 
-    val userSetting: MutableMap<Long, UserSetting>
+    val userSetting: MutableMap<Long, UserSetting> = Json.decodeFromStringOrNull(settingFile.readText()) ?: mutableMapOf()
 
     var awardMonth: Int by value(0)
 
     var awards: List<Award.AwardItem>
 
     init {
-        val settingFile = CactusBot.dataFolder.resolve("userSettings.json").also { it.createNewFile() }
-        userSetting =
-            Json.decodeFromStringOrNull(settingFile.readText()) ?: mutableMapOf()
         val saveJson = fun() {
             settingFile.writeText(
                 Json.encodeToString(
@@ -42,7 +37,7 @@ object CactusData : AutoSavePluginData("GenshinPluginData") {
 
         awards = Json.decodeFromStringOrNull(
             Json.serializersModule.serializer(),
-            cacheFolder.resolve("awards.json").also { it.createNewFile() }.readText()
+            awardsFile.readText()
         ) ?: PluginDispatcher.runBlocking {
             GenshinBBSApi.getAwards().also {
                 awardMonth = it.month
