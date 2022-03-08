@@ -84,7 +84,7 @@ private val recordBg: Surface by lazy {
             val bgPadding = Rect(0f, 10f, 0f, 10f)
             val bglSf = recordBGL.zoomLeftAtPoint(46f, 48f, halfWidth, bgHeight, bgPadding)
             val bgrSf = recordBGR.zoomRightAtPoint(46f, 48f, halfWidth, bgHeight, bgPadding)
-            val bgcSf = recordBGC.zoomVerticalAtPoint(20f, 36f, centerWidth, bgHeight, Rect(0f, 12f, 0f, 12f))
+            val bgcSf = recordBGC.zoomVerticalAtPoint(20f, 36f, bgHeight, Rect(0f, 12f, 0f, 12f))
 
             bglSf.draw(this, 0, 0, Paint())
             bgcSf.draw(this, halfWidth, 0, Paint())

@@ -83,7 +83,6 @@ internal fun Image.zoomTopAtPoint(
 internal fun Image.zoomVerticalAtPoint(
     verticalTopPoint: Float,
     verticalBottomPoint: Float,
-    dstWidth: Int,
     dstHeight: Int,
     dstPadding: Rect = Rect(0f, 0f, 0f, 0f),
     srcPadding: Rect = Rect(0f, 0f, 0f, 0f)
@@ -92,8 +91,25 @@ internal fun Image.zoomVerticalAtPoint(
     this.height.toFloat(),
     verticalTopPoint,
     verticalBottomPoint,
-    dstWidth,
+    this.width,
     dstHeight,
+    dstPadding,
+    srcPadding
+)
+
+internal fun Image.zoomHorizontalAtPoint(
+    horizontalLeftPoint: Float,
+    horizontalRightPoint: Float,
+    dstWidth: Int,
+    dstPadding: Rect = Rect(0f, 0f, 0f, 0f),
+    srcPadding: Rect = Rect(0f, 0f, 0f, 0f)
+) = zoomAroundAtPoint(
+    horizontalLeftPoint,
+    horizontalRightPoint,
+    this.width.toFloat(),
+    this.width.toFloat(),
+    dstWidth,
+    this.height,
     dstPadding,
     srcPadding
 )
@@ -279,3 +295,71 @@ internal fun Canvas.drawImageClipHeight(image: Image, src: Rect, dst: Rect, pain
  */
 internal fun Canvas.drawImageClipHeight(image: Image, dst: Rect, paint: Paint? = null) =
     drawImageClipHeight(image, Rect.makeWH(image.width.toFloat(), image.height.toFloat()), dst, paint)
+
+
+/**
+ * 图片内容位置
+ * TOP 居上
+ * CENTER 居中
+ * BOTTOM 居下
+ */
+enum class ImagePosition {
+    TOP,
+    CENTER,
+    BOTTOM
+}
+
+/**
+ * 等比缩放图片并按裁剪高出的部分
+ *
+ * @param dstWidth 目标宽度
+ * @param dstHeight 目标高度
+ * @param contentPosition 图片内容位置
+ * @param dstPosition 图片绘制位置
+ */
+internal fun Canvas.drawImageClipHeight(
+    image: Image,
+    dstWidth: Int,
+    dstHeight: Int,
+    contentPosition: ImagePosition,
+    dstPosition: Point
+){
+    val imgDstHeight = image.width * dstHeight / dstWidth
+
+    val offsetY = when (contentPosition){
+        ImagePosition.TOP -> 0
+        ImagePosition.CENTER -> (image.height - imgDstHeight) / 2
+        ImagePosition.BOTTOM -> image.height - imgDstHeight
+    }
+
+    drawImageRectNearest(
+        image,
+        Rect.makeXYWH(0f, offsetY.toFloat(), image.width.toFloat(), imgDstHeight.toFloat()),
+        Rect.makeXYWH(dstPosition.x, dstPosition.y, dstWidth.toFloat(), dstHeight.toFloat())
+    )
+}
+
+/**
+ * 按比例缩放图片并裁剪高出的部分
+ *
+ * @param proportion 比例 如: 16/6
+ * @param dstWidth 目标宽度
+ * @param contentPosition 图片内容位置
+ * @param dstPosition 图片绘制位置
+ */
+internal fun Canvas.drawImageAtProportion(
+    image: Image,
+    proportion: String,
+    dstWidth: Int,
+    contentPosition: ImagePosition,
+    dstPosition: Point
+){
+    val split = proportion.split("/").map { s -> s.toInt() }
+    drawImageClipHeight(
+        image,
+        dstWidth,
+        dstWidth * split[1] / split[0],
+        contentPosition,
+        dstPosition
+    )
+}

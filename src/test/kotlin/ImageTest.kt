@@ -138,10 +138,12 @@ internal class ImageTest {
                 val nameCardWidth = infoBgWidth-leftPadding*2+4
                 val nameCardHeight = nameCardWidth * 6 / 16
                 println(nameCardHeight)
-                drawImageClipHeight(
-                    Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_NameCardPic_Kokomi_P.png").readBytes()),
-                    Rect.makeXYWH(leftPadding.toFloat() - 1, topPadding.toFloat(), nameCardWidth.toFloat() + 2, nameCardHeight.toFloat())
-                )
+                val nc = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_NameCardPic_Kokomi_P.png").readBytes())
+//                drawImageClipHeight(
+//                    Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_NameCardPic_Kokomi_P.png").readBytes()),
+//                    Rect.makeXYWH(leftPadding.toFloat() - 1, topPadding.toFloat(), nameCardWidth.toFloat() + 2, nameCardHeight.toFloat())
+//                )
+                drawImageClipHeight(nc, nameCardWidth, nameCardHeight, ImagePosition.CENTER, Point(leftPadding.toFloat(), topPadding.toFloat()))
 
                 // 透明名片装饰线
                 val lineNC = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_Line_NC.png").readBytes())
@@ -157,22 +159,39 @@ internal class ImageTest {
                 drawLevelBox(35f, 340f, Color.makeRGB(165, 185, 130))
                 drawLevelBox(330f, 340f, Color.makeRGB(205,185,165))
 
-                drawInfoBgA(30f, 430f, 210f)
-                drawInfoBgA(330f, 430f, 210f)
+                val image = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_BgA.png").readBytes())
+                val infoBg = image.zoomHorizontalAtPoint(39f, 40f, 290)
+                infoBg.draw(this, 30, 430, null)
+                infoBg.draw(this, 330, 430, null)
+//                drawInfoBgA(30f, 430f, 210f)
+//                drawInfoBgA(330f, 430f, 210f)
 
-                val p1 = Point(infoBgWidth / 2f, infoBgHeight /2f + 20)
-                val p2 = Point(infoBgWidth / 2f, infoBgHeight /2f + 36)
-                val p3 = Point(infoBgWidth / 2f - 6, infoBgHeight/ 2f + 28)
-                val p4 = Point(infoBgWidth / 2f + 6, infoBgHeight/ 2f + 28)
 
-                drawPath(Path().apply {
-                    moveTo(p1)
-                    lineTo(p3)
-                    lineTo(p2)
-                    lineTo(p4)
-                }, Paint().apply {
-                    color= Color.makeRGB(220, 215, 205)
-                }) // 小菱形
+                val kira = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_Kira2.png").readBytes())
+
+                drawImageRect(
+                    kira,
+                    Rect(
+                        infoBgWidth / 2f - 9,
+                        infoBgHeight / 2f + 20,
+                        infoBgWidth / 2f + 9,
+                        infoBgHeight/ 2f + 37
+                    ),
+                )
+
+//                val p1 = Point(infoBgWidth / 2f, infoBgHeight /2f + 20)
+//                val p2 = Point(infoBgWidth / 2f, infoBgHeight /2f + 36)
+//                val p3 = Point(infoBgWidth / 2f - 6, infoBgHeight/ 2f + 28)
+//                val p4 = Point(infoBgWidth / 2f + 6, infoBgHeight/ 2f + 28)
+//
+//                drawPath(Path().apply {
+//                    moveTo(p1)
+//                    lineTo(p3)
+//                    lineTo(p2)
+//                    lineTo(p4)
+//                }, Paint().apply {
+//                    color= Color.makeRGB(220, 215, 205)
+//                }) // 小菱形
             }
 
             File("infoBg.png").writeBytes(makeImageSnapshot().getBytes())
@@ -208,7 +227,7 @@ internal class ImageTest {
                 val bgPadding = Rect(0f,10f,0f,10f)
                 val bglSf = recordBGL.zoomLeftAtPoint(46f, 48f, halfWidth, bgHeight, bgPadding)
                 val bgrSf = recordBGR.zoomRightAtPoint(46f, 48f, halfWidth, bgHeight, bgPadding)
-                val bgcSf = recordBGC.zoomVerticalAtPoint(20f, 36f, centerWidth, bgHeight, Rect(0f,12f,0f,12f))
+                val bgcSf = recordBGC.zoomVerticalAtPoint(20f, 36f, bgHeight, Rect(0f,12f,0f,12f))
 
                 bglSf.draw(this, 0,0, null)
                 bgcSf.draw(this, halfWidth,0, null)
