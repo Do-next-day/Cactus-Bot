@@ -39,7 +39,7 @@ data class DailyNote(
      * 是否领取奖励
      */
     @SerialName("is_extra_task_reward_received")
-    val rewardRecived: Boolean,
+    val rewardReceived: Boolean,
 
     /**
      * 周本减半剩余次数

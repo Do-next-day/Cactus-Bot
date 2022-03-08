@@ -9,9 +9,6 @@ import icu.dnddl.plugin.genshin.service.GenshinSignProver
 import icu.dnddl.plugin.genshin.service.PluginDispatcher
 import icu.dnddl.plugin.genshin.service.aDay
 import icu.dnddl.plugin.genshin.util.Json
-import icu.dnddl.plugin.genshin.util.avatarDataFolder
-import icu.dnddl.plugin.genshin.util.cacheFolder
-import icu.dnddl.plugin.genshin.util.gachaDataFolder
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.datetime.atTime

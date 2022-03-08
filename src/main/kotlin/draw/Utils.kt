@@ -263,13 +263,13 @@ internal fun Image.zoomAroundAtRect(
  * @param dst 指定绘制区域
  */
 internal fun Canvas.drawImageClipHeight(image: Image, src: Rect, dst: Rect) {
-    val foo = image.width.toFloat() / image.height
+    val foo = image.height.toFloat() / image.width
     Surface.makeRasterN32Premul(dst.width.toInt(), dst.height.toInt()).apply {
-            canvas.apply {
-                drawImageRect(image, src, Rect.makeWH(dst.width, dst.width / foo))
-            }
-        }.draw(this, dst.left.toInt(), dst.top.toInt(), null)
-    }
+        canvas.apply {
+            drawImageRect(image, src, Rect.makeWH(dst.width, dst.width * foo))
+        }
+    }.draw(this, dst.left.toInt(), dst.top.toInt(), null)
+}
 
 
 /**

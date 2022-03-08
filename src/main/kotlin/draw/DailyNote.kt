@@ -44,7 +44,7 @@ fun DailyNote.infoImage(): Image {
         dailyTaskImage,
         "每日委托任务",
         when {
-            rewardRecived -> "「每日委托」奖励已领取"
+            rewardReceived -> "「每日委托」奖励已领取"
             finishedTask == totalTask -> "「每日委托」奖励暂未领取"
             else -> "今日完成委托数量不足"
         },
