@@ -25,8 +25,8 @@ dependencies {
     compileOnly(exposed("java-time"))
     compileOnly("org.xerial:sqlite-jdbc:3.36.0.3")
     compileOnly("com.alibaba:druid:1.2.8")
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    implementation(skikoAwt("windows-x64"))
+    compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    compileOnly(skikoAwt("windows-x64"))
     compileOnly(skikoAwt("linux-x64"))
     compileOnly(skikoAwt("linux-arm64"))
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.2") {
@@ -34,4 +34,6 @@ dependencies {
         exclude(group = "org.jetbrains.kotlinx")
     }
     testImplementation(kotlin("test", "1.6.20-M1"))
+    testImplementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    testImplementation(skikoAwt("windows-x64"))
 }
