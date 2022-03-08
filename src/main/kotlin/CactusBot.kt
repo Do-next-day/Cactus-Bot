@@ -9,6 +9,7 @@ import icu.dnddl.plugin.genshin.service.GenshinSignProver
 import icu.dnddl.plugin.genshin.service.PluginDispatcher
 import icu.dnddl.plugin.genshin.service.aDay
 import icu.dnddl.plugin.genshin.util.Json
+import icu.dnddl.plugin.genshin.util.cacheFolder
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.datetime.atTime
@@ -62,6 +63,13 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
                 CactusData.userSetting
             )
         )
+
+        Json.encodeToString(
+            Json.serializersModule.serializer(),
+            CactusData.awards
+        ).also {
+            cacheFolder.resolve("awards.json").writeText(it)
+        }
 
         logger.info { "All services closed successfully" }
     }

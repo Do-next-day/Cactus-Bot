@@ -17,7 +17,7 @@ import net.mamoe.mirai.console.data.value
 
 object CactusData : AutoSavePluginData("GenshinPluginData") {
     @ValueDescription("全局Cookie, 支持多个")
-    val cookies by value(mutableSetOf("Cookie1", "Cookie2"))
+    val cookies by value(mutableSetOf("Cookie1"))
 
     val cookie get() = cookies.random()
 
