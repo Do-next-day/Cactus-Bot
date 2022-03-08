@@ -23,8 +23,8 @@ internal fun Canvas.drawImageRectNearest(image: Image, dst: Rect, paint: Paint? 
 /**
  * 从目标源截取[Rect]并绘制到指定坐标
  */
-internal fun Canvas.drawImageRectTo(image: Image, src: Rect, x: Float, y: Float) =
-    drawImageRect(image, src, Rect.makeXYWH(x, y, src.width, src.height))
+internal fun Canvas.drawImageRectTo(image: Image, src: Rect, x: Float, y: Float, paint: Paint? = null) =
+    drawImageRect(image, src, Rect.makeXYWH(x, y, src.width, src.height), paint)
 
 internal fun Image.zoomLeftAtPoint(
     verticalTopPoint: Float,
