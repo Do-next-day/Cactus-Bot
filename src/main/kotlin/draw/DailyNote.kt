@@ -9,6 +9,9 @@ import org.jetbrains.skia.*
 import org.laolittle.plugin.Fonts
 import kotlin.math.round
 
+/**
+ * @author LaoLittle
+ */
 fun DailyNote.infoImage(): Image {
     val w = 745
     val h = 1200

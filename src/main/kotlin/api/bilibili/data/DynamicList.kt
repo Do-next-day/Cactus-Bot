@@ -10,6 +10,7 @@ import kotlinx.serialization.json.JsonElement
  * @param dynamics 动态列表
  * @param hasMore 是否有更多动态
  * @param nextOffset 下一个动态偏移
+ * @author Colter23
  */
 @Serializable
 data class DynamicList(

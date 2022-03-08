@@ -8,7 +8,9 @@ private const val bgHeight = 920
 private const val infoBgWidth = 650
 private const val infoBgHeight = 920
 
-
+/**
+ * @author Colter23
+ */
 fun GenshinRecord.infoImage(): Image {
     return Surface.makeRasterN32Premul(bgWidth, bgHeight).apply {
         canvas.apply {

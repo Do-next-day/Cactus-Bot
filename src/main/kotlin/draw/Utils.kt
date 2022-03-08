@@ -162,7 +162,7 @@ internal fun Image.zoomAroundAtPoint(
 
 
 /**
- *
+ * @author Colter23
  */
 internal fun Image.zoomAroundAtRect(
     leftTopCornerRect: Rect,
