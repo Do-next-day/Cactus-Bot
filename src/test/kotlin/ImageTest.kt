@@ -119,7 +119,7 @@ internal class ImageTest {
     @Test
     fun testBg(): Unit = runBlocking{
 
-        val bgWidth = 1500
+        val bgWidth = 1430
         val bgHeight = 920
         val infoBgWidth = 650
         val infoBgHeight = 920
@@ -159,13 +159,32 @@ internal class ImageTest {
                 drawInfoBgA(30f, 430f, 210f)
                 drawInfoBgA(330f, 430f, 210f)
 
-                val p1 = Point(infoBgWidth / 2f, infoBgHeight /2f)
-                val p2 = Point(infoBgWidth / 2f, infoBgHeight /2f)
+                val p1 = Point(infoBgWidth / 2f, infoBgHeight /2f + 20)
+                val p2 = Point(infoBgWidth / 2f, infoBgHeight /2f + 36)
+                val p3 = Point(infoBgWidth / 2f - 6, infoBgHeight/ 2f + 28)
+                val p4 = Point(infoBgWidth / 2f + 6, infoBgHeight/ 2f + 28)
 
-                //drawPoint(p1.x, p2.y, Paint())
+                drawPath(Path().apply {
+                    moveTo(p1)
+                    lineTo(p3)
+                    lineTo(p2)
+                    lineTo(p4)
+                }, Paint().apply {
+                    color= Color.makeRGB(220, 215, 205)
+                }) // 小菱形
             }
 
             File("infoBg.png").writeBytes(makeImageSnapshot().getBytes())
+        }
+
+        // x 775 - 1490
+        // y 15 - 895
+        val infoBgMinor = Surface.makeRasterN32Premul(1490 - 775, 895 - 15).apply {
+            canvas.apply {
+                
+            }
+
+            File("minor.png").writeBytes(makeImageSnapshot().getBytes())
         }
 
         val recordBGL = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_BGL.png").readBytes())
@@ -181,12 +200,13 @@ internal class ImageTest {
                 val bgrSf = recordBGR.zoomRightAtPoint(46f, 48f, halfWidth, bgHeight, bgPadding)
                 val bgcSf = recordBGC.zoomVerticalAtPoint(20f, 36f, centerWidth, bgHeight, Rect(0f,12f,0f,12f))
 
-                bglSf.draw(this, 0,0, Paint())
-                bgcSf.draw(this, halfWidth,0, Paint())
-                bgrSf.draw(this, halfWidth + centerWidth,0, Paint())
+                bglSf.draw(this, 0,0, null)
+                bgcSf.draw(this, halfWidth,0, null)
+                bgrSf.draw(this, halfWidth + centerWidth,0, null)
 
 
-                infoBgMainSf.draw(this, 30,0,Paint())
+                infoBgMainSf.draw(this, 30,0, null)
+                infoBgMinor.draw(this, 100, 0, null)
             }
         }
 
