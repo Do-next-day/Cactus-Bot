@@ -322,7 +322,8 @@ internal fun Canvas.drawImageClipHeight(
     dstWidth: Int,
     dstHeight: Int,
     contentPosition: ImagePosition,
-    dstPosition: Point
+    dstPosition: Point,
+    paint: Paint? = null
 ){
     val imgDstHeight = image.width * dstHeight / dstWidth
 
@@ -335,31 +336,33 @@ internal fun Canvas.drawImageClipHeight(
     drawImageRectNearest(
         image,
         Rect.makeXYWH(0f, offsetY.toFloat(), image.width.toFloat(), imgDstHeight.toFloat()),
-        Rect.makeXYWH(dstPosition.x, dstPosition.y, dstWidth.toFloat(), dstHeight.toFloat())
+        Rect.makeXYWH(dstPosition.x, dstPosition.y, dstWidth.toFloat(), dstHeight.toFloat()),
+        paint
     )
 }
 
 /**
  * 按比例缩放图片并裁剪高出的部分
  *
- * @param proportion 比例 如: 16/6
+ * @param proportion 比例 如: 16/6F
  * @param dstWidth 目标宽度
  * @param contentPosition 图片内容位置
  * @param dstPosition 图片绘制位置
  */
 internal fun Canvas.drawImageAtProportion(
     image: Image,
-    proportion: String,
+    proportion: Float,
     dstWidth: Int,
     contentPosition: ImagePosition,
-    dstPosition: Point
+    dstPosition: Point,
+    paint: Paint? = null
 ){
-    val split = proportion.split("/").map { s -> s.toInt() }
     drawImageClipHeight(
         image,
         dstWidth,
-        dstWidth * split[1] / split[0],
+        (dstWidth * proportion).toInt(),
         contentPosition,
-        dstPosition
+        dstPosition,
+        paint
     )
 }

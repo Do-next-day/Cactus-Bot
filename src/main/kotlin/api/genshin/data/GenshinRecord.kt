@@ -24,7 +24,7 @@ import kotlinx.serialization.json.JsonArray
 @Serializable
 data class GenshinRecord(
     val role: String?,
-    val avatars: List<GenshiAvatarInfo>,
+    val avatars: List<GenshinAvatarInfo>,
     val stats: PlayerStats,
     @SerialName("city_explorations") val cityExplorations: JsonArray, // TODO: 2022/2/27 need city data
     @SerialName("world_explorations") val worldExplorations: List<WorldExploration>,
@@ -82,7 +82,7 @@ data class GenshinRecord(
      * @param isChosen
      */
     @Serializable
-    data class GenshiAvatarInfo(
+    data class GenshinAvatarInfo(
         val id: Long,
         @SerialName("image") val imageUrl: String,
         val name: String,

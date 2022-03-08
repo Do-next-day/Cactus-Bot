@@ -1,3 +1,6 @@
+@file: Suppress("unused", "UNUSED_PARAMETER")
+
+import icu.dnddl.plugin.genshin.api.genshin.data.GenshinRecord
 import icu.dnddl.plugin.genshin.draw.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
@@ -7,116 +10,7 @@ import org.laolittle.plugin.getBytes
 import java.io.File
 import kotlin.system.measureTimeMillis
 
-@Suppress("unused")
 internal class ImageTest {
-    @Test
-    fun test(): Unit = runBlocking {
-        println(measureTimeMillis {
-
-            // val awtImage = ImageIO.read(File("resource/UI_ItemIcon_107001.png")).getScaledInstance(85, 85, java.awt.Image.SCALE_SMOOTH)
-            /**
-             * val scaled = BufferedImage(85, 85, BufferedImage.TYPE_INT_ARGB).apply {
-            createGraphics().apply {
-            drawImage(awtImage, 0, 0, null)
-            dispose()
-            }
-            }.toImage()
-             */
-
-            /**
-             * val scaled = BufferedImage(85, 85, BufferedImage.TYPE_INT_ARGB).apply {
-            createGraphics().apply {
-            drawImage(awtImage, 0, 0, null)
-            dispose()
-            }
-            }.toImage()
-             */
-//            val image = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_AchievementIcon_O001.png").readBytes())
-
-            val infoBg = async {
-                Surface.makeRasterN32Premul(650, 920).apply {
-                    canvas.apply {
-                        infoBgMain.draw(this, 0, 0, null)
-                    }
-
-                    File("infoBgMain.png").writeBytes(makeImageSnapshot().getBytes())
-                }
-            }
-
-            Surface.makeRasterN32Premul(1505, 920).apply {
-                canvas.apply {
-                    // BackGround
-                    drawBackGround()
-
-                    // InfoBgMain
-                    infoBg.await().draw(this, 50, 0, null)
-
-                    // 名片
-                    drawImageRect(
-                        Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_NameCardPic_Kokomi_P.png").readBytes()),
-                        Rect.makeXYWH(55f, 12f, 638f, 319f)
-                    )
-
-                    // 透明名片装饰线
-                    drawLineNC()
-
-                    // 头像框
-                    drawAvatarFrame(100f,375f, 300f)
-                    // 200 205 180
-                    drawLevelBox(85f, 420f, Color.makeRGB(165, 185, 130))
-                    drawLevelBox(380f, 420f, Color.makeRGB(205,185,165))
-
-
-                }
-
-                File("bg.png").writeBytes(makeImageSnapshot().getBytes())
-            }
-        })
-    }
-
-    val infoBgMain by lazy {
-        val infoBgWidth = 650
-        val infoBgHeight = 920
-
-
-        val infoBgMain = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_Bg.png").readBytes())
-
-        infoBgMain.zoomAroundAtCornerWidth(56f,infoBgWidth, infoBgHeight).apply {
-            canvas.apply {
-
-                // 名片 比例:16/6
-                val leftPadding = 15
-                val topPadding = 14
-
-                val nameCardWidth = infoBgWidth-leftPadding*2+4
-                val nameCardHeight = nameCardWidth * 6 / 16
-                println(nameCardHeight)
-                drawImageRect(
-                    Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_NameCardPic_Kokomi_P.png").readBytes()),
-                    Rect.makeXYWH(leftPadding.toFloat(), topPadding.toFloat(), nameCardWidth.toFloat(), nameCardHeight.toFloat())
-                )
-
-                // 透明名片装饰线
-                val lineNC = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_Line_NC.png").readBytes())
-                val lineNCSf = lineNC.zoomTopAtPoint(47f, 48f, nameCardWidth, nameCardHeight)
-                lineNCSf.draw(this, leftPadding, topPadding, Paint().setAlphaf(0.2f))
-
-                // 头像框
-                val avatarRadius = 100f
-                drawAvatarFrame(avatarRadius, (nameCardWidth / 2 + leftPadding).toFloat(),(nameCardHeight - avatarRadius / 4))
-
-
-                // 200 205 180
-                drawLevelBox(35f, 420f, Color.makeRGB(165, 185, 130))
-                drawLevelBox(330f, 420f, Color.makeRGB(205,185,165))
-
-            }
-
-            File("infoBg.png").writeBytes(makeImageSnapshot().getBytes())
-        }
-    }
-
-
     @Test
     fun testBg(): Unit = runBlocking{
 
@@ -154,19 +48,13 @@ internal class ImageTest {
                 val avatarRadius = 100f
                 drawAvatarFrame(avatarRadius, (nameCardWidth / 2 + leftPadding).toFloat(),(nameCardHeight - avatarRadius / 4))
 
-
                 // 200 205 180
                 drawLevelBox(35f, 340f, Color.makeRGB(165, 185, 130))
                 drawLevelBox(330f, 340f, Color.makeRGB(205,185,165))
 
-                val image = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_BgA.png").readBytes())
-                val infoBg = image.zoomHorizontalAtPoint(39f, 40f, 290)
-                infoBg.draw(this, 30, 430, null)
-                infoBg.draw(this, 330, 430, null)
 //                drawInfoBgA(30f, 430f, 210f)
 //                drawInfoBgA(330f, 430f, 210f)
-
-
+                // shiny, kira !
                 val kira = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_Kira2.png").readBytes())
 
                 drawImageRect(
@@ -176,8 +64,17 @@ internal class ImageTest {
                         infoBgHeight / 2f + 20,
                         infoBgWidth / 2f + 9,
                         infoBgHeight/ 2f + 37
-                    ),
+                    ), Paint().apply {
+                        colorFilter = ColorFilter.makeBlend(Color.makeRGB(220, 215, 205), BlendMode.SRC_ATOP)
+                    }
                 )
+
+                val infoBgA = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_BgA.png").readBytes())
+                val infoBg = infoBgA.zoomHorizontalAtPoint(39f, 40f, 290)
+                infoBg.draw(this, 30, 430, null)
+                infoBg.draw(this, 330, 430, null)
+
+
 
 //                val p1 = Point(infoBgWidth / 2f, infoBgHeight /2f + 20)
 //                val p2 = Point(infoBgWidth / 2f, infoBgHeight /2f + 36)
@@ -199,18 +96,27 @@ internal class ImageTest {
 
         // x 775 - 1490
         // y 15 - 895
-        val w = 1490 - 775f
+        val w = 1490 - 880f
         val h = 895 - 15f
         val infoBgMinor = Surface.makeRasterN32Premul(w.toInt(), h.toInt()).apply {
             val home = getTestImage("UI_HomeworldModule_3_Pic.png")
-            val homeCardWidth = w - 40
-            val homeCardHeight = 200f
+
+            val homeCardWidth = w
+            val homeCardHeight = homeCardWidth / 2.65f
 
             canvas.apply {
-                drawRRect(RRect.makeComplexXYWH(0f, 0f, homeCardWidth, homeCardHeight, floatArrayOf(10f)), Paint())
+                drawRRect(RRect.makeComplexLTRB(0f, 0f, homeCardWidth, homeCardHeight, floatArrayOf(10f)), Paint())
                 drawImageRectNearest(home, Rect(0f, 0f, homeCardWidth, homeCardHeight), Paint().apply {
                     blendMode = BlendMode.SRC_ATOP
                 })
+                val top = 90f
+                drawRect(Rect(0f, top, homeCardWidth, homeCardHeight), Paint().apply {
+                    color = Color.BLACK
+                    alpha = 50
+                    blendMode = BlendMode.SRC_ATOP
+                })
+
+
             }
 
             File("minor.png").writeBytes(makeImageSnapshot().getBytes())
@@ -233,13 +139,12 @@ internal class ImageTest {
                 bgcSf.draw(this, halfWidth,0, null)
                 bgrSf.draw(this, halfWidth + centerWidth,0, null)
 
-
                 infoBgMainSf.draw(this, 30,0, null)
-                //infoBgMinor.draw(this, 100, 0, null)
+                infoBgMinor.draw(this, 765, 45, null)
             }
         }
 
-        File("bg.png").writeBytes(bg.makeImageSnapshot().getBytes())
+        File("infoCard.png").writeBytes(bg.makeImageSnapshot().getBytes())
 
     }
 
@@ -322,27 +227,38 @@ internal class ImageTest {
     fun Canvas.drawAvatarFrame(radius: Float, x: Float, y: Float) {
         // (30 + 600) / 2
         // 中部实心圆
-        drawCircle(x, y, radius, Paint().apply {
-            color = Color.makeRGB(210, 160, 120)
-        })
-        // 内边框
-        drawCircle(x, y, radius - 10, Paint().apply {
-            color = Color.makeRGB(220, 200, 165)
-            mode = PaintMode.STROKE
-            strokeWidth = 2f
-        })
-        // 中边框
-        drawCircle(x, y, radius - 5, Paint().apply {
-            mode = PaintMode.STROKE
-            strokeWidth = 10f
-            color = Color.makeRGB(240, 235, 227)
-        })
-        // 外边框
-        drawCircle(x, y, radius, Paint().apply {
-            mode = PaintMode.STROKE
-            strokeWidth = 3.5f
-            color = Color.makeRGB(220, 200, 165)
-        })
+       Surface.makeRasterN32Premul((radius * 2 + 2).toInt(), (radius * 2 + 2).toInt()).apply {
+           canvas.apply {
+               drawCircle(radius + 1, radius + 1, radius, Paint().apply {
+                   color = Color.makeRGB(210, 160, 120)
+               })
+               val avatar = getTestImage("UI_AvatarIcon_Zhongli.png")
+
+               drawImageRectNearest(avatar, Rect(0f, 0f, radius*2, radius*2),Paint().apply {
+                   blendMode = BlendMode.SRC_ATOP
+               })
+
+               // 内边框
+               drawCircle(radius + 1, radius + 1, radius - 10, Paint().apply {
+                   blendMode = BlendMode.SRC
+                   color = Color.makeRGB(220, 200, 165)
+                   mode = PaintMode.STROKE
+                   strokeWidth = 2f
+               })
+               // 中边框
+               drawCircle(radius + 1, radius + 1, radius - 5, Paint().apply {
+                   mode = PaintMode.STROKE
+                   strokeWidth = 10f
+                   color = Color.makeRGB(240, 235, 227)
+               })
+               // 外边框
+               drawCircle(radius + 1, radius + 1, radius - 1, Paint().apply {
+                   mode = PaintMode.STROKE
+                   strokeWidth = 3.5f
+                   color = Color.makeRGB(220, 200, 165)
+               })
+           }
+       }.draw(this, (x - radius - 1).toInt(), (y - radius - 1).toInt(), null)
     }
 
     fun Canvas.drawLevelBox(l: Float, t: Float, colorR: Int){
@@ -384,6 +300,70 @@ internal class ImageTest {
 
             File("scale_test.png").writeBytes(makeImageSnapshot().getBytes())
         }
+    }
+
+    @Test
+    fun test(): Unit = runBlocking {
+        println(measureTimeMillis {
+
+            // val awtImage = ImageIO.read(File("resource/UI_ItemIcon_107001.png")).getScaledInstance(85, 85, java.awt.Image.SCALE_SMOOTH)
+            /**
+             * val scaled = BufferedImage(85, 85, BufferedImage.TYPE_INT_ARGB).apply {
+            createGraphics().apply {
+            drawImage(awtImage, 0, 0, null)
+            dispose()
+            }
+            }.toImage()
+             */
+
+            /**
+             * val scaled = BufferedImage(85, 85, BufferedImage.TYPE_INT_ARGB).apply {
+            createGraphics().apply {
+            drawImage(awtImage, 0, 0, null)
+            dispose()
+            }
+            }.toImage()
+             */
+//            val image = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_AchievementIcon_O001.png").readBytes())
+
+            val infoBg = async {
+                Surface.makeRasterN32Premul(650, 920).apply {
+                    canvas.apply {
+                    }
+
+                    File("infoBgMain.png").writeBytes(makeImageSnapshot().getBytes())
+                }
+            }
+
+            Surface.makeRasterN32Premul(1505, 920).apply {
+                canvas.apply {
+                    // BackGround
+                    drawBackGround()
+
+                    // InfoBgMain
+                    infoBg.await().draw(this, 50, 0, null)
+
+                    // 名片
+                    drawImageRect(
+                        Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_NameCardPic_Kokomi_P.png").readBytes()),
+                        Rect.makeXYWH(55f, 12f, 638f, 319f)
+                    )
+
+                    // 透明名片装饰线
+                    drawLineNC()
+
+                    // 头像框
+                    drawAvatarFrame(100f,375f, 300f)
+                    // 200 205 180
+                    drawLevelBox(85f, 420f, Color.makeRGB(165, 185, 130))
+                    drawLevelBox(380f, 420f, Color.makeRGB(205,185,165))
+
+
+                }
+
+                File("bg.png").writeBytes(makeImageSnapshot().getBytes())
+            }
+        })
     }
 
     fun getTestImage(name: String) = Image.makeFromEncoded(this::class.java.getResource("/$name")!!.openStream().use { it.readBytes() })
