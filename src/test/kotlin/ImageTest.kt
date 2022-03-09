@@ -7,6 +7,7 @@ import org.jetbrains.skia.*
 import org.junit.Test
 import org.laolittle.plugin.getBytes
 import java.io.File
+import kotlin.math.max
 import kotlin.system.measureTimeMillis
 
 internal class ImageTest {
@@ -154,27 +155,34 @@ internal class ImageTest {
                 })
 
 
-                val font = Font(Typeface.makeFromName("Noto Sans SC", FontStyle.ITALIC), 58f)
-                repeat(4) {
+                val space = 40f
+                val font = Font(Typeface.makeFromName("Noto Sans SC", FontStyle.NORMAL), 35f)
+                val fontTwo = font.makeWithSize(20f)
+                val fontColor = Color.makeRGB(253, 253, 253)
 
-                    val textTop = TextLine.make("Test", font)
-                    val textBottom = TextLine.make("Test", font)
-                    drawTextLine(
-                        textTop,
-                        (homeCardWidth.toInt() shr 3) - textTop.width / 2,
-                        (homeCardHeight.toInt() shr 1) - 50f,
-                        Paint().apply {
-                            color = Color.CYAN
-                        })
-                    drawTextLine(
-                        textBottom,
-                        (homeCardWidth.toInt() shr 3) - textBottom.width / 2,
-                        (homeCardHeight.toInt() shr 1) + 10f,
-                        Paint().apply {
-                            color = Color.CYAN
-                        })
-                    translate(homeCardWidth / 4, 0f)
+                val dataMap: MutableMap<String, String> = mutableMapOf()
+                dataMap["信任等阶"] = "10"
+                dataMap["最高洞天仙力"] = "21740"
+                dataMap["获得摆件数"] = "2366"
+                dataMap["历史访客数"] = "13"
+
+//                translate(0f, 70f)
+//                var offsetX = 0f
+//                dataMap.forEach { (key, value) ->
+//                    translate(space + offsetX, 0f)
+//                    offsetX = drawTitleData(value, key, font, fontTwo, fontColor)
+//                }
+//                resetMatrix()
+                averLayer(Rect(20f, 0f, 590f, 130f),0f, 4,1){
+                    var i = 1
+                    dataMap.forEach { (key, value) ->
+                        box(i) {
+                            drawTitleData(value, key, font, fontTwo,Rect.makeXYWH(0f,0f,boxWidth,boxHeight), fontColor)
+                        }
+                        i++
+                    }
                 }
+
 
                 resetMatrix()
                 translate(0f, homeCardHeight + 30)
@@ -259,6 +267,40 @@ internal class ImageTest {
         File("infoCard.png").writeBytes(bg.makeImageSnapshot().getBytes())
 
     }
+
+    fun Canvas.drawTitleData(
+        rowOne: String,
+        rowTwo: String,
+        rowOneFont: Font,
+        rowTwoFont: Font,
+        box: Rect,
+        dataColor: Int
+    ){
+        val textTop = TextLine.make(rowOne, rowOneFont)
+        val textBottom = TextLine.make(rowTwo, rowTwoFont)
+
+        val halfBoxWidth = box.width / 2
+        val offsetY = (box.height - textTop.xHeight - textBottom.xHeight) / 2 + textTop.xHeight
+
+        drawTextLine(
+            textTop,
+            halfBoxWidth - textTop.width / 2,
+            offsetY,
+            Paint().apply {
+                color = dataColor
+            }
+        )
+        drawTextLine(
+            textBottom,
+            halfBoxWidth - textBottom.width / 2,
+            offsetY + textTop.xHeight + textBottom.xHeight,
+            Paint().apply {
+                color = dataColor
+                alpha = 160
+            }
+        )
+    }
+
 
     fun Canvas.drawBackGround() {
         val bgl = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/UI_FriendInfo_BGL.png").readBytes())

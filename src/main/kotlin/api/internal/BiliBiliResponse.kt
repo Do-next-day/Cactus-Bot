@@ -1,7 +1,7 @@
 package icu.dnddl.plugin.genshin.api.internal
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
 
 @Serializable
 data class BiliBiliResponse(
@@ -9,5 +9,5 @@ data class BiliBiliResponse(
     val message: String? = null,
     val status: Boolean? = null,
     val msg: String? = null,
-    val data: JsonElement? = null
+    val data: JsonObject? = null
 )

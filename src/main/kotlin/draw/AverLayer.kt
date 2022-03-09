@@ -39,7 +39,6 @@ class AverLayer internal constructor(
     fun Canvas.box(position: Int = 1, block: Canvas.() -> Unit) {
         require(position in 1..size) { "Position position must be in 1 to $size, but is $position" }
         val count = save()
-        resetMatrix()
         translate(
             area.left + (boxWidth + padding) * ((position - 1) % horizontal),
             area.top + (boxHeight + padding) * (ceil((position.toFloat() / horizontal)) - 1)

@@ -1,5 +1,13 @@
 package icu.dnddl.plugin.genshin.api.bilibili
 
+import icu.dnddl.plugin.genshin.api.bilibili.data.DynamicList
+import icu.dnddl.plugin.genshin.api.internal.BiliBiliResponse
+import icu.dnddl.plugin.genshin.api.internal.biliGet
+import icu.dnddl.plugin.genshin.api.internal.client
+import icu.dnddl.plugin.genshin.util.decode
+import io.ktor.client.features.*
+import io.ktor.client.request.*
+
 object BiliBiliApi {
     private const val BILIBILI_API = "https://api.bilibili.com"
     private const val BILIBILI_VC_API = "https://api.vc.bilibili.com"
@@ -13,13 +21,13 @@ object BiliBiliApi {
     private const val HISTORY_DYNAMIC_LIST = "$BILIBILI_VC_API$DYNAMIC_ACTION/space_history?visitor_uid=0&platform=web"
 
 
-    fun getNewDynamic(biliUid: Long) {
+    suspend fun getNewDynamic(biliUid: Long) {
         getHistoryDynamic(biliUid, 0)
     }
 
-    fun getHistoryDynamic(biliUid: Long, offsetDid: Long) {
-
-
+    suspend fun getHistoryDynamic(biliUid: Long, offsetDid: Long): DynamicList {
+        val response = biliGet("$HISTORY_DYNAMIC_LIST&offset_dynamic_id=$offsetDid&host_uid=$biliUid")
+        return response.data!!.decode()
     }
 
 
