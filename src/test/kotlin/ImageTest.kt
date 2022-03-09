@@ -122,13 +122,13 @@ internal class ImageTest {
                 drawImageRectNearest(home, Rect(0f, 0f, homeCardWidth, homeCardHeight), Paint().apply {
                     blendMode = BlendMode.SRC_ATOP
                 })
-                val top = 90f
-                drawRect(Rect(0f, top, homeCardWidth, homeCardHeight), Paint().apply {
+                translate(0f, 90f)
+                drawRect(Rect(0f, 0f, homeCardWidth, homeCardHeight), Paint().apply {
                     color = Color.BLACK
                     alpha = 50
                     blendMode = BlendMode.SRC_ATOP
                 })
-                translate(0f, top)
+
 
                 val font = Font(Typeface.makeFromName("Noto Sans SC", FontStyle.ITALIC), 58f)
                 repeat(4) {
@@ -159,13 +159,16 @@ internal class ImageTest {
                 val boxW = 295f
                 val boxH = 130f
                 val pad = w - (boxW * 2)
+                val zhong = getTestImage("UI_AvatarIcon_Zhongli.png")
                 for (y in 0..1) {
                     for (x in 0..1) {
                         // todo draw image
+                        val left = (w - boxW) * x
+                        val top = (boxH + pad) * y
                         drawRRect(
                             RRect.makeComplexXYWH(
-                                (w - boxW) * x,
-                                (boxH + pad) * y,
+                                left,
+                                top,
                                 boxW,
                                 boxH,
                                 floatArrayOf(5f)),
@@ -173,6 +176,12 @@ internal class ImageTest {
                                 color = Color.CYAN
                             }
                         )
+
+                        drawImageRectNearest(zhong, Rect.makeXYWH
+                            (left,
+                            top,
+                            boxW,
+                            boxH,))
                         i++
                     }
                 }
@@ -184,10 +193,15 @@ internal class ImageTest {
                 val rectCBg = Rect.makeXYWH(165f, 59f, 78f, 95f)
                 repeat(2) { t ->
                     val off = 15f + (cW + 30) * t
-                    drawImageRectNearest(cBg, rectCBg, Rect.makeXYWH(off, 0f, cW, cH))
-                    drawImageRectNearest(cBg, rectCBg, Rect(w - (off + cW), 0f, w- off, cH))
-                }
+                    val leftRect = Rect.makeXYWH(off, 0f, cW, cH)
+                    val rightRect = Rect(w - (off + cW), 0f, w- off, cH)
+                    drawImageRectNearest(cBg, rectCBg, leftRect)
+                    drawImageRectNearest(cBg, rectCBg, rightRect)
 
+                    // draw image
+                    drawImageClipHeight(zhong, leftRect)
+                    drawImageClipHeight(zhong, rightRect)
+                }
             }
 
             File("minor.png").writeBytes(makeImageSnapshot().getBytes())
