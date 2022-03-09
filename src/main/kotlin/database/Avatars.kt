@@ -31,11 +31,21 @@ class Avatar(id: EntityID<Int>) : IntEntity(id), GachaItem {
             this, ::description, Json.encodeToString(AvatarDescription.serializer(), value)
         )
 
-    operator fun compareTo(other: Avatar): Int {
-        return if (star && other.star) 0
-        else if (star) -1
-        else if (other.star) 1
-        else 0
+    override operator fun compareTo(other: GachaItem): Int {
+        if (this === other) return 0
+        when (other) {
+            is Avatar ->
+                return if (this.star && other.star) 0
+                else if (this.star) 1
+                else if (other.star) -1
+                else 0
+
+            is Equip ->
+                return if (this.star) 1
+                else if (other.star == 5) -1
+                else 1
+        }
+        return 0
     }
 
     override fun getCard(): Image {

@@ -35,6 +35,6 @@ class GachaEquip(id: EntityID<Int>) : IntEntity(id) {
     var date by GachasEquip.date
 }
 
-interface GachaItem {
+interface GachaItem: Comparable<GachaItem> {
     fun getCard(): Image
 }

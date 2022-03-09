@@ -282,7 +282,7 @@ internal fun Canvas.drawImageClipHeight(image: Image, src: Rect, dst: Rect, pain
     val foo = image.height.toFloat() / image.width
     Surface.makeRasterN32Premul(dst.width.toInt(), dst.height.toInt()).apply {
         canvas.apply {
-            drawImageRect(image, src, Rect.makeWH(dst.width, dst.width * foo))
+            drawImageRectNearest(image, src, Rect.makeWH(dst.width, dst.width * foo))
         }
     }.draw(this, dst.left.toInt(), dst.top.toInt(), paint)
 }

@@ -32,6 +32,10 @@ class Equip(id: EntityID<Int>) : IntEntity(id), GachaItem {
     override fun getCard(): Image {
         TODO("Not yet implemented")
     }
+
+    override fun compareTo(other: GachaItem): Int {
+        TODO("Not yet implemented")
+    }
 }
 
 @Serializable

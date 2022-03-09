@@ -1,7 +1,7 @@
 package icu.dnddl.plugin.genshin
 
 import icu.dnddl.plugin.genshin.service.PluginDispatcher
-import net.mamoe.mirai.console.data.ReadOnlyPluginConfig
+import net.mamoe.mirai.console.data.AutoSavePluginConfig
 import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
 import net.mamoe.mirai.contact.Contact
@@ -9,7 +9,7 @@ import net.mamoe.mirai.message.code.MiraiCode.deserializeMiraiCode
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
 
-object CactusConfig : ReadOnlyPluginConfig("GenshinPluginConfig") {
+object CactusConfig : AutoSavePluginConfig("GenshinPluginConfig") {
     @ValueDescription("机器人昵称")
     val botName by value("派蒙")
 
@@ -21,6 +21,9 @@ object CactusConfig : ReadOnlyPluginConfig("GenshinPluginConfig") {
 
     @ValueDescription("开启自动签到")
     val autoSign by value(true)
+
+    @ValueDescription("使用图片")
+    var image by value(true)
 
     private val guideResourceFolder = CactusBot.configFolder.resolve("GuideRes").also { it.mkdir() }
     val Contact.guideMessage: MessageChain

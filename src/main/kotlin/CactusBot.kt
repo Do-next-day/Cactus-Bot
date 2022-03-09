@@ -20,6 +20,7 @@ import net.mamoe.mirai.console.plugin.description.PluginDependency
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.utils.info
+import net.mamoe.mirai.utils.warning
 import java.time.LocalDate as JLocalDate
 
 object CactusBot : KotlinPlugin(JvmPluginDescription(
@@ -29,10 +30,19 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
 ) {
     author("LaoLittle")
     dependsOn(
-        PluginDependency("icu.dnddl.plugin.SkikoMirai", ">=1.0.2", true)
+        PluginDependency("org.laolittle.plugin.SkikoMirai", ">=1.0.2", true)
     )
 }) {
     override fun onEnable() {
+        kotlin.runCatching { Class.forName("org.laolittle.plugin.SkikoMirai") }
+            .onFailure {
+                logger.warning { """
+                    未找到前置插件: SkikoMirai, 已切换成文字输出
+                    如要使用图片输出, 请下载前置插件 https://github.com/LaoLittle/SkikoMirai 并修改插件配置
+                """.trimIndent() }
+                CactusConfig.image = false
+            }
+
         launch { getAppVersion(true) }
         CactusConfig.reload()
         CactusData.reload()
