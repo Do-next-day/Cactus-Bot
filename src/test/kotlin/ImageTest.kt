@@ -88,7 +88,31 @@ internal class ImageTest {
                 infoBg.draw(this, 30, 430, null)
                 infoBg.draw(this, 330, 430, null)
 
-
+                drawRect(Rect(30f, 560f,600f,880f), Paint())
+                averLayer(Rect(30f, 560f,600f,880f), 12f, 3, 3) {
+                    box(1) {
+                        //drawPoint(0f,0f, Paint())
+                        drawRect(Rect(0f,0f, boxWidth, boxHeight), Paint().apply {
+                            color = Color.CYAN
+                        })
+                    }
+                    box(2) {
+                        //drawPoint(0f,0f, Paint())
+                        drawRect(Rect(0f,0f, boxWidth, boxHeight), Paint().apply {
+                            color = Color.CYAN
+                        })
+                    }
+                    box(3) {
+                        drawRect(Rect(0f,0f, boxWidth, boxHeight), Paint().apply {
+                            color = Color.CYAN
+                        })
+                    }
+                    box(5) {
+                        drawRect(Rect(0f,0f, boxWidth, boxHeight), Paint().apply {
+                            color = Color.CYAN
+                        })
+                    }
+                }
 //                val p1 = Point(infoBgWidth / 2f, infoBgHeight /2f + 20)
 //                val p2 = Point(infoBgWidth / 2f, infoBgHeight /2f + 36)
 //                val p3 = Point(infoBgWidth / 2f - 6, infoBgHeight/ 2f + 28)

@@ -42,7 +42,7 @@ class AverLayer internal constructor(
         resetMatrix()
         translate(
             area.left + (boxWidth + padding) * ((position - 1) % horizontal),
-            area.top + (boxHeight + padding) * ceil((position.toFloat() / horizontal))
+            area.top + (boxHeight + padding) * (ceil((position.toFloat() / horizontal)) - 1)
         )
         block()
         restoreToCount(count)
