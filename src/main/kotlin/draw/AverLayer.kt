@@ -27,14 +27,16 @@ class AverLayer internal constructor(
     val vertical: Int,
 ) {
     val size get() = horizontal * vertical
-    val boxWidth: Float get() {
-        if (horizontal == 1) return area.width
-        return (area.width - (padding * (horizontal - 1))) / horizontal
-    }
-    val boxHeight: Float get() {
-        if (vertical == 1) return area.height
-        return (area.height - (padding * (vertical - 1))) / vertical
-    }
+    val boxWidth: Float
+        get() {
+            if (horizontal == 1) return area.width
+            return (area.width - (padding * (horizontal - 1))) / horizontal
+        }
+    val boxHeight: Float
+        get() {
+            if (vertical == 1) return area.height
+            return (area.height - (padding * (vertical - 1))) / vertical
+        }
 
     fun Canvas.box(position: Int = 1, block: Canvas.() -> Unit) {
         require(position in 1..size) { "Position position must be in 1 to $size, but is $position" }

@@ -324,10 +324,10 @@ internal fun Canvas.drawImageClipHeight(
     contentPosition: ImagePosition,
     dstPosition: Point,
     paint: Paint? = null
-){
+) {
     val imgDstHeight = image.width * dstHeight / dstWidth
 
-    val offsetY = when (contentPosition){
+    val offsetY = when (contentPosition) {
         ImagePosition.TOP -> 0
         ImagePosition.CENTER -> (image.height - imgDstHeight) / 2
         ImagePosition.BOTTOM -> image.height - imgDstHeight
@@ -356,7 +356,7 @@ internal fun Canvas.drawImageAtProportion(
     contentPosition: ImagePosition,
     dstPosition: Point,
     paint: Paint? = null
-){
+) {
     drawImageClipHeight(
         image,
         dstWidth,

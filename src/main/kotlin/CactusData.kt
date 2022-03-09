@@ -4,7 +4,10 @@ import icu.dnddl.plugin.genshin.api.genshin.GenshinBBSApi
 import icu.dnddl.plugin.genshin.api.genshin.data.Award
 import icu.dnddl.plugin.genshin.database.UserSetting
 import icu.dnddl.plugin.genshin.service.PluginDispatcher
-import icu.dnddl.plugin.genshin.util.*
+import icu.dnddl.plugin.genshin.util.Json
+import icu.dnddl.plugin.genshin.util.awardsFile
+import icu.dnddl.plugin.genshin.util.decodeFromStringOrNull
+import icu.dnddl.plugin.genshin.util.settingFile
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -19,7 +22,8 @@ object CactusData : AutoSavePluginData("GenshinPluginData") {
 
     val cookie get() = cookies.random()
 
-    val userSetting: MutableMap<Long, UserSetting> = Json.decodeFromStringOrNull(settingFile.readText()) ?: mutableMapOf()
+    val userSetting: MutableMap<Long, UserSetting> =
+        Json.decodeFromStringOrNull(settingFile.readText()) ?: mutableMapOf()
 
     var awardMonth: Int by value(0)
 

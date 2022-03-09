@@ -1,7 +1,6 @@
 package icu.dnddl.plugin.genshin.draw
 
 import icu.dnddl.plugin.genshin.api.genshin.data.GenshinRecord
-import icu.dnddl.plugin.genshin.model.GachaImages.drawBackDrop
 import icu.dnddl.plugin.genshin.service.PluginDispatcher
 import icu.dnddl.plugin.genshin.util.getOrDownload
 import org.jetbrains.skia.*
@@ -11,6 +10,7 @@ private const val bgHeight = 920
 private const val infoBgWidth = 650
 private const val infoBgHeight = 920
 private const val resourceFolder = "/GenshinRecord"
+
 /**
  * @author Colter23 and LaoLittle
  */
@@ -45,7 +45,7 @@ fun GenshinRecord.recordInfo(): Surface {
                     getOrDownload(avatars.random().imageUrl)
                 })
 
-                drawImageRectNearest(avatar, Rect(0f, 0f, radius*2, radius*2),paint.apply {
+                drawImageRectNearest(avatar, Rect(0f, 0f, radius * 2, radius * 2), paint.apply {
                     blendMode = BlendMode.SRC_ATOP
                 })
 
@@ -104,6 +104,8 @@ fun GenshinRecord.recordInfo(): Surface {
                 (nameCardHeight - avatarRadius / 4)
             )
 
+            drawLevelBox(35f, 340f, Color.makeRGB(165, 185, 130))
+            drawLevelBox(330f, 340f, Color.makeRGB(205, 185, 165))
         }
     }
 }
@@ -132,7 +134,7 @@ private val infoBg: Surface by lazy {
                 }
             )
 
-            val infoBgA = getImageFromResource("$resourceFolder/UI_FriendInfo_BgA.png")
+            val infoBgA = getImageFromResource("$resourceFolder/UI_FriendInfo_BGA.png")
             val infoBg = infoBgA.zoomHorizontalAtPoint(39f, 40f, 290)
             infoBg.draw(this, 30, 430, null)
             infoBg.draw(this, 330, 430, null)
@@ -146,9 +148,26 @@ private val recordBg: Surface by lazy {
             val centerWidth = 100
             val halfWidth = (bgWidth - centerWidth) / 2
             val bgPadding = Rect(0f, 10f, 0f, 10f)
-            val bglSf = getImageFromResource("$resourceFolder/UI_FriendInfo_BGL.png").zoomLeftAtPoint(46f, 48f, halfWidth, bgHeight, bgPadding)
-            val bgrSf = getImageFromResource("$resourceFolder/UI_FriendInfo_BGR.png").zoomRightAtPoint(46f, 48f, halfWidth, bgHeight, bgPadding)
-            val bgcSf = getImageFromResource("$resourceFolder/UI_FriendInfo_BGC.png").zoomVerticalAtPoint(20f, 36f, bgHeight, Rect(0f, 12f, 0f, 12f))
+            val bglSf = getImageFromResource("$resourceFolder/UI_FriendInfo_BGL.png").zoomLeftAtPoint(
+                46f,
+                48f,
+                halfWidth,
+                bgHeight,
+                bgPadding
+            )
+            val bgrSf = getImageFromResource("$resourceFolder/UI_FriendInfo_BGR.png").zoomRightAtPoint(
+                46f,
+                48f,
+                halfWidth,
+                bgHeight,
+                bgPadding
+            )
+            val bgcSf = getImageFromResource("$resourceFolder/UI_FriendInfo_BGC.png").zoomVerticalAtPoint(
+                20f,
+                36f,
+                bgHeight,
+                Rect(0f, 12f, 0f, 12f)
+            )
 
             bglSf.draw(this, 0, 0, Paint())
             bgcSf.draw(this, halfWidth, 0, Paint())
@@ -169,5 +188,5 @@ private fun Canvas.drawLevelBox(l: Float, t: Float, colorR: Int) {
     })
 }
 
-private val infoBG = getImageFromResource("$resourceFolder/UI_FriendInfo_Bg.png")
+private val infoBG = getImageFromResource("$resourceFolder/UI_FriendInfo_BG.png")
 private val lineNC = getImageFromResource("$resourceFolder/UI_FriendInfo_Line_NC.png")

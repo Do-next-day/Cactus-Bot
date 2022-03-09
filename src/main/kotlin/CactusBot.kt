@@ -36,10 +36,12 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
     override fun onEnable() {
         kotlin.runCatching { Class.forName("org.laolittle.plugin.SkikoMirai") }
             .onFailure {
-                logger.warning { """
+                logger.warning {
+                    """
                     未找到前置插件: SkikoMirai, 已切换成文字输出
                     如要使用图片输出, 请下载前置插件 https://github.com/LaoLittle/SkikoMirai 并修改插件配置
-                """.trimIndent() }
+                """.trimIndent()
+                }
                 CactusConfig.image = false
             }
 
