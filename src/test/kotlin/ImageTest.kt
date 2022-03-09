@@ -89,30 +89,28 @@ internal class ImageTest {
                 infoBg.draw(this, 30, 430, null)
                 infoBg.draw(this, 330, 430, null)
 
-                drawRect(Rect(30f, 560f,600f,880f), Paint())
-                averLayer(Rect(30f, 560f,600f,880f), 12f, 3, 3) {
-                    box(1) {
-                        //drawPoint(0f,0f, Paint())
-                        drawRect(Rect(0f,0f, boxWidth, boxHeight), Paint().apply {
-                            color = Color.CYAN
-                        })
+
+                val font = Font(Typeface.makeFromName("Noto Sans SC", FontStyle.BOLD), 35f)
+                val fontTwo = font.makeWithSize(20f)
+                val fontColor = Color.BLACK
+                val sprite = Image.makeFromEncoded(File("src/main/resources/GenshinRecord/SpriteAtlasTextureIcon.png").readBytes())
+                val icon1 = sprite.readImageRectContent(Rect(10f, 9f, 65f, 66f))
+
+                val dataMap: MutableMap<String, String> = mutableMapOf()
+                dataMap["活跃天数"] = "537"
+                dataMap["达成成就数"] = "519"
+                dataMap["获得角色数"] = "39"
+                dataMap["解锁传送点"] = "169"
+//                drawRect(Rect(30f, 560f,600f,880f), Paint())
+                averLayer(Rect(10f, 560f,580f,880f), 12f, 3, 3) {
+                    var i = 1
+                    dataMap.forEach { (key, value) ->
+                        box(i) {
+                            drawTitleData(icon1, value, key, font, fontTwo,Rect.makeXYWH(0f,0f,boxWidth,boxHeight), fontColor)
+                        }
+                        i++
                     }
-                    box(2) {
-                        //drawPoint(0f,0f, Paint())
-                        drawRect(Rect(0f,0f, boxWidth, boxHeight), Paint().apply {
-                            color = Color.CYAN
-                        })
-                    }
-                    box(3) {
-                        drawRect(Rect(0f,0f, boxWidth, boxHeight), Paint().apply {
-                            color = Color.CYAN
-                        })
-                    }
-                    box(5) {
-                        drawRect(Rect(0f,0f, boxWidth, boxHeight), Paint().apply {
-                            color = Color.CYAN
-                        })
-                    }
+
                 }
 //                val p1 = Point(infoBgWidth / 2f, infoBgHeight /2f + 20)
 //                val p2 = Point(infoBgWidth / 2f, infoBgHeight /2f + 36)
@@ -154,7 +152,6 @@ internal class ImageTest {
                     blendMode = BlendMode.SRC_ATOP
                 })
 
-
                 val space = 40f
                 val font = Font(Typeface.makeFromName("Noto Sans SC", FontStyle.NORMAL), 35f)
                 val fontTwo = font.makeWithSize(20f)
@@ -173,7 +170,7 @@ internal class ImageTest {
 //                    offsetX = drawTitleData(value, key, font, fontTwo, fontColor)
 //                }
 //                resetMatrix()
-                averLayer(Rect(20f, 0f, 590f, 130f),0f, 4,1){
+                averLayer(Rect(20f, 0f, 580f, 130f),0f, 4,1){
                     var i = 1
                     dataMap.forEach { (key, value) ->
                         box(i) {
@@ -269,6 +266,22 @@ internal class ImageTest {
     }
 
     fun Canvas.drawTitleData(
+        icon: Image,
+        rowOne: String,
+        rowTwo: String,
+        rowOneFont: Font,
+        rowTwoFont: Font,
+        box: Rect,
+        dataColor: Int
+    ){
+        drawImage(icon, 40f,(box.height-icon.height)/2 + 5,null)
+        val count = save()
+        translate(icon.width.toFloat(), 0f)
+        drawTitleData(rowOne, rowTwo, rowOneFont, rowTwoFont, box, dataColor)
+        restoreToCount(count)
+    }
+
+    fun Canvas.drawTitleData(
         rowOne: String,
         rowTwo: String,
         rowOneFont: Font,
@@ -300,6 +313,15 @@ internal class ImageTest {
             }
         )
     }
+
+    fun Image.readImageRectContent(rect: Rect): Image{
+        return Surface.makeRasterN32Premul(rect.width.toInt(), rect.height.toInt()).apply {
+            canvas.apply {
+                drawImageRect(this@readImageRectContent, rect, Rect(0f, 0f, rect.width, rect.height))
+            }
+        }.makeImageSnapshot()
+    }
+
 
 
     fun Canvas.drawBackGround() {
