@@ -64,7 +64,7 @@ fun Iterable<GachaItem>.sort(): List<GachaItem> {
             if (it) sorted.add(item)
         }
     }.filterNot { item ->
-        (item is Equip && item.star == 5).also {
+        (item is Equip && item.star.toInt() == 5).also {
             if (it) sorted.add(item)
         }
     }.filterNot { item ->
@@ -72,7 +72,7 @@ fun Iterable<GachaItem>.sort(): List<GachaItem> {
             if (it) sorted.add(item)
         }
     }.filterNot { item ->
-        (item is Equip && item.star == 4).also {
+        (item is Equip && item.star.toInt() == 4).also {
             if (it) sorted.add(item)
         }
     }.filterIsInstance<Equip>().onEach(sorted::add).toList()

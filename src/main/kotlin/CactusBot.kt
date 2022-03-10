@@ -1,13 +1,13 @@
 package icu.dnddl.plugin.genshin
 
 import icu.dnddl.plugin.genshin.api.internal.getAppVersion
+import icu.dnddl.plugin.genshin.database.User
+import icu.dnddl.plugin.genshin.database.Users
+import icu.dnddl.plugin.genshin.database.cactusTransaction
 import icu.dnddl.plugin.genshin.mirai.AllMessageListener
 import icu.dnddl.plugin.genshin.mirai.FriendMessageListener
 import icu.dnddl.plugin.genshin.mirai.GroupMessageListener
-import icu.dnddl.plugin.genshin.service.GenshinGachaCache
-import icu.dnddl.plugin.genshin.service.GenshinSignProver
-import icu.dnddl.plugin.genshin.service.PluginDispatcher
-import icu.dnddl.plugin.genshin.service.aDay
+import icu.dnddl.plugin.genshin.service.*
 import icu.dnddl.plugin.genshin.util.Json
 import icu.dnddl.plugin.genshin.util.cacheFolder
 import icu.dnddl.plugin.genshin.util.settingFile
@@ -63,6 +63,11 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
         if (CactusConfig.autoSign) GenshinSignProver.startAt(dateTime, aDay)
         logger.info { "Cactus-Bot loaded" }
 
+        cactusTransaction { // 为每位用户分发树脂提醒服务
+            User.all().forEach {
+                GenshinResinPromptingService(it).start()
+            }
+        }
     }
 
     override fun onDisable() {

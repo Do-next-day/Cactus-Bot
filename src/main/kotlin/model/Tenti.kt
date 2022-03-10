@@ -29,7 +29,7 @@ object Tenti {
             when (this) {
                 is Avatar -> if (star) GOLD else PURPLE
                 is Equip ->
-                    when (star) {
+                    when (star.toInt()) {
                         3 -> BLUE
                         4 -> PURPLE
                         else -> GOLD

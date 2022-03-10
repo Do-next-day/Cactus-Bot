@@ -366,3 +366,36 @@ internal fun Canvas.drawImageAtProportion(
         paint
     )
 }
+
+fun Canvas.drawTitleData(
+    rowOne: String,
+    rowTwo: String,
+    rowOneFont: Font,
+    rowTwoFont: Font,
+    box: Rect,
+    dataColor: Int
+){
+    val textTop = TextLine.make(rowOne, rowOneFont)
+    val textBottom = TextLine.make(rowTwo, rowTwoFont)
+
+    val halfBoxWidth = box.width / 2
+    val offsetY = (box.height - textTop.xHeight - textBottom.xHeight) / 2 + textTop.xHeight
+
+    drawTextLine(
+        textTop,
+        halfBoxWidth - textTop.width / 2,
+        offsetY,
+        Paint().apply {
+            color = dataColor
+        }
+    )
+    drawTextLine(
+        textBottom,
+        halfBoxWidth - textBottom.width / 2,
+        offsetY + textTop.xHeight + textBottom.xHeight,
+        Paint().apply {
+            color = dataColor
+            alpha = 160
+        }
+    )
+}

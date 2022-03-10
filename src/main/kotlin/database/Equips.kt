@@ -11,7 +11,7 @@ import org.jetbrains.skia.Image
 
 object Equips : IntIdTable() {
     val name = varchar("Name", 6)
-    val star = integer("Star")
+    val star = short("Star")
     val date = date("Date")
     val description = varchar("Desc", 255)
 }

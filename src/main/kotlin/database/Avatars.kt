@@ -42,7 +42,7 @@ class Avatar(id: EntityID<Int>) : IntEntity(id), GachaItem {
 
             is Equip ->
                 return if (this.star) 1
-                else if (other.star == 5) -1
+                else if (other.star.toInt() == 5) -1
                 else 1
         }
         return 0
@@ -89,8 +89,9 @@ class Avatar(id: EntityID<Int>) : IntEntity(id), GachaItem {
 
 @Serializable
 data class AvatarDescription(
-    val exonym: String,
-    val element: AvatarElement,
+    val exonym: String, // 中文名
+    val alias: String, // 别名
+    val element: AvatarElement, // 元素
 ) {
     override fun toString(): String = Json.encodeToString(serializer(), this)
 }
