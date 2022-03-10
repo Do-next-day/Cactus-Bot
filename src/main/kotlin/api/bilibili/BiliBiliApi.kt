@@ -21,8 +21,8 @@ object BiliBiliApi {
     private const val HISTORY_DYNAMIC_LIST = "$BILIBILI_VC_API$DYNAMIC_ACTION/space_history?visitor_uid=0&platform=web"
 
 
-    suspend fun getNewDynamic(biliUid: Long) {
-        getHistoryDynamic(biliUid, 0)
+    suspend fun getNewDynamic(biliUid: Long): DynamicList {
+        return getHistoryDynamic(biliUid, 0)
     }
 
     suspend fun getHistoryDynamic(biliUid: Long, offsetDid: Long): DynamicList {

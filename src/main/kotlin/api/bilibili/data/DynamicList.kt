@@ -1,5 +1,6 @@
 package icu.dnddl.plugin.genshin.api.bilibili.data
 
+import icu.dnddl.plugin.genshin.util.dynamictime
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
@@ -54,7 +55,9 @@ data class DynamicList(
             val timestamp: Long,
             @SerialName("user_profile")
             val profile: JsonElement? = null
-        )
+        ){
+            val dynamictime = dynamictime(dynamicId)
+        }
 
         @Serializable
         data class DynamicDisplay(
