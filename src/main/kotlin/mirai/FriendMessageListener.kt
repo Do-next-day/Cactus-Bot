@@ -75,8 +75,8 @@ object FriendMessageListener : AbstractCactusService() {
                     }
                     delay(232)
                     send(subject.guideMessage)
-                    delay(1_320)
-                    send("请在5分钟内内发送Cookie")
+                    delay(2_320)
+                    send("请在5分钟内发送Cookie")
                 }
 
                 val cookies = nextMessageOrNull(300_000)?.content ?: kotlin.run {

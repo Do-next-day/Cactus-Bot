@@ -19,7 +19,7 @@ abstract class AbstractCactusService(
         this.serviceName = serviceName
     }
 
-    protected var serviceName: String = this::class.simpleName ?: "Unknown"
+    protected var serviceName: String = this::class.simpleName ?: "Unknown Service"
     protected var job: Job? = null
 
     final override val coroutineContext: CoroutineContext
@@ -56,6 +56,9 @@ abstract class AbstractCactusService(
     fun startAt(time: LocalDate) =
         startAt(time.toJavaLocalDate().atStartOfDay().toKotlinLocalDateTime())
 
+    override fun toString(): String {
+        return "$serviceName@${hashCode()}"
+    }
 
     enum class Type {
         Job,

@@ -2,6 +2,7 @@ package icu.dnddl.plugin.genshin.api.genshin
 
 import icu.dnddl.plugin.genshin.CactusData
 import icu.dnddl.plugin.genshin.api.Action.GENSHIN_SIGN
+import icu.dnddl.plugin.genshin.api.GAME_RECORD
 import icu.dnddl.plugin.genshin.api.TAKUMI_API
 import icu.dnddl.plugin.genshin.api.WEB_STATIC
 import icu.dnddl.plugin.genshin.api.buildUrlParameters
@@ -22,7 +23,6 @@ import kotlinx.serialization.json.put
 import kotlinx.serialization.serializer
 
 object GenshinBBSApi {
-    private const val GAME_RECORD = "$TAKUMI_API/game_record/app"
     private const val GENSHIN_GAME_RECORD = "$GAME_RECORD/genshin/api"
     private const val SIGN_API = "$TAKUMI_API/event/bbs_sign_reward"
     private const val GACHA_INFO = "$WEB_STATIC/hk4e/gacha_info"
@@ -193,12 +193,6 @@ object GenshinBBSApi {
         val signInfo = getSignInfo(genshinUID, region, cookies, uuid)
         val response = if (!signInfo.isSign) signGenshin(genshinUID, region, cookies, uuid) else null
         return SignResponse(response, signInfo, CactusData.awards[signInfo.totalSignDay])
-    }
-
-    suspend fun getGameRecordCard(uid: Long): MiHoYoBBSResponse { //todo 解析
-        val url = "$GAME_RECORD/card/wapi/getGameRecordCard?uid=$uid"
-
-        return getBBS(url)
     }
 
     fun getServerFromUID(uid: Long) = if (uid < 500000000) CN_GF01

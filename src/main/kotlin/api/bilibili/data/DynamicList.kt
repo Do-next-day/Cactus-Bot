@@ -7,7 +7,7 @@ import kotlinx.serialization.json.JsonElement
 /**
  * 动态列表
  *
- * @param [dynamics] 动态列表
+ * @param dynamics 动态列表
  * @property hasMore 是否有更多动态
  * @param nextOffset 下一个动态偏移
  * @author Colter23

@@ -43,6 +43,7 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
                 """.trimIndent()
                 }
                 CactusConfig.image = false
+                CactusConfig.save()
             }
 
         launch { getAppVersion(true) }

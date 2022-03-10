@@ -49,4 +49,8 @@ abstract class AbstractCactusTimerService(
             start(delay)
         }
     }
+
+    override fun toString(): String {
+        return "$serviceName@${hashCode()}"
+    }
 }

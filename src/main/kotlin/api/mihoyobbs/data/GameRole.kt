@@ -10,7 +10,7 @@ data class GameRole(
     val region: GenshinServer,
     @SerialName("game_uid") val gameUID: Long,
     val nickname: String,
-    val level: Int,
+    val level: Short,
     @SerialName("is_chosen") val isChosen: Boolean,
     @SerialName("region_name") val regionName: String,
     @SerialName("is_official") val isOfficial: Boolean

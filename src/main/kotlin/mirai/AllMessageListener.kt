@@ -71,19 +71,20 @@ object AllMessageListener : AbstractCactusService() {
                         if (!autoSign.get()) {
                             autoSign.set(true)
                             subject.sendMessage("已开启自动签到")
-                        } else subject.sendMessage("你已经开启了自动签到")
+                        } else subject.sendMessage("你已经开启了自动签到, 无需重复开启")
                     }
                     "关闭" -> {
                         if (autoSign.get()) {
                             autoSign.set(false)
                             subject.sendMessage("已关闭自动签到")
-                        } else subject.sendMessage("你未开启自动签到")
+                        } else subject.sendMessage("你尚未开启自动签到")
                     }
                     else -> {
                         subject.sendMessage(
                             """
-                            发送 "开启自动签到", 每天都会自动帮你进行米游社签到
+                            发送 "开启自动签到", 每天会自动帮你进行米游社签到
                             发送 "关闭自动签到" 即可关闭
+                            你现在是${if (autoSign.get()) "开启" else "关闭"}的状态
                         """.trimIndent()
                         )
                     }

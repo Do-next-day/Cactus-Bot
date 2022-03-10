@@ -4,6 +4,7 @@ import icu.dnddl.plugin.genshin.api.genshin.data.GenshinRecord
 import icu.dnddl.plugin.genshin.service.PluginDispatcher
 import icu.dnddl.plugin.genshin.util.getOrDownload
 import org.jetbrains.skia.*
+import org.laolittle.plugin.Fonts
 
 private const val bgWidth = 1500
 private const val bgHeight = 920
@@ -103,9 +104,52 @@ fun GenshinRecord.recordInfo(): Surface {
                 (nameCardWidth / 2 + leftPadding).toFloat(),
                 (nameCardHeight - avatarRadius / 4)
             )
+            val genshinFont = Fonts["GenshinSans-Bold", 35f]
+            val whiteFont = Paint().apply { color = Color.WHITE }
+            drawTextLine(TextLine.make("冒险等阶", genshinFont), 45f, 380f, whiteFont)
+            //drawTextLine(TextLine.make("${this@recordInfo}"))
 
-            drawLevelBox(35f, 340f, Color.makeRGB(165, 185, 130))
-            drawLevelBox(330f, 340f, Color.makeRGB(205, 185, 165))
+
+            val spImg = getImageFromResource("/GenshinRecord/SpriteAtlasTextureIcon.png")
+            averLayer(Rect(10f, 560f, 580f, 880f), 12f, 3, 3) {
+                val fontT = Fonts["MiSans-Regular", 35f]
+                val fontB = fontT.makeWithSize(20f)
+                val fP = Paint().apply {
+                    color = Color.makeRGB(60, 70, 85)
+                }
+
+                listOf(
+                    Record(Rect.makeXYWH(213f, 86f, 55f, 55f), "活跃天数", stats.activeDays.toString()),
+                    Record(Rect.makeXYWH(282f, 85f, 55f, 55f), "成就达成数", stats.totalAchievements.toString()),
+                    Record(Rect.makeXYWH(353f, 81f, 55f, 55f), "获得角色数", stats.totalAvatars.toString()),
+                    Record(Rect.makeXYWH(201f, 16f, 55f, 55f), "解锁传送点", stats.unlockedPoints.toString()),
+                    Record(Rect.makeXYWH(10f, 9f, 55f, 55f), "解锁秘境", stats.totalDomains.toString()),
+                    Record(Rect.makeXYWH(256f, 14f, 55f, 55f), "深境螺旋", stats.spiralAbyss),
+                    Record(Rect.makeXYWH(17f, 76f, 55f, 55f), "风神瞳", stats.totalAnemoculus.toString()),
+                    Record(Rect.makeXYWH(75f, 80f, 55f, 55f), "岩神瞳", stats.totalGeoculus.toString()),
+                    Record(Rect.makeXYWH(144f, 77f, 55f, 55f), "雷神瞳", stats.totalElectroculus.toString())
+                ).forEachIndexed { index, record ->
+                    box(index + 1) {
+                        val topText = TextLine.make(record.info, fontT)
+                        val bottomText = TextLine.make(record.title, fontB)
+
+                        val dst = Rect.makeXYWH(
+                            40f,
+                            (boxHeight - record.src.height) / 2 + 5,
+                            record.src.width,
+                            record.src.height
+                        )
+                        drawImageRect(
+                            spImg,
+                            record.src,
+                            dst
+                        )
+
+                        drawTextLine(topText, 45f + dst.width, (boxHeight + topText.xHeight) /2, fP)
+                        drawTextLine(bottomText, 45f + dst.width, (boxHeight + bottomText.height) / 2 + bottomText.height * .67f, fP)
+                    }
+                }
+            }
         }
     }
 }
@@ -175,6 +219,12 @@ private val recordBg: Surface by lazy {
         }
     }
 }
+
+private data class Record(
+    val src: Rect,
+    val title: String,
+    val info: String,
+)
 
 private fun Canvas.drawLevelBox(l: Float, t: Float, colorR: Int) {
     drawRRect(RRect.makeComplexXYWH(l, t, 285f, 52f, floatArrayOf(1f)), Paint().apply {
