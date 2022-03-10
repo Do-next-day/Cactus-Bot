@@ -16,6 +16,9 @@ import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.message.data.PlainText
 import org.jetbrains.skia.Image
 import java.io.File
+import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.*
 import net.mamoe.mirai.contact.User as MiraiUser
 
@@ -31,6 +34,8 @@ val settingFile = dataFolder.resolve("userSettings.json").also { it.createNewFil
 
 val awardsFile = cacheFolder.resolve("awards.json").also { it.createNewFile() }
 
+val biliSubscribesFile = dataFolder.resolve("biliSubscribes.json").also { it.createNewFile() }
+
 val File.skikoImage: Image get() = Image.makeFromEncoded(readBytes())
 
 inline fun <reified T> Json.decodeFromStringOrNull(str: String) =
@@ -43,6 +48,11 @@ fun <T> Json.decodeFromStringOrNull(deserializer: DeserializationStrategy<T>, st
     }.getOrNull()
 
 inline fun <reified T> JsonElement.decode() = icu.dnddl.plugin.genshin.util.Json.decodeFromJsonElement<T>(
+    icu.dnddl.plugin.genshin.util.Json.serializersModule.serializer(),
+    this
+)
+
+inline fun <reified T> String.decode() = icu.dnddl.plugin.genshin.util.Json.decodeFromString<T>(
     icu.dnddl.plugin.genshin.util.Json.serializersModule.serializer(),
     this
 )
@@ -124,3 +134,12 @@ val userSettings by CactusData::userSetting
 fun seconds(timeMillis: Long) = timeMillis * 1000
 
 fun minutes(timeMillis: Long) = seconds(timeMillis) * 60
+
+/**
+ * 2017-07-01 00:00:00
+ */
+private const val DYNAMIC_START = 1498838400L
+
+fun dynamictime(id: Long): Long = (id shr 32) + DYNAMIC_START
+
+fun timestamp(sec: Long) = OffsetDateTime.ofInstant(Instant.ofEpochSecond(sec), ZoneOffset.systemDefault())

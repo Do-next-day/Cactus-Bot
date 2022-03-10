@@ -1,13 +1,11 @@
 package icu.dnddl.plugin.genshin
 
+import icu.dnddl.plugin.genshin.api.bilibili.data.BiliSubscribeData
 import icu.dnddl.plugin.genshin.api.genshin.GenshinBBSApi
 import icu.dnddl.plugin.genshin.api.genshin.data.Award
 import icu.dnddl.plugin.genshin.database.UserSetting
 import icu.dnddl.plugin.genshin.service.PluginDispatcher
-import icu.dnddl.plugin.genshin.util.Json
-import icu.dnddl.plugin.genshin.util.awardsFile
-import icu.dnddl.plugin.genshin.util.decodeFromStringOrNull
-import icu.dnddl.plugin.genshin.util.settingFile
+import icu.dnddl.plugin.genshin.util.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -29,14 +27,13 @@ object CactusData : AutoSavePluginData("GenshinPluginData") {
 
     var awards: List<Award.AwardItem>
 
+    val biliSubscribes: MutableMap<Long, BiliSubscribeData> =
+        Json.decodeFromStringOrNull(biliSubscribesFile.readText()) ?: mutableMapOf()
+
     init {
         val saveJson = fun() {
-            settingFile.writeText(
-                Json.encodeToString(
-                    Json.serializersModule.serializer(),
-                    userSetting
-                )
-            )
+            settingFile.writeText(Json.encodeToString(Json.serializersModule.serializer(), userSetting))
+            biliSubscribesFile.writeText(Json.encodeToString(Json.serializersModule.serializer(), biliSubscribes))
         }
 
         awards = Json.decodeFromStringOrNull(
@@ -48,7 +45,7 @@ object CactusData : AutoSavePluginData("GenshinPluginData") {
             }.awards
         }
 
-        if (!settingFile.isFile) saveJson()
+        if (!settingFile.isFile || !biliSubscribesFile.isFile) saveJson()
 
         PluginDispatcher.launch {
             while (isActive) {
