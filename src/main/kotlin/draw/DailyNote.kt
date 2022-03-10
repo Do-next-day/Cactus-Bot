@@ -134,11 +134,7 @@ fun DailyNote.infoImage(): Image {
             drawRect(exp, paintBox)
             drawRect(exp, paintBorder)
 
-            val paintGreen = Paint().apply {
-                mode = PaintMode.STROKE
-                color = Color.makeRGB(125, 185, 15)
-                strokeWidth = 3f
-            }
+
 
             val paintWhite = Paint().apply {
                 color = Color.WHITE
@@ -179,8 +175,17 @@ fun DailyNote.infoImage(): Image {
                     )
                 })
 
+                val paintCircleBorder = Paint().apply {
+                    mode = PaintMode.STROKE
+                    color = when(info.status) {
+                        Finished -> Color.makeRGB(125, 185, 15)
+                        Ongoing -> Color.makeRGB(220,155,75)
+                    }
+                    strokeWidth = 3f
+                }
+
                 drawCircle(120f, top, 30f, paintWhite)
-                drawCircle(120f, top, 25f, paintGreen)
+                drawCircle(120f, top, 25f, paintCircleBorder)
                 drawImageRectNearest(
                     avatar,
                     Rect.makeXYWH(
