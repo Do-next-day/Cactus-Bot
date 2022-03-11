@@ -15,7 +15,7 @@ repositories {
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
-fun skikoAwt(ver: String) = "org.jetbrains.skiko:skiko-awt-runtime-$ver:0.7.12"
+fun skikoAwt(ver: String) = "org.jetbrains.skiko:skiko-awt-runtime-$ver:0.7.15"
 fun exposed(module: String) = "org.jetbrains.exposed:exposed-$module:0.37.3"
 
 dependencies {
