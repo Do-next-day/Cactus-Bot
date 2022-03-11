@@ -22,65 +22,64 @@ data class DynamicList(
     @SerialName("next_offset")
     val nextOffset: Long? = null
 ) {
-
     val hasMore get() = more == 1
-
-    /**
-     *
-     */
-    @Serializable
-    data class DynamicInfo(
-        @SerialName("card")
-        val card: String,
-        @SerialName("desc")
-        val describe: DynamicDescribe,
-        @SerialName("display")
-        val display: DynamicDisplay,
-    ) {
-        @Serializable
-        data class DynamicDescribe(
-            @SerialName("uid")
-            val uid: Long,
-            @SerialName("type")
-            val type: Int,
-            @SerialName("dynamic_id")
-            val dynamicId: Long,
-            @SerialName("origin")
-            val origin: DynamicDescribe? = null,
-            @SerialName("orig_dy_id")
-            val originDynamicId: Long? = null,
-            @SerialName("orig_type")
-            val originType: Int? = null,
-            @SerialName("timestamp")
-            val timestamp: Long,
-            @SerialName("user_profile")
-            val profile: JsonElement? = null
-        ){
-            val dynamictime = dynamictime(dynamicId)
-        }
-
-        @Serializable
-        data class DynamicDisplay(
-            @SerialName("origin")
-            val origin: DynamicDisplay? = null,
-            @SerialName("emoji_info")
-            val emojiInfo: EmojiInfo? = null
-        ) {
-            @Serializable
-            data class EmojiInfo(
-                @SerialName("emoji_details")
-                val emojiDetails: List<EmojiDetails>? = null
-            ) {
-                @Serializable
-                data class EmojiDetails(
-                    @SerialName("id")
-                    val id: Int,
-                    @SerialName("emoji_name")
-                    val emojiName: String,
-                    @SerialName("url")
-                    val url: String
-                )
-            }
-        }
-    }
 }
+
+/**
+ *
+ */
+@Serializable
+data class DynamicInfo(
+    @SerialName("card")
+    val card: String,
+    @SerialName("desc")
+    val describe: DynamicDescribe,
+    @SerialName("display")
+    val display: DynamicDisplay,
+)
+
+@Serializable
+data class DynamicDescribe(
+    @SerialName("uid")
+    val uid: Long,
+    @SerialName("type")
+    val type: Int,
+    @SerialName("dynamic_id")
+    val dynamicId: Long,
+    @SerialName("origin")
+    val origin: DynamicDescribe? = null,
+    @SerialName("orig_dy_id")
+    val originDynamicId: Long? = null,
+    @SerialName("orig_type")
+    val originType: Int? = null,
+    @SerialName("timestamp")
+    val timestamp: Long,
+    @SerialName("user_profile")
+    val profile: JsonElement? = null
+){
+    val dynamictime = dynamictime(dynamicId)
+}
+
+@Serializable
+data class DynamicDisplay(
+    @SerialName("origin")
+    val origin: DynamicDisplay? = null,
+    @SerialName("emoji_info")
+    val emojiInfo: EmojiInfo? = null
+)
+
+@Serializable
+data class EmojiInfo(
+    @SerialName("emoji_details")
+    val emojiDetails: List<EmojiDetails>? = null
+)
+
+@Serializable
+data class EmojiDetails(
+    @SerialName("id")
+    val id: Int,
+    @SerialName("emoji_name")
+    val emojiName: String,
+    @SerialName("url")
+    val url: String
+)
