@@ -1,5 +1,6 @@
 package icu.dnddl.plugin.genshin.draw
 
+import icu.dnddl.plugin.genshin.CactusConfig.image
 import icu.dnddl.plugin.genshin.api.bilibili.data.*
 import org.jetbrains.skia.*
 import org.laolittle.plugin.getBytes
@@ -7,7 +8,7 @@ import java.awt.SystemColor.text
 import java.io.File
 
 private const val cardWidth = 800
-private const val margin = 20
+private const val margin = 50
 
 //fun String.dynamicImage(type: Int): Image {
 //    return when (type) {
@@ -25,7 +26,6 @@ private const val margin = 20
 //}
 
 fun makeDynamicImage(){
-    TextLine.make("text", null)
     Surface.makeRasterN32Premul(cardWidth, cardWidth).apply {
         canvas.apply {
             drawDynamicBg(Rect(0f,0f, cardWidth.toFloat(), cardWidth.toFloat()))
@@ -52,6 +52,10 @@ private fun Canvas.drawDynamicBg(rect: Rect){
         )
     })
 
+    val im = getImageFromResource("/GenshinRecord/UI_NameCardPic_Kokomi_P.png")
+
+    drawImage(im, 0f, 0f, null)
+
     val rr = RRect.makeLTRB(
         rect.left + margin,
         rect.top + margin,
@@ -60,12 +64,36 @@ private fun Canvas.drawDynamicBg(rect: Rect){
         10f)
 
     drawRRect(rr, Paint().apply {
-            color = Color.WHITE
-            alpha = 153
+            imageFilter = ImageFilter.makeBlur(5f,5f,
+                FilterTileMode.DECAL,
+                ImageFilter.makeImage(
+                    im,
+                    Rect.makeXYWH(50f,50f,cardWidth.toFloat() - 100, cardWidth.toFloat() - 100),
+                    Rect.makeXYWH(50f,50f,cardWidth.toFloat() - 100, cardWidth.toFloat() - 100),
+                    SamplingMode.DEFAULT
+                )
+            )
         }
     )
 
-    drawRectShadow(rr,5f,5f,30f,Color.makeARGB(85, 0,0,0))
+
+    /**
+     * 黑色
+     */
+    drawRRect(rr, Paint().apply {
+        color = Color.BLACK
+        alpha = 50
+    })
+    drawRectShadowNoclip(rr,10f,10f,30f,10f,Color.makeARGB(85, 0,0,0))
+
+    /**
+     * 白色
+     */
+//    drawRRect(rr, Paint().apply {
+//        color = Color.WHITE
+//        alpha = 90
+//    })
+//    drawRectShadow(rr,10f,10f,30f,10f,Color.makeARGB(50, 0,0,0))
 
 }
 
