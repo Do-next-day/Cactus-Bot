@@ -1,6 +1,6 @@
 package icu.dnddl.plugin.genshin.api.bilibili.data
 
-import icu.dnddl.plugin.genshin.util.dynamictime
+import icu.dnddl.plugin.genshin.util.getDynamicTimeFromID
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
@@ -57,7 +57,7 @@ data class DynamicDescribe(
     @SerialName("user_profile")
     val profile: JsonElement? = null
 ){
-    val dynamictime = dynamictime(dynamicId)
+    val dynamicTime get() = getDynamicTimeFromID(dynamicId)
 }
 
 @Serializable

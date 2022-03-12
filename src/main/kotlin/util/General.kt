@@ -143,6 +143,6 @@ fun minutes(timeMillis: Long) = seconds(timeMillis) * 60
  */
 private const val DYNAMIC_START = 1498838400L
 
-fun dynamictime(id: Long): Long = (id shr 32) + DYNAMIC_START
+fun getDynamicTimeFromID(id: Long): Long = (id shr 32) + DYNAMIC_START
 
 fun timestamp(sec: Long): OffsetDateTime = OffsetDateTime.ofInstant(Instant.ofEpochSecond(sec), ZoneOffset.systemDefault())

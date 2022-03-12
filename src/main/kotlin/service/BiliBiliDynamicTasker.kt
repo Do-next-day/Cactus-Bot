@@ -12,7 +12,7 @@ object BiliBiliDynamicTasker : AbstractCactusTimerService(
 
     override suspend fun main() {
         subscribes.forEach { (buid, subData) ->
-            val dynamics = getNewDynamic(buid).dynamics?.filter { it.describe.dynamictime > subData.last }
+            val dynamics = getNewDynamic(buid).dynamics?.filter { it.describe.dynamicTime > subData.last }
             dynamics?.forEach {
                 it.card
             }
