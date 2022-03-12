@@ -82,6 +82,16 @@ object GachaSimulator {
         return foo + getProb(times - 1)
     }
 
+    private fun getProb2(times: Int): Double {
+        var foo = 0.0
+
+        for (i in times downTo 70) {
+            foo += (0.994 / 210) * (i - 70)
+        }
+
+        return foo + 0.006
+    }
+
     fun renderGachaImage(avatars: List<GachaItem>): Image {
         val w = 1920F
         val h = 1080F
