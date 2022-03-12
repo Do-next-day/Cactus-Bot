@@ -26,6 +26,42 @@ internal fun Canvas.drawImageRectNearest(image: Image, dst: Rect, paint: Paint? 
 internal fun Canvas.drawImageRectTo(image: Image, src: Rect, x: Float, y: Float, paint: Paint? = null) =
     drawImageRect(image, src, Rect.makeXYWH(x, y, src.width, src.height), paint)
 
+/**
+ * 缩放图片
+ *
+ * @see Canvas.drawImageRectNearest
+ */
+internal fun scaleImage(image: Image, src: Rect, dst: Rect, paint: Paint? = null): Image =
+    Surface.makeRasterN32Premul(dst.width.toInt(), dst.height.toInt()).apply {
+        canvas.drawImageRectNearest(image, src, dst, paint)
+    }.makeImageSnapshot()
+
+
+/**
+ * 缩放图片
+ *
+ * @see scaleImage
+ */
+internal fun scaleImage(image: Image, dst: Rect, paint: Paint? = null): Image =
+    scaleImage(image, Rect(0f, 0f, image.width.toFloat(), image.height.toFloat()), dst, paint)
+
+/**
+ *  绘制圆角图片
+ */
+fun Canvas.drawImageRRect(image: Image, srcRect: Rect, rRect: RRect){
+    save()
+    clipRRect(rRect,true)
+    drawImageRect(image, srcRect, rRect)
+    restore()
+}
+
+/**
+ *  @see drawImageRRect
+ */
+fun Canvas.drawImageRRect(image: Image, rRect: RRect) =
+    drawImageRRect(image, Rect.makeWH(image.width.toFloat(), image.height.toFloat()), rRect)
+
+
 internal fun Image.zoomLeftAtPoint(
     verticalTopPoint: Float,
     verticalBottomPoint: Float,

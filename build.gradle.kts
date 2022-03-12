@@ -29,6 +29,7 @@ dependencies {
     compileOnly(skikoAwt("windows-x64"))
     compileOnly(skikoAwt("linux-x64"))
     compileOnly(skikoAwt("linux-arm64"))
+    implementation("com.vdurmont:emoji-java:5.1.1")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.2") {
         exclude(group = "org.jetbrains.kotlin")
         exclude(group = "org.jetbrains.kotlinx")
