@@ -1,6 +1,6 @@
 package icu.dnddl.plugin.genshin.draw
 
-import icu.dnddl.plugin.genshin.api.genshin.data.GenshinRecord
+import icu.dnddl.plugin.genshin.api.genshin.data.GenshinFullRecord
 import icu.dnddl.plugin.genshin.service.PluginDispatcher
 import icu.dnddl.plugin.genshin.util.getOrDownload
 import org.jetbrains.skia.*
@@ -15,7 +15,7 @@ private const val resourceFolder = "/GenshinRecord"
 /**
  * @author Colter23 and LaoLittle
  */
-fun GenshinRecord.infoImage(): Image {
+fun GenshinFullRecord.infoImage(): Image {
 
     return Surface.makeRasterN32Premul(bgWidth, bgHeight).apply {
         canvas.apply {
@@ -24,7 +24,7 @@ fun GenshinRecord.infoImage(): Image {
             // 左半信息卡片
             recordInfo().draw(this, 30, 0, Paint())
 
-            // todo 右半信息
+            minorInfo().draw(this, 815, 45, null)
 
 
         }
@@ -32,7 +32,7 @@ fun GenshinRecord.infoImage(): Image {
 }
 
 private val nameCardImage = getImageFromResource("$resourceFolder/UI_NameCardPic_Kokomi_P.png")
-fun GenshinRecord.recordInfo(): Surface {
+fun GenshinFullRecord.recordInfo(): Surface {
     fun Canvas.drawAvatarFrame(radius: Float, x: Float, y: Float) {
         // (30 + 600) / 2
         // 中部实心圆
@@ -43,7 +43,7 @@ fun GenshinRecord.recordInfo(): Surface {
                     color = Color.makeRGB(210, 160, 120)
                 })
                 val avatar = Image.makeFromEncoded(PluginDispatcher.runBlocking {
-                    getOrDownload(avatars.random().imageUrl)
+                    getOrDownload(record.avatars.random().imageUrl)
                 })
 
                 drawImageRectNearest(avatar, Rect(0f, 0f, radius * 2, radius * 2), paint.apply {
@@ -74,6 +74,15 @@ fun GenshinRecord.recordInfo(): Surface {
     return Surface.makeRasterN32Premul(infoBgWidth, infoBgHeight).apply {
         canvas.apply {
             infoBg.draw(this, 0, 0, Paint())
+            val genshinFont = Fonts["GenshinSans-Bold", 35f]
+            val whiteFont = Paint().apply { color = Color.WHITE }
+            if (null != level) {
+                drawLevelBox(35f, 340f, Color.makeRGB(165, 185, 130))
+                drawLevelBox(330f, 340f, Color.makeRGB(205, 185, 165))
+
+                drawTextLine(TextLine.make("冒险等阶", genshinFont), 45f, 380f, whiteFont)
+                // todo
+            }
 
             // 名片 比例:16/6
             val leftPadding = 15
@@ -96,6 +105,8 @@ fun GenshinRecord.recordInfo(): Surface {
             // 透明名片装饰线
             val lineNCSf = lineNC.zoomTopAtPoint(47f, 48f, nameCardWidth + 2, nameCardHeight)
             lineNCSf.draw(this, leftPadding - 1, topPadding, Paint().setAlphaf(0.2f))
+            val uidText = TextLine.make("UID: $uid", genshinFont)
+            drawTextLine(uidText, (nameCardWidth - uidText.width) / 2 + leftPadding,80f,whiteFont)
 
             // 头像框
             val avatarRadius = 100f
@@ -104,30 +115,60 @@ fun GenshinRecord.recordInfo(): Surface {
                 (nameCardWidth / 2 + leftPadding).toFloat(),
                 (nameCardHeight - avatarRadius / 4)
             )
-            val genshinFont = Fonts["GenshinSans-Bold", 35f]
-            val whiteFont = Paint().apply { color = Color.WHITE }
-            drawTextLine(TextLine.make("冒险等阶", genshinFont), 45f, 380f, whiteFont)
+
             //drawTextLine(TextLine.make("${this@recordInfo}"))
+            val fP = Paint().apply {
+                color = Color.makeRGB(60, 70, 85)
+            }
+            averLayer(Rect(61f,431f,648f,546f),0f,2,1) {
+                val genshinFont25 = genshinFont.makeWithSize(20f)
+                box(1) {
+                    val r = Rect(123f, 360f, 210f, 453f)
+                    drawImageRectNearest(spriteIcon, r, Rect.makeXYWH(0f, -10f, r.width * 1.42f, r.height * 1.42f))
+                    translate(r.width * 1.42f, 0f)
 
+                    val l = TextLine.make("成就总数", genshinFont25)
 
-            val spImg = getImageFromResource("/GenshinRecord/SpriteAtlasTextureIcon.png")
+                    drawTextLine(l, 10f, 40f, fP)
+
+                    val b = TextLine.make(record.stats.totalAchievements.toString(), genshinFont)
+                    drawTextLine(b, 10f, 80f,fP)
+                }
+
+                box(2) {
+                    val r = Rect(17f, 360f, 110f, 453f)
+                    drawImageRectNearest(spriteIcon, r, Rect.makeXYWH(0f, -10f, r.width * 1.42f, r.height * 1.42f))
+                    translate(r.width * 1.42f, 0f)
+
+                    val l = TextLine.make("深境螺旋", genshinFont25)
+
+                    drawTextLine(l, 10f, 40f, fP)
+
+                    val b = TextLine.make(record.stats.spiralAbyss, genshinFont)
+                    drawTextLine(b, 10f, 80f,fP)
+                }
+            }
+
             averLayer(Rect(10f, 560f, 580f, 880f), 12f, 3, 3) {
                 val fontT = Fonts["MiSans-Regular", 35f]
                 val fontB = fontT.makeWithSize(20f)
-                val fP = Paint().apply {
-                    color = Color.makeRGB(60, 70, 85)
-                }
+
+                data class Record(
+                    val src: Rect,
+                    val title: String,
+                    val info: String,
+                )
 
                 listOf(
-                    Record(Rect.makeXYWH(213f, 86f, 55f, 55f), "活跃天数", stats.activeDays.toString()),
-                    Record(Rect.makeXYWH(282f, 85f, 55f, 55f), "成就达成数", stats.totalAchievements.toString()),
-                    Record(Rect.makeXYWH(353f, 81f, 55f, 55f), "获得角色数", stats.totalAvatars.toString()),
-                    Record(Rect.makeXYWH(201f, 16f, 55f, 55f), "解锁传送点", stats.unlockedPoints.toString()),
-                    Record(Rect.makeXYWH(10f, 9f, 55f, 55f), "解锁秘境", stats.totalDomains.toString()),
-                    Record(Rect.makeXYWH(256f, 14f, 55f, 55f), "深境螺旋", stats.spiralAbyss),
-                    Record(Rect.makeXYWH(17f, 76f, 55f, 55f), "风神瞳", stats.totalAnemoculus.toString()),
-                    Record(Rect.makeXYWH(75f, 80f, 55f, 55f), "岩神瞳", stats.totalGeoculus.toString()),
-                    Record(Rect.makeXYWH(144f, 77f, 55f, 55f), "雷神瞳", stats.totalElectroculus.toString())
+                    Record(Rect.makeXYWH(213f, 86f, 60f, 60f), "活跃天数", record.stats.activeDays.toString()),
+                    Record(Rect.makeXYWH(282f, 85f, 60f, 60f), "成就达成数", record.stats.totalAchievements.toString()),
+                    Record(Rect.makeXYWH(353f, 81f, 60f, 60f), "获得角色数", record.stats.totalAvatars.toString()),
+                    Record(Rect.makeXYWH(201f, 16f, 50f, 60f), "解锁传送点", record.stats.unlockedPoints.toString()),
+                    Record(Rect.makeXYWH(10f, 9f, 60f, 60f), "解锁秘境", record.stats.totalDomains.toString()),
+                    Record(Rect.makeXYWH(256f, 14f, 60f, 60f), "深境螺旋", record.stats.spiralAbyss),
+                    Record(Rect.makeXYWH(17f, 76f, 55f, 60f), "风神瞳", record.stats.totalAnemoculus.toString()),
+                    Record(Rect.makeXYWH(75f, 80f, 60f, 60f), "岩神瞳", record.stats.totalGeoculus.toString()),
+                    Record(Rect.makeXYWH(144f, 77f, 60f, 60f), "雷神瞳", record.stats.totalElectroculus.toString())
                 ).forEachIndexed { index, record ->
                     box(index + 1) {
                         val topText = TextLine.make(record.info, fontT)
@@ -140,16 +181,134 @@ fun GenshinRecord.recordInfo(): Surface {
                             record.src.height
                         )
                         drawImageRect(
-                            spImg,
+                            spriteIcon,
                             record.src,
                             dst
                         )
 
-                        drawTextLine(topText, 45f + dst.width, (boxHeight + topText.xHeight) /2, fP)
-                        drawTextLine(bottomText, 45f + dst.width, (boxHeight + bottomText.height) / 2 + bottomText.height * .67f, fP)
+                        translate(105f, 0f)
+
+                        drawTextLine(topText, 0f, (boxHeight + topText.xHeight) /2, fP)
+                        drawTextLine(bottomText, 0f, (boxHeight + bottomText.height) / 2 + bottomText.height * .67f, fP)
                     }
                 }
             }
+        }
+    }
+}
+
+fun GenshinFullRecord.minorInfo(): Surface {
+    val w = 1490 - 880f
+    val h = 895 - 15f
+    return Surface.makeRasterN32Premul(w.toInt(), h.toInt()).apply {
+        val home = getImageFromResource("/GenshinRecord/UI_HomeworldModule_3_Pic.png")
+
+        val homeCardWidth = w
+        val homeCardHeight = homeCardWidth / 2.65f
+
+        canvas.apply {
+            save()
+            clipRRect(RRect.makeComplexLTRB(0f, 0f, homeCardWidth, homeCardHeight, floatArrayOf(10f)),true)
+            //drawRRect(RRect.makeComplexLTRB(0f, 0f, homeCardWidth, homeCardHeight, floatArrayOf(10f)), Paint())
+            drawImageRectNearest(home, Rect(0f, 0f, homeCardWidth, homeCardHeight), Paint().apply {
+                //blendMode = BlendMode.SRC_ATOP
+            })
+            restore()
+            translate(0f, 90f)
+            drawRect(Rect(0f, 0f, homeCardWidth, homeCardHeight), Paint().apply {
+                color = Color.BLACK
+                alpha = 50
+                blendMode = BlendMode.SRC_ATOP
+            })
+
+            //val space = 40f
+            val font = Fonts["MiSans-Regular", 35f]
+            val fontTwo = font.makeWithSize(20f)
+            val fontColor = Color.makeRGB(253, 253, 253)
+
+            val dataMap: MutableMap<String, String> = mutableMapOf()
+            val homeData = record.homes.first()
+            dataMap["信任等阶"] = homeData.level.toString()
+            dataMap["最高洞天仙力"] = homeData.comfort.toString()
+            dataMap["获得摆件数"] = homeData.totalGotItems.toString()
+            dataMap["历史访客数"] = homeData.totalVisitors.toString()
+
+//                translate(0f, 70f)
+//                var offsetX = 0f
+//                dataMap.forEach { (key, value) ->
+//                    translate(space + offsetX, 0f)
+//                    offsetX = drawTitleData(value, key, font, fontTwo, fontColor)
+//                }
+//                resetMatrix()
+            averLayer(Rect(20f, 0f, 580f, 130f),0f, 4,1){
+                var i = 1
+                //val font18 = font.makeWithSize(18f)
+                dataMap.forEach { (key, value) ->
+                    box(i) {
+
+                        drawTitleData(value, key, font, fontTwo,Rect.makeXYWH(0f,0f,boxWidth,boxHeight), fontColor)
+                    }
+                    i++
+                }
+            }
+
+            resetMatrix()
+            translate(0f, homeCardHeight + 30)
+            translate(0f, 280f) // delete later
+            drawTextLine(TextLine.make("施工中",font.makeWithSize(160f)), 40f,0f, Paint())
+
+            /**
+             *
+
+
+            var i = 0
+            val boxW = 295f
+            val boxH = 130f
+            val pad = w - (boxW * 2)
+            val zhong = getImageFromResource("UI_AvatarIcon_Zhongli.png")
+            for (y in 0..1) {
+            for (x in 0..1) {
+            // todo draw image
+            val left = (w - boxW) * x
+            val top = (boxH + pad) * y
+            drawRRect(
+            RRect.makeComplexXYWH(
+            left,
+            top,
+            boxW,
+            boxH,
+            floatArrayOf(5f)),
+            Paint().apply {
+            color = Color.CYAN
+            }
+            )
+
+            drawImageRectNearest(zhong, Rect.makeXYWH
+            (left,
+            top,
+            boxW,
+            boxH,))
+            i++
+            }
+            }
+
+            translate(0f, boxH * 2 + pad + 30)
+            val cBg = getImageFromResource("SpriteAtlasTexture-ui_sprite_general_quality_bg-512x256-fmt25.png")
+            val cW = 120f
+            val cH = cW * (95f/78)
+            val rectCBg = Rect.makeXYWH(165f, 59f, 78f, 95f)
+            repeat(2) { t ->
+            val off = 15f + (cW + 30) * t
+            val leftRect = Rect.makeXYWH(off, 0f, cW, cH)
+            val rightRect = Rect(w - (off + cW), 0f, w- off, cH)
+            drawImageRectNearest(cBg, rectCBg, leftRect)
+            drawImageRectNearest(cBg, rectCBg, rightRect)
+
+            // draw image
+            drawImageClipHeight(zhong, leftRect)
+            drawImageClipHeight(zhong, rightRect)
+            }
+             */
         }
     }
 }
@@ -158,8 +317,6 @@ private val infoBg: Surface by lazy {
     infoBG.zoomAroundAtCornerWidth(56f, infoBgWidth, infoBgHeight).apply {
         canvas.apply {
             // 200 205 180
-            drawLevelBox(35f, 340f, Color.makeRGB(165, 185, 130))
-            drawLevelBox(330f, 340f, Color.makeRGB(205, 185, 165))
 
 //                drawInfoBgA(30f, 430f, 210f)
 //                drawInfoBgA(330f, 430f, 210f)
@@ -220,11 +377,6 @@ private val recordBg: Surface by lazy {
     }
 }
 
-private data class Record(
-    val src: Rect,
-    val title: String,
-    val info: String,
-)
 
 private fun Canvas.drawLevelBox(l: Float, t: Float, colorR: Int) {
     drawRRect(RRect.makeComplexXYWH(l, t, 285f, 52f, floatArrayOf(1f)), Paint().apply {
@@ -238,5 +390,6 @@ private fun Canvas.drawLevelBox(l: Float, t: Float, colorR: Int) {
     })
 }
 
+private val spriteIcon = getImageFromResource("/GenshinRecord/SpriteAtlasTextureIcon.png")
 private val infoBG = getImageFromResource("$resourceFolder/UI_FriendInfo_BG.png")
 private val lineNC = getImageFromResource("$resourceFolder/UI_FriendInfo_Line_NC.png")

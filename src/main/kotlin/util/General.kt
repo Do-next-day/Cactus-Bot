@@ -114,6 +114,9 @@ fun SignResponse.buildSuccessMessage(uid: Long): String = buildString {
     }
 }
 
+/**
+ * 缓存从[url]获取的文件, 并返回缓存, 文件名从[url]自动获取
+ */
 suspend fun getOrDownload(url: String, block: HttpRequestBuilder.() -> Unit = {}): ByteArray {
     val fileName = Regex("(.+)/(.+)$").find(url)?.groupValues?.last()
     val file = fileName?.let { cacheFolder.resolve(it) }
@@ -142,4 +145,4 @@ private const val DYNAMIC_START = 1498838400L
 
 fun dynamictime(id: Long): Long = (id shr 32) + DYNAMIC_START
 
-fun timestamp(sec: Long) = OffsetDateTime.ofInstant(Instant.ofEpochSecond(sec), ZoneOffset.systemDefault())
+fun timestamp(sec: Long): OffsetDateTime = OffsetDateTime.ofInstant(Instant.ofEpochSecond(sec), ZoneOffset.systemDefault())

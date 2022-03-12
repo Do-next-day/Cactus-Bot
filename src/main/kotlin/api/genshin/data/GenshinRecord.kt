@@ -160,7 +160,7 @@ data class GenshinRecord(
      * @param totalGotItems 获得摆件数
      * @param name 名称
      * @param iconUrl 图标地址
-     * @param comfortLevel 舒适等级
+     * @param comfortLevelName 舒适等级
      * @param comfortLevelIconUrl 舒适度图标
      */
     @Serializable
@@ -176,8 +176,15 @@ data class GenshinRecord(
         @SerialName("icon")
         val iconUrl: String,
         @SerialName("comfort_level_name")
-        val comfortLevel: String,
+        val comfortLevelName: String,
         @SerialName("comfort_level_icon")
         val comfortLevelIconUrl: String,
     )
 }
+
+data class GenshinFullRecord(
+    val level: Short? = null,
+    val name: String? = null,
+    val uid: Long,
+    val record: GenshinRecord,
+)

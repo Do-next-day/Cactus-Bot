@@ -16,6 +16,13 @@ fun DailyNote.infoImage(): Image {
     val w = 745
     val h = 1200
 
+    data class Note(
+        val image: Image,
+        val title: String,
+        val subtitle: String,
+        val info: String
+    )
+
     val homeCoin = Note(
         homeCoinImage,
         "洞天财翁 - 洞天宝钱",
@@ -228,12 +235,6 @@ fun DailyNote.infoImage(): Image {
     }.makeImageSnapshot()
 }
 
-private data class Note(
-    val image: Image,
-    val title: String,
-    val subtitle: String,
-    val info: String
-)
 
 private val resinImage = getImageFromResource("/DailyNote/resin.png")
 private val homeCoinImage = getImageFromResource("/DailyNote/home_coin.png")

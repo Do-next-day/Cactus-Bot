@@ -5,6 +5,7 @@ import icu.dnddl.plugin.genshin.CactusConfig
 import icu.dnddl.plugin.genshin.CactusData
 import icu.dnddl.plugin.genshin.api.ApiAccessDeniedException
 import icu.dnddl.plugin.genshin.api.genshin.GenshinBBSApi
+import icu.dnddl.plugin.genshin.api.genshin.data.GenshinFullRecord
 import icu.dnddl.plugin.genshin.database.getUserData
 import icu.dnddl.plugin.genshin.draw.infoImage
 import icu.dnddl.plugin.genshin.model.GachaSimulator
@@ -57,7 +58,14 @@ object GroupMessageListener : AbstractCactusService() {
                             return@Listener
                         }
 
-                        subject.sendImage(query.infoImage())
+                        val full = GenshinFullRecord(
+                            level = null,
+                            name = null,
+                            uid = uid,
+                            record = query
+                        )
+
+                        subject.sendImage(full.infoImage())
                     }
                 }
             }
