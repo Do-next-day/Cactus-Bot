@@ -48,9 +48,9 @@ internal fun scaleImage(image: Image, dst: Rect, paint: Paint? = null): Image =
 /**
  *  绘制圆角图片
  */
-fun Canvas.drawImageRRect(image: Image, srcRect: Rect, rRect: RRect){
+fun Canvas.drawImageRRect(image: Image, srcRect: Rect, rRect: RRect) {
     save()
-    clipRRect(rRect,true)
+    clipRRect(rRect, true)
     drawImageRect(image, srcRect, rRect)
     restore()
 }
@@ -410,7 +410,7 @@ fun Canvas.drawTitleData(
     rowTwoFont: Font,
     box: Rect,
     dataColor: Int
-){
+) {
     val textTop = TextLine.make(rowOne, rowOneFont)
     val textBottom = TextLine.make(rowTwo, rowTwoFont)
 

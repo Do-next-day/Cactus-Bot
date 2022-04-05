@@ -14,10 +14,13 @@ import java.io.File
 
 // 动态图片宽度
 private const val cardWidth = 840
+
 // 动态卡片外边距
 private const val cardMargin = 40
+
 // 内容外边距
 private const val contentMargin = 60
+
 // 内容宽度
 private const val contentWidth = cardWidth - contentMargin * 2
 
@@ -30,9 +33,9 @@ suspend fun String.dynamicImage(type: Int, dynamicInfo: DynamicInfo): List<Image
 //            decode<DynamicReply>()
 //        }
         DynamicType.PICTURE -> {
-            with(decode<DynamicPicture>()){
+            with(decode<DynamicPicture>()) {
                 listOf(
-                    makeTextContent(detail.description,dynamicInfo.display.emojiInfo?.emojiDetails, font,
+                    makeTextContent(detail.description, dynamicInfo.display.emojiInfo?.emojiDetails, font,
                         Paint().apply { color = Color.WHITE }
                     ),
                     makeImageContent(detail.pictures)
@@ -47,7 +50,7 @@ suspend fun String.dynamicImage(type: Int, dynamicInfo: DynamicInfo): List<Image
             )
         }
         DynamicType.VIDEO -> {
-            with(decode<DynamicVideo>()){
+            with(decode<DynamicVideo>()) {
                 listOf(
                     makeTextContent(dynamic, dynamicInfo.display.emojiInfo?.emojiDetails, font, Paint().apply {
                         color = Color.WHITE
@@ -59,7 +62,7 @@ suspend fun String.dynamicImage(type: Int, dynamicInfo: DynamicInfo): List<Image
             }
         }
         DynamicType.ARTICLE -> {
-            with(decode<DynamicArticle>()){
+            with(decode<DynamicArticle>()) {
                 listOf(
                     makeArticleContent(images, title, summary, font.makeWithSize(20f), Paint().apply {
                         color = Color.WHITE
@@ -82,11 +85,11 @@ suspend fun String.dynamicImage(type: Int, dynamicInfo: DynamicInfo): List<Image
     }
 }
 
-suspend fun makeDynamicImage(){
+suspend fun makeDynamicImage() {
 
     Surface.makeRasterN32Premul(cardWidth, cardWidth).apply surface@{
         canvas.apply {
-            drawDynamicBg(RRect.makeXYWH(0f,0f, this@surface.width.toFloat(), this@surface.height.toFloat(), 10f))
+            drawDynamicBg(RRect.makeXYWH(0f, 0f, this@surface.width.toFloat(), this@surface.height.toFloat(), 10f))
 
             // Noto Sans SC  HarmonyOS Sans SC
             val font = Font(Typeface.makeFromName("Noto Sans SC", FontStyle.NORMAL), 25f)
@@ -99,9 +102,10 @@ suspend fun makeDynamicImage(){
             drawImage(makeHeader("猫芒ベル_Official", "2022-03-12 17:40",
                 "https://i1.hdslb.com/bfs/face/1c202e4750bceb1692b60f5a0d6a004a2013d242.jpg",
                 "https://i1.hdslb.com/bfs/face/d3587e6f3b534499fc08a71296bafa74a159fa33.png",
-                0,font.makeWithSize(30f), paint.apply {
+                0, font.makeWithSize(30f), paint.apply {
                     color = Color.makeRGB(251, 114, 153)
-                }), contentMargin.toFloat(), cardMargin.toFloat(),null)
+                }), contentMargin.toFloat(), cardMargin.toFloat(), null
+            )
 
             val tt = "[原神_哼]下午3点半！开始[原神_欸嘿]开始开始AAAAAAAAAAAAAAAAAAAAAAAAAAAA始开始原神原神原神原神原神\n" +
                     "原神~！！！！\n" +
@@ -110,17 +114,22 @@ suspend fun makeDynamicImage(){
             drawImage(makeTextContent(tt, null, font, Paint().apply {
                 color = Color.WHITE
                 isAntiAlias = true
-            }), contentMargin.toFloat(), contentMargin.toFloat() + 100,null)
+            }), contentMargin.toFloat(), contentMargin.toFloat() + 100, null)
 
             val images = listOf(
-                    DynamicPictureInfo(1080,null,"https://i0.hdslb.com/bfs/album/648fb2527f49fd42c6ecbf991151e1593e7225ad.jpg",1920),
+                DynamicPictureInfo(
+                    1080,
+                    null,
+                    "https://i0.hdslb.com/bfs/album/648fb2527f49fd42c6ecbf991151e1593e7225ad.jpg",
+                    1920
+                ),
 //                    DynamicPictureInfo(816,null,"https://i0.hdslb.com/bfs/album/0ae6fee9eaeafe614377cf5451e78c2430d5a6e4.gif",499),
 //                    DynamicPictureInfo(816,null,"https://i0.hdslb.com/bfs/album/56c135d05c0d4a77964db04a07f039d7fe945f14.gif",499),
 //                    DynamicPictureInfo(816,null,"https://i0.hdslb.com/bfs/album/1971358d4d71ded8c1b287c7377a32c397190490.gif",499),
 //                    DynamicPictureInfo(816,null,"https://i0.hdslb.com/bfs/album/554027b1f38ad88040e315cdf55ee98ed5a20335.gif",499),
 //                    DynamicPictureInfo(816,null,"https://i0.hdslb.com/bfs/album/2180d689ad3de225f70e37f6ae3e953f583b012a.gif",499),
 //                    DynamicPictureInfo(816,null,"https://i0.hdslb.com/bfs/album/d009f31357f049f7f8134e4e74e208db4284c2eb.gif",499),
-                )
+            )
 
 //            drawImage(makeImageContent(images), contentMargin.toFloat(), 200f ,null)
 //
@@ -147,7 +156,7 @@ suspend fun makeDynamicImage(){
     }
 }
 
-private fun Canvas.drawDynamicBg(rect: RRect){
+private fun Canvas.drawDynamicBg(rect: RRect) {
 //    drawRect(rect, Paint().apply {
 //        shader = Shader.makeLinearGradient(
 //            Point(rect.left,rect.top),
@@ -164,12 +173,12 @@ private fun Canvas.drawDynamicBg(rect: RRect){
 
     val ratio = bgImg.width.toFloat() / bgImg.height.toFloat()
 
-    val srcRect = if (rect.width / ratio < rect.height){
+    val srcRect = if (rect.width / ratio < rect.height) {
         val imgW = rect.width * bgImg.height / rect.height
         val offsetX = (bgImg.width - imgW) / 2
         println("X")
         Rect.makeXYWH(offsetX, 0f, imgW, bgImg.height.toFloat())
-    }else{
+    } else {
         val imgH = rect.height * bgImg.width / rect.width
         val offsetY = (bgImg.height - imgH) / 2
         println("Y")
@@ -187,16 +196,17 @@ private fun Canvas.drawDynamicBg(rect: RRect){
     )
 
     drawRRect(rr, Paint().apply {
-            imageFilter = ImageFilter.makeBlur(15f,15f,
-                FilterTileMode.CLAMP,
-                ImageFilter.makeImage(
-                    bgImg,
-                    srcRect.inflate(cardMargin * -1f),
-                    rect.inflate(cardMargin * -1f),
-                    SamplingMode.MITCHELL
-                )
+        imageFilter = ImageFilter.makeBlur(
+            15f, 15f,
+            FilterTileMode.CLAMP,
+            ImageFilter.makeImage(
+                bgImg,
+                srcRect.inflate(cardMargin * -1f),
+                rect.inflate(cardMargin * -1f),
+                SamplingMode.MITCHELL
             )
-        }
+        )
+    }
     )
 
     /**
@@ -206,7 +216,7 @@ private fun Canvas.drawDynamicBg(rect: RRect){
         color = Color.BLACK
         alpha = 90
     })
-    drawRectShadowAntiAlias(rr.inflate(1f),8f,8f,25f,0f,Color.makeARGB(80, 0,0,0))
+    drawRectShadowAntiAlias(rr.inflate(1f), 8f, 8f, 25f, 0f, Color.makeARGB(80, 0, 0, 0))
 
     /**
      * 白色
@@ -233,17 +243,17 @@ private suspend fun makeHeader(
 //                color = Color.BLACK
 //            })
             val radius = 60f
-            drawCircle(radius, radius, radius/2, Paint().apply {
+            drawCircle(radius, radius, radius / 2, Paint().apply {
                 color = Color.makeRGB(210, 160, 120)
                 isAntiAlias = true
             })
             val avatar = getImageOrDownload(faceUrl)
 
-            drawImageRectNearest(avatar, Rect.makeXYWH(radius/2, radius/2, radius, radius), Paint().apply {
+            drawImageRectNearest(avatar, Rect.makeXYWH(radius / 2, radius / 2, radius, radius), Paint().apply {
                 blendMode = BlendMode.SRC_ATOP
             })
 
-            if (pendentUrl.isNotEmpty()){
+            if (pendentUrl.isNotEmpty()) {
                 val pendent = getImageOrDownload(pendentUrl)
 
                 drawImageRectNearest(pendent, Rect(10f, 10f, radius + 50, radius + 50), Paint())
@@ -263,7 +273,12 @@ private suspend fun makeHeader(
     }.makeImageSnapshot()
 }
 
-private suspend fun makeTextContent(text: String, emojiList: List<EmojiDetails>? = null, font: Font, paint: Paint, ): Image {
+private suspend fun makeTextContent(
+    text: String,
+    emojiList: List<EmojiDetails>? = null,
+    font: Font,
+    paint: Paint,
+): Image {
 
     var msgText = text
     val lineHeight = font.size * 1.3f
@@ -276,12 +291,13 @@ private suspend fun makeTextContent(text: String, emojiList: List<EmojiDetails>?
 
             emojiList?.forEach {
                 if (!emojiMap.containsKey(it.emojiName)) {
-                    emojiMap[it.emojiName] = scaleImage(getImageOrDownload(it.url), Rect(0f,0f,30f,30f))
+                    emojiMap[it.emojiName] = scaleImage(getImageOrDownload(it.url), Rect(0f, 0f, 30f, 30f))
                 }
             }
 
             msgText = EmojiParser.parseFromUnicode(msgText) { e ->
-                val emojis = e.emoji.htmlHexadecimal.split(";").filter{ it.isNotEmpty() }.map{ it.substring(3) }.toList()
+                val emojis =
+                    e.emoji.htmlHexadecimal.split(";").filter { it.isNotEmpty() }.map { it.substring(3) }.toList()
                 val emoji = emojis.joinToString("-")
                 if (!emojiMap.containsKey(emoji)) {
                     var emojiImg: Image? = null
@@ -295,7 +311,7 @@ private suspend fun makeTextContent(text: String, emojiList: List<EmojiDetails>?
                         return@parseFromUnicode e.emoji.unicode
                     }
 
-                    emojiMap["[$emoji]"] = scaleImage(emojiImg!!, Rect(0f,0f,30f,30f))
+                    emojiMap["[$emoji]"] = scaleImage(emojiImg!!, Rect(0f, 0f, 30f, 30f))
                 }
                 "[$emoji]"
             }
@@ -330,8 +346,8 @@ private suspend fun makeTextContent(text: String, emojiList: List<EmojiDetails>?
                         textY += lineHeight
                     }
                     if (c.toString().matches("[\u4e00-\u9fa5]".toRegex())) {
-                        drawTextLine(t, textX+1, textY, paint)
-                        textX+=2
+                        drawTextLine(t, textX + 1, textY, paint)
+                        textX += 2
                     } else {
                         drawTextLine(t, ++textX, textY, paint)
                         textX++
@@ -374,13 +390,19 @@ private suspend fun makeImageContent(pictures: List<DynamicPictureInfo>): Image 
                         picHeight = pic.height * picWidth / pic.width
                     }
                 }
-                val rr = RRect.makeXYWH(picX.toFloat(), picH.toFloat(), picWidth.toFloat(), picHeight.toFloat(), picArc.toFloat())
+                val rr = RRect.makeXYWH(
+                    picX.toFloat(),
+                    picH.toFloat(),
+                    picWidth.toFloat(),
+                    picHeight.toFloat(),
+                    picArc.toFloat()
+                )
 
                 val image = getImageOrDownload(imgApi(pic.source, picWidth, picHeight))
 
                 drawImageRRect(image, rr)
 
-                drawRectShadowAntiAlias(rr, 2f, 2f, 6f, 0f, Color.makeARGB(130,0,0,0))
+                drawRectShadowAntiAlias(rr, 2f, 2f, 6f, 0f, Color.makeARGB(130, 0, 0, 0))
 
                 picX += (picPadding + picWidth)
                 if (i % 3 == 2) {
@@ -428,7 +450,7 @@ private suspend fun makeVideoContent(coverUrl: String, title: String, desc: Stri
                 color = Color.makeRGB(251, 114, 153)
             })
 
-            drawTextLine(TextLine.make("视频", font.makeWithSize(25f)), tagX+9, tagY+25, Paint().apply {
+            drawTextLine(TextLine.make("视频", font.makeWithSize(25f)), tagX + 9, tagY + 25, Paint().apply {
                 color = Color.WHITE
             })
 
@@ -440,13 +462,19 @@ private suspend fun makeVideoContent(coverUrl: String, title: String, desc: Stri
                 }
             )
 
-            drawRectShadowAntiAlias(rr,3f,3f,6f,0f,Color.makeARGB(100, 0,0,0))
+            drawRectShadowAntiAlias(rr, 3f, 3f, 6f, 0f, Color.makeARGB(100, 0, 0, 0))
 
         }
     }.makeImageSnapshot()
 }
 
-private suspend fun makeArticleContent(imageUrls: List<String>, title: String, desc: String, font: Font, paint: Paint): Image{
+private suspend fun makeArticleContent(
+    imageUrls: List<String>,
+    title: String,
+    desc: String,
+    font: Font,
+    paint: Paint
+): Image {
 
     val picArc = 10
     val imgHeight = 170
@@ -455,7 +483,7 @@ private suspend fun makeArticleContent(imageUrls: List<String>, title: String, d
     return Surface.makeRasterN32Premul(contentWidth + 10, cardHeight + 10).apply {
         canvas.apply {
 
-            val rr = RRect.makeXYWH(0f,0f, contentWidth.toFloat(), cardHeight.toFloat(), picArc.toFloat())
+            val rr = RRect.makeXYWH(0f, 0f, contentWidth.toFloat(), cardHeight.toFloat(), picArc.toFloat())
             drawRRect(rr, Paint().apply {
                 color = Color.WHITE
                 alpha = 180
@@ -473,7 +501,7 @@ private suspend fun makeArticleContent(imageUrls: List<String>, title: String, d
                     imgX += cardWidth / 3 + 2
                 }
             } else {
-                val rrr = RRect.makeXYWH(0f,0f, contentWidth.toFloat(), imgHeight.toFloat(), picArc.toFloat())
+                val rrr = RRect.makeXYWH(0f, 0f, contentWidth.toFloat(), imgHeight.toFloat(), picArc.toFloat())
                 val image = getImageOrDownload(imgApi(imageUrls[0], 640, 147))
 
                 drawImageRRect(image, rrr)
@@ -486,7 +514,7 @@ private suspend fun makeArticleContent(imageUrls: List<String>, title: String, d
                 color = Color.makeRGB(251, 114, 153)
             })
 
-            drawTextLine(TextLine.make("专栏", font.makeWithSize(20f)), tagX+9, tagY+22, Paint().apply {
+            drawTextLine(TextLine.make("专栏", font.makeWithSize(20f)), tagX + 9, tagY + 22, Paint().apply {
                 color = Color.WHITE
             })
 
@@ -497,13 +525,13 @@ private suspend fun makeArticleContent(imageUrls: List<String>, title: String, d
                 }
             )
 
-            drawRectShadowAntiAlias(rr,3f,3f,6f,0f,Color.makeARGB(100, 0,0,0))
+            drawRectShadowAntiAlias(rr, 3f, 3f, 6f, 0f, Color.makeARGB(100, 0, 0, 0))
         }
     }.makeImageSnapshot()
 }
 
-private fun makeInfoContent(text: String, font: Font, paint: Paint): Image{
-    return Surface.makeRasterN32Premul(contentWidth,30).apply {
+private fun makeInfoContent(text: String, font: Font, paint: Paint): Image {
+    return Surface.makeRasterN32Premul(contentWidth, 30).apply {
         canvas.apply {
             drawTextLine(TextLine.make(text, font), 0f, font.size, paint)
         }
@@ -545,7 +573,11 @@ fun Canvas.drawRectShadowAntiAlias(r: Rect, dx: Float, dy: Float, blur: Float, s
     val insides = r.inflate(-1f)
     if (!insides.isEmpty) {
         save()
-        if (insides is RRect) clipRRect(insides, ClipMode.DIFFERENCE, true) else clipRect(insides, ClipMode.DIFFERENCE, true)
+        if (insides is RRect) clipRRect(insides, ClipMode.DIFFERENCE, true) else clipRect(
+            insides,
+            ClipMode.DIFFERENCE,
+            true
+        )
         drawRectShadowNoclip(r, dx, dy, blur, spread, color)
         restore()
     } else drawRectShadowNoclip(r, dx, dy, blur, spread, color)

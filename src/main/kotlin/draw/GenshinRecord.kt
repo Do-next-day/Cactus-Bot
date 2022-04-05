@@ -106,7 +106,7 @@ fun GenshinFullRecord.recordInfo(): Surface {
             val lineNCSf = lineNC.zoomTopAtPoint(47f, 48f, nameCardWidth + 2, nameCardHeight)
             lineNCSf.draw(this, leftPadding - 1, topPadding, Paint().setAlphaf(0.2f))
             val uidText = TextLine.make("UID: $uid", genshinFont)
-            drawTextLine(uidText, (nameCardWidth - uidText.width) / 2 + leftPadding,80f,whiteFont)
+            drawTextLine(uidText, (nameCardWidth - uidText.width) / 2 + leftPadding, 80f, whiteFont)
 
             // 头像框
             val avatarRadius = 100f
@@ -120,7 +120,7 @@ fun GenshinFullRecord.recordInfo(): Surface {
             val fP = Paint().apply {
                 color = Color.makeRGB(60, 70, 85)
             }
-            averLayer(Rect(61f,431f,648f,546f),0f,2,1) {
+            averLayer(Rect(61f, 431f, 648f, 546f), 0f, 2, 1) {
                 val genshinFont25 = genshinFont.makeWithSize(20f)
                 box(1) {
                     val r = Rect(123f, 360f, 210f, 453f)
@@ -132,7 +132,7 @@ fun GenshinFullRecord.recordInfo(): Surface {
                     drawTextLine(l, 10f, 40f, fP)
 
                     val b = TextLine.make(record.stats.totalAchievements.toString(), genshinFont)
-                    drawTextLine(b, 10f, 80f,fP)
+                    drawTextLine(b, 10f, 80f, fP)
                 }
 
                 box(2) {
@@ -145,7 +145,7 @@ fun GenshinFullRecord.recordInfo(): Surface {
                     drawTextLine(l, 10f, 40f, fP)
 
                     val b = TextLine.make(record.stats.spiralAbyss, genshinFont)
-                    drawTextLine(b, 10f, 80f,fP)
+                    drawTextLine(b, 10f, 80f, fP)
                 }
             }
 
@@ -188,7 +188,7 @@ fun GenshinFullRecord.recordInfo(): Surface {
 
                         translate(105f, 0f)
 
-                        drawTextLine(topText, 0f, (boxHeight + topText.xHeight) /2, fP)
+                        drawTextLine(topText, 0f, (boxHeight + topText.xHeight) / 2, fP)
                         drawTextLine(bottomText, 0f, (boxHeight + bottomText.height) / 2 + bottomText.height * .67f, fP)
                     }
                 }
@@ -208,7 +208,7 @@ fun GenshinFullRecord.minorInfo(): Surface {
 
         canvas.apply {
             save()
-            clipRRect(RRect.makeComplexLTRB(0f, 0f, homeCardWidth, homeCardHeight, floatArrayOf(10f)),true)
+            clipRRect(RRect.makeComplexLTRB(0f, 0f, homeCardWidth, homeCardHeight, floatArrayOf(10f)), true)
             //drawRRect(RRect.makeComplexLTRB(0f, 0f, homeCardWidth, homeCardHeight, floatArrayOf(10f)), Paint())
             drawImageRectNearest(home, Rect(0f, 0f, homeCardWidth, homeCardHeight), Paint().apply {
                 //blendMode = BlendMode.SRC_ATOP
@@ -240,13 +240,13 @@ fun GenshinFullRecord.minorInfo(): Surface {
 //                    offsetX = drawTitleData(value, key, font, fontTwo, fontColor)
 //                }
 //                resetMatrix()
-            averLayer(Rect(20f, 0f, 580f, 130f),0f, 4,1){
+            averLayer(Rect(20f, 0f, 580f, 130f), 0f, 4, 1) {
                 var i = 1
                 //val font18 = font.makeWithSize(18f)
                 dataMap.forEach { (key, value) ->
                     box(i) {
 
-                        drawTitleData(value, key, font, fontTwo,Rect.makeXYWH(0f,0f,boxWidth,boxHeight), fontColor)
+                        drawTitleData(value, key, font, fontTwo, Rect.makeXYWH(0f, 0f, boxWidth, boxHeight), fontColor)
                     }
                     i++
                 }
@@ -255,7 +255,7 @@ fun GenshinFullRecord.minorInfo(): Surface {
             resetMatrix()
             translate(0f, homeCardHeight + 30)
             translate(0f, 280f) // delete later
-            drawTextLine(TextLine.make("施工中",font.makeWithSize(160f)), 40f,0f, Paint())
+            drawTextLine(TextLine.make("施工中", font.makeWithSize(160f)), 40f, 0f, Paint())
 
             /**
              *

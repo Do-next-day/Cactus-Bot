@@ -56,7 +56,7 @@ data class DynamicDescribe(
     val timestamp: Long,
     @SerialName("user_profile")
     val profile: JsonElement? = null
-){
+) {
     val dynamicTime get() = getDynamicTimeFromID(dynamicId)
 }
 

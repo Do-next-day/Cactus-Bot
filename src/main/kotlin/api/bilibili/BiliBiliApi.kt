@@ -1,12 +1,8 @@
 package icu.dnddl.plugin.genshin.api.bilibili
 
 import icu.dnddl.plugin.genshin.api.bilibili.data.DynamicList
-import icu.dnddl.plugin.genshin.api.internal.BiliBiliResponse
 import icu.dnddl.plugin.genshin.api.internal.biliGet
-import icu.dnddl.plugin.genshin.api.internal.client
 import icu.dnddl.plugin.genshin.util.decode
-import io.ktor.client.features.*
-import io.ktor.client.request.*
 
 object BiliBiliApi {
     private const val BILIBILI_API = "https://api.bilibili.com"

@@ -7,11 +7,49 @@ import icu.dnddl.plugin.genshin.service.PluginDispatcher
 import icu.dnddl.plugin.genshin.util.getOrDownload
 import org.jetbrains.skia.*
 import org.laolittle.plugin.Fonts
+import org.laolittle.plugin.usedBy
 import kotlin.math.round
 
 /**
  * @author LaoLittle
  */
+
+private val paintBox = Paint().apply {
+    color = Color.makeRGB(245, 240, 235)
+}
+private val paintInfo = Paint().apply {
+    color = Color.makeRGB(235, 230, 215)
+}
+private val paintBorder = Paint().apply {
+    mode = PaintMode.STROKE
+    color = Color.makeRGB(225, 220, 210)
+}
+private val paintBlackText = Paint().apply {
+    color = Color.makeRGB(100, 100, 100)
+}
+private val paintGrayText = Paint().apply {
+    color = Color.makeRGB(200, 185, 165)
+}
+private val paintBrownText = Paint().apply {
+    color = Color.makeRGB(115, 80, 45)
+}
+
+private val paintWhite = Paint().apply {
+    color = Color.WHITE
+}
+
+private val paintGreenText = Paint().apply {
+    color = Color.makeRGB(125, 185, 15)
+}
+
+val paintCircleBorder = Paint().apply {
+    mode = PaintMode.STROKE
+    strokeWidth = 3f
+}
+
+private val fontBig = Fonts["MiSans-Regular", 28f] usedBy "原神便笺"
+private val fontSmall = Fonts["MiSans-Regular", 24f] usedBy "原神便笺"
+
 fun DailyNote.infoImage(): Image {
     val w = 745
     val h = 1200
@@ -97,27 +135,8 @@ fun DailyNote.infoImage(): Image {
     return Surface.makeRasterN32Premul(w, h).apply {
         canvas.apply {
             clear(Color.makeRGB(240, 235, 230))
-            val paintBox = Paint().apply {
-                color = Color.makeRGB(245, 240, 235)
-            }
-            val paintInfo = Paint().apply {
-                color = Color.makeRGB(235, 230, 215)
-            }
-            val paintBorder = Paint().apply {
-                mode = PaintMode.STROKE
-                color = Color.makeRGB(225, 220, 210)
-            }
-            val paintBlackText = Paint().apply {
-                color = Color.makeRGB(100, 100, 100)
-            }
-            val paintGrayText = Paint().apply {
-                color = Color.makeRGB(200, 185, 165)
-            }
-            val paintBrownText = Paint().apply {
-                color = Color.makeRGB(115, 80, 45)
-            }
-            val fontBig = Fonts["MiSans-Regular", 28f]
-            val fontSmall = Fonts["MiSans-Regular", 24f]
+
+
             listOf(resin, homeCoin, dailyTask, weeklyZones).forEachIndexed { time, note ->
                 val top = 60f + 125 * time
                 val box = Rect.makeXYWH(30f, top, 685f, 105f)
@@ -143,13 +162,6 @@ fun DailyNote.infoImage(): Image {
 
 
 
-            val paintWhite = Paint().apply {
-                color = Color.WHITE
-            }
-
-            val paintGreenText = Paint().apply {
-                color = Color.makeRGB(125, 185, 15)
-            }
 
             val finishedText = TextLine.make("探险完成", fontSmall)
 
@@ -182,13 +194,11 @@ fun DailyNote.infoImage(): Image {
                     )
                 })
 
-                val paintCircleBorder = Paint().apply {
-                    mode = PaintMode.STROKE
-                    color = when(info.status) {
+                paintCircleBorder.apply {
+                    color = when (info.status) {
                         Finished -> Color.makeRGB(125, 185, 15)
-                        Ongoing -> Color.makeRGB(220,155,75)
+                        Ongoing -> Color.makeRGB(220, 155, 75)
                     }
-                    strokeWidth = 3f
                 }
 
                 drawCircle(120f, top, 30f, paintWhite)

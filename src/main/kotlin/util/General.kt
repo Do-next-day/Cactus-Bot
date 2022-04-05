@@ -41,7 +41,6 @@ val File.skikoImage: Image get() = Image.makeFromEncoded(readBytes())
 inline fun <reified T> Json.decodeFromStringOrNull(str: String) =
     decodeFromStringOrNull<T>(serializersModule.serializer(), str)
 
-
 fun <T> Json.decodeFromStringOrNull(deserializer: DeserializationStrategy<T>, string: String): T? =
     kotlin.runCatching {
         decodeFromString(deserializer, string)
@@ -145,4 +144,5 @@ private const val DYNAMIC_START = 1498838400L
 
 fun getDynamicTimeFromID(id: Long): Long = (id shr 32) + DYNAMIC_START
 
-fun timestamp(sec: Long): OffsetDateTime = OffsetDateTime.ofInstant(Instant.ofEpochSecond(sec), ZoneOffset.systemDefault())
+fun timestamp(sec: Long): OffsetDateTime =
+    OffsetDateTime.ofInstant(Instant.ofEpochSecond(sec), ZoneOffset.systemDefault())

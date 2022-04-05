@@ -23,7 +23,7 @@ object CactusConfig : AutoSavePluginConfig("GenshinPluginConfig") {
     val autoSign by value(true)
 
     @ValueDescription("使用图片")
-    var image by value(true)
+    var useImage by value(true)
 
     private val guideResourceFolder = CactusBot.configFolder.resolve("GuideRes").also { it.mkdir() }
     val Contact.guideMessage: MessageChain

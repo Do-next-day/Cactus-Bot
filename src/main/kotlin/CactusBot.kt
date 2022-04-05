@@ -2,7 +2,6 @@ package icu.dnddl.plugin.genshin
 
 import icu.dnddl.plugin.genshin.api.internal.getAppVersion
 import icu.dnddl.plugin.genshin.database.User
-import icu.dnddl.plugin.genshin.database.Users
 import icu.dnddl.plugin.genshin.database.cactusTransaction
 import icu.dnddl.plugin.genshin.mirai.AllMessageListener
 import icu.dnddl.plugin.genshin.mirai.FriendMessageListener
@@ -42,7 +41,7 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
                     如要使用图片输出, 请下载前置插件 https://github.com/LaoLittle/SkikoMirai 并修改插件配置
                 """.trimIndent()
                 }
-                CactusConfig.image = false
+                CactusConfig.useImage = false
                 CactusConfig.save()
             }
 
@@ -63,9 +62,11 @@ object CactusBot : KotlinPlugin(JvmPluginDescription(
         if (CactusConfig.autoSign) GenshinSignProver.startAt(dateTime, aDay)
         logger.info { "Cactus-Bot loaded" }
 
-        cactusTransaction { // 为每位用户分发树脂提醒服务
-            User.all().forEach {
-                GenshinResinPromptingService(it).start()
+        if (CactusConfig.resinRecoveredPush) {
+            cactusTransaction { // 为每位用户分发树脂提醒服务
+                User.all().forEach {
+                    GenshinResinPromptingService(it).start()
+                }
             }
         }
     }
